@@ -2,6 +2,391 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Product Details - ChanZel</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css" />
+  <link rel="icon" href="img/logo-light.png" />
+  <style>
+    .color-img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s;
+    }
+    .color-img:hover {
+      border-color: #007bff;
+    }
+    .color-img.selected {
+      border-color: #007bff;
+    }
+    .size-btn {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .quantity-input {
+      width: 80px;
+      text-align: center;
+    }
+    .product-main-img {
+      max-height: 500px;
+      object-fit: cover;
+      cursor: zoom-in;
+    }
+    .product-main-img:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+    .gallery-img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .gallery-img:hover,
+    .gallery-img.active {
+      border-color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid body">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
+      </a>
+      <div class="collapse navbar-collapse" id="x">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link h" href="index.html" data-translate="nav_home">HOME</a></li>
+          <li class="nav-item"><a class="nav-link h" href="women.html" data-translate="nav_women">WOMEN</a></li>
+          <li class="nav-item"><a class="nav-link h" href="men.html" data-translate="nav_men">MEN</a></li>
+          <li class="nav-item"><a class="nav-link h" href="about.html" data-translate="nav_about">ABOUT</a></li>
+          <li class="nav-item"><a class="nav-link h" href="#contact" data-translate="nav_contact">CONTACT</a></li>
+        </ul>
+      </div>
+      <ul class="navbar-nav vv align-items-center">
+        <!-- Language Toggle -->
+        <li class="nav-item mr-3">
+          <button class="btn btn-outline-secondary btn-sm" id="languageToggle">
+            <span id="currentLang">EN</span>
+          </button>
+        </li>
+        <!-- Search Icon -->
+        <li class="nav-item mr-3">
+          <a class="nav-link" href="#" title="Search" data-toggle="modal" data-target="#searchModal">
+            <i class="fa-solid fa-search"></i>
+          </a>
+        </li>
+        <h6 class="nav-item dolar mr-3">$<span id="totalPrice">0.00</span></h6>
+        <li class="nav-item mr-3">
+          <a class="nav-link position-relative" href="cart.html" title="Your Cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="navCartCount" class="badge badge-danger position-absolute" style="top:0; right:0; font-size:0.6rem;">0</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link login" href="login.html" id="authLink" data-translate="nav_login">LOG IN</a>
+        </li>
+      </ul>
+      <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
+        <span class="navbar-toggler-icon"></span>
+      </a>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="container mt-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html" data-translate="nav_home">Home</a></li>
+          <li class="breadcrumb-item"><span id="productCategory">Products</span></li>
+          <li class="breadcrumb-item active" aria-current="page" id="productName">Product Details</li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center mt-5">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <p data-translate="loading_product">Loading product details...</p>
+    </div>
+
+    <!-- Product Details Container -->
+    <div class="container mt-4" id="productContainer" style="display: none;">
+      <div class="row">
+        <!-- Product Images -->
+        <div class="col-md-6">
+          <div class="text-center">
+            <img id="mainProductImage" src="" alt="Product Image" class="img-fluid product-main-img rounded mb-3" />
+          </div>
+          <!-- Image Gallery -->
+          <div id="imageGallery" class="d-flex flex-wrap justify-content-center">
+            <!-- Gallery images will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Product Information -->
+        <div class="col-md-6">
+          <h2 id="productTitle" class="mb-3"></h2>
+          <h3 class="text-primary mb-3">$<span id="productPrice">0.00</span></h3>
+          
+          <!-- Product Details -->
+          <div class="mb-3">
+            <p><strong data-translate="product_stock">Stock:</strong> <span id="productStock" class="badge badge-success">In Stock</span></p>
+            <p><strong data-translate="product_gender">Gender:</strong> <span id="productGender"></span></p>
+            <p><strong data-translate="product_category">Category:</strong> <span id="productCategoryDetail"></span></p>
+            <p><strong data-translate="product_season">Season:</strong> <span id="productSeason"></span></p>
+          </div>
+
+          <!-- Product Description -->
+          <div class="mb-4">
+            <h5 data-translate="product_description">Description</h5>
+            <p id="productDescription">Product description will be loaded here.</p>
+          </div>
+
+          <!-- Available Colors -->
+          <div class="mb-4">
+            <h5 data-translate="available_colors">Available Colors</h5>
+            <div id="colorOptions" class="d-flex flex-wrap">
+              <!-- Color options will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Available Sizes -->
+          <div class="mb-4">
+            <h5 data-translate="available_sizes">Available Sizes</h5>
+            <div id="sizeOptions">
+              <!-- Size options will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="mb-4">
+            <h5 data-translate="quantity">Quantity</h5>
+            <div class="quantity-controls">
+              <button class="btn btn-outline-secondary" onclick="decreaseQuantity()">-</button>
+              <input type="number" id="quantityInput" class="form-control quantity-input" value="1" min="1" max="10">
+              <button class="btn btn-outline-secondary" onclick="increaseQuantity()">+</button>
+            </div>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <div class="mb-4">
+            <button id="addToCartBtn" class="btn btn-success btn-lg" onclick="addToCart()" disabled>
+              <i class="fa-solid fa-cart-plus mr-2"></i>
+              <span data-translate="add_to_cart">Add to Cart</span>
+            </button>
+          </div>
+
+          <!-- Product Features -->
+          <div class="mb-4">
+            <h5 data-translate="product_features">Features</h5>
+            <ul class="list-unstyled">
+              <li><i class="fa-solid fa-check text-success mr-2"></i><span data-translate="feature_quality">High Quality Material</span></li>
+              <li><i class="fa-solid fa-check text-success mr-2"></i><span data-translate="feature_shipping">Free Shipping</span></li>
+              <li><i class="fa-solid fa-check text-success mr-2"></i><span data-translate="feature_return">30-Day Return Policy</span></li>
+              <li><i class="fa-solid fa-check text-success mr-2"></i><span data-translate="feature_warranty">1-Year Warranty</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="container mt-5" style="display: none;">
+      <div class="alert alert-danger text-center">
+        <h4 data-translate="product_not_found">Product Not Found</h4>
+        <p data-translate="product_not_found_desc">The product you're looking for doesn't exist or has been removed.</p>
+        <a href="index.html" class="btn btn-primary" data-translate="back_to_home">Back to Home</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container-fluid mt-5" id="contact">
+      <div class="d-flex align-items-center flex-column foo">
+        <h2 class="textt fo" data-translate="subscribe_title">Subscribe To Get Offers In Your Inbox</h2>
+        <span class="text fon" style="font-size: 20px" data-translate="subscribe_desc">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br><br></span>
+
+        <div class="navbar-nav vvv">
+          <a href="index.html" class="nav-link text mr-4" data-translate="footer_tshirts">Buy T-Shirts</a>
+          <a href="women.html" class="nav-link text mr-4" data-translate="nav_women">Women</a>
+          <a href="men.html" class="nav-link text mr-4" data-translate="nav_men">Men</a>
+          <a href="about.html" class="nav-link text mr-4" data-translate="nav_about">About</a>
+          <a href="#contact" class="nav-link text" data-translate="nav_contact">Contact</a>
+        </div>
+
+        <div class="d-flex mt-3 btns">
+          <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
+            <i class="fa-brands fa-facebook"></i>
+          </a>
+          <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
+            <i class="fa-brands fa-github"></i>
+          </a>
+          <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
+            <i class="fa-brands fa-linkedin"></i>
+          </a>
+          <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
+            <i class="fa-brands fa-square-behance"></i>
+          </a>
+        </div>
+      </div>
+      <div class="last-div copy mb-4" data-translate="copyright">Copyright &copy; 2024 ChanZel By NERMEEN</div>
+    </footer>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel" data-translate="search_products">Search Products</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" id="searchInput" placeholder="Search for products..." data-translate-placeholder="search_placeholder">
+          <div id="searchResults" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="toast position-fixed" id="successToast" style="top: 20px; right: 20px; z-index: 9999;" data-delay="3000">
+    <div class="toast-header">
+      <strong class="mr-auto text-success">Success</strong>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body" id="toastMessage">
+      Product added to cart successfully!
+    </div>
+  </div>
+
+  <!-- Bootstrap + jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+  <!-- Firebase + Product Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+      authDomain: "chanzel-ecommerce.firebaseapp.com",
+      projectId: "chanzel-ecommerce",
+      storageBucket: "chanzel-ecommerce.appspot.com",
+      messagingSenderId: "379673191328",
+      appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Translation object (simplified for product page)
+    const translations = {
+      en: {
+        nav_home: "HOME",
+        nav_women: "WOMEN",
+        nav_men: "MEN",
+        nav_about: "ABOUT",
+        nav_contact: "CONTACT",
+        nav_login: "LOG IN",
+        nav_logout: "LOG OUT",
+        loading_product: "Loading product details...",
+        product_stock: "Stock",
+        product_gender: "Gender",
+        product_category: "Category",
+        product_season: "Season",
+        product_description: "Description",
+        available_colors: "Available Colors",
+        available_sizes: "Available Sizes",
+        quantity: "Quantity",
+        add_to_cart: "Add to Cart",
+        product_features: "Features",
+        feature_quality: "High Quality Material",
+        feature_shipping: "Free Shipping",
+        feature_return: "30-Day Return Policy",
+        feature_warranty: "1-Year Warranty",
+        product_not_found: "Product Not Found",
+        product_not_found_desc: "The product you're looking for doesn't exist or has been removed.",
+        back_to_home: "Back to Home",
+        subscribe_title: "Subscribe To Get Offers In Your Inbox",
+        subscribe_desc: "Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum",
+        footer_tshirts: "Buy T-Shirts",
+        copyright: "Copyright © 2024 ChanZel By NERMEEN",
+        search_products: "Search Products",
+        search_placeholder: "Search for products...",
+        product_added: "Product added to cart successfully!",
+        admin_dashboard: "Admin Dashboard",
+        out_of_stock: "Out of Stock",
+        in_stock: "In Stock"
+      },
+      ar: {
+        nav_home: "الرئيسية",
+        nav_women: "النساء",
+        nav_men: "الرجال",
+        nav_about: "حول",
+        nav_contact: "اتصل",
+        nav_login: "تسجيل الدخول",
+        nav_logout: "تسجيل الخروج",
+        loading_product: "جاري تحميل تفاصيل المنتج...",
+        product_stock: "المخزون",
+        product_gender: "الجنس",
+        product_category: "الفئة",
+        product_season: "الموسم",
+        product_description: "الوصف",
+        available_colors: "الألوان المتاحة",
+        available_sizes: "الأحجام المتاحة",
+        quantity: "الكمية",
+        add_to_cart: "أضف إلى السلة",
+        product_features: "المميزات",
+        feature_quality: "مواد عالية الجودة",
+        feature_shipping: "شحن مجاني",
+        feature_return: "سياسة إرجاع 30 يوم",
+        feature_warranty: "ضمان سنة واحدة",
+        product_not_found: "المنتج غير موجود",
+        product_not_found_desc: "المنتج الذي تبحث عنه غير موجود أو تم حذفه.",
+        back_to_home: "العودة للرئيسية",
+        subscribe_title: "اشترك للحصول على العروض في بريدك الإلكتروني",
+        subscribe_desc: "لوريم إيبسوم دولور سيت أميت، أديبيسينغ إيليت سيد دو إيوسمود كونديمنتوم",
+        footer_tshirts: "شراء القمصان",
+        copyright: "حقوق الطبع والنشر © 2024 شانزيل 
+(Content truncated due to size limit. Use line ranges to read in chunks)
+
+          
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
   <title>Product Details</title>
   <link
     rel="stylesheet"
@@ -135,3 +520,4 @@
   </script>
 </body>
 </html>
+ -->
