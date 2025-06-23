@@ -13,6 +13,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ============================================
+// دالة تحميل وعرض المنتجات مع فلترة حسب الجنس والتصنيف
+// gender: "women" أو "men"
+// category: مثلاً "dress", "pants", "tshirts", "shoes", ... أو null لتجاهل الفلتر
+async function loadProducts(gender, category = null) {
+    const container = document.querySelector('.divparent');
+    if (!container) return;
+
+    container.innerHTML = ''; // تفريغ المحتوى
+
+    // بناء الاستعلام مع شروط فلترة حسب الحاجة
+    let q;
+    if (category) {
+        q = query(collection(db, "products"),
+            where("gender", "==", gender),
+            where("category", "==", category)
+        );
+    } else {
+        q = query(collection(db, "products"),
+            where("gender", "==", gender)
+        );
+    }
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+        container.innerHTML = '<p class="text-center w-100">لا توجد منتجات لعرضها</p>';
+        return;
+    }
+
+    snapshot.forEach(docSnap => {
+        const product = docSnap.data();
+
+        const card = document.createElement('div');
+        card.classList.add('card', 'mr-2');
+        card.style.width = '18rem';
+
+        card.innerHTML = `
+            <img src="${product.image}" class="card-img-top" alt="${product.name}">
+            <div class="card-body">
+                <h5 class="card-title">${product.name}</h5>
+                <p class="card-text">$${product.price.toFixed(2)}</p>
+                <p class="card-text text-muted">تصنيف: ${product.category}</p>
+                <!-- أضف هنا أي تفاصيل أخرى تحبي تعرضيها -->
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+// ============================================
+// دالة الثيم - كما هي بدون تعديل (فقط نسخها هنا)
 function darkmode(){
     document.querySelector(".body").style.backgroundColor = 'rgb(57 35 35)';
     document.querySelector("body").style.backgroundColor = 'rgb(57 35 35)';
@@ -27,7 +80,6 @@ function darkmode(){
         item.style.color = '#392323';
     })
     document.querySelector(".h2").style.color = '#3923238a';
-
 
     document.querySelector(".cust").style.backgroundColor = '#e2cfae';
     document.querySelector(".cust").style.color = 'rgb(57 35 35)';
@@ -64,7 +116,6 @@ function darkmode(){
     })
     document.querySelector(".textt").style.color = '#792929';
 
-
     document.querySelectorAll(".body .btn-darkk").forEach(function (item){
         item.style.backgroundColor = 'rgb(57 35 35)';
         item.style.color = 'rgb(230,216,185)';
@@ -85,7 +136,13 @@ function darkmode(){
     })
 }
 
+// ============================================
+// مثال: تحميل منتجات النساء عند تحميل الصفحة تلقائيًا
+document.addEventListener('DOMContentLoaded', () => {
+    loadProducts("women");
+});
 
+// ============================================
 function sign(){
     window.location.replace("index.html");
 }
