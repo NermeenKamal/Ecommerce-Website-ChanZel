@@ -1,7 +1,22 @@
-// js/script.js
-import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { db } from "./firebase-config.js";
+// استيراد الدوال اللازمة من Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// إعدادات Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+  authDomain: "chanzel-ecommerce.firebaseapp.com",
+  projectId: "chanzel-ecommerce",
+  storageBucket: "chanzel-ecommerce.appspot.com",
+  messagingSenderId: "379673191328",
+  appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+};
+
+// تهيئة التطبيق
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// دالة تحميل وعرض المنتجات
 async function loadProducts(category = "tshirt") {
   const productsContainer = document.querySelector(".products-container");
   if (!productsContainer) return;
