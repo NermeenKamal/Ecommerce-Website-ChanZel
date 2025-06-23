@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="img/logo-light.png">
-    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
-
-
-    <title>ChanZel</title>
+    <meta charset="UTF-8" />
+    <title>Men ChanZel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="img/logo-light.png" />
+    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css" />
     <style>
-        .items{
+        .items {
             background-color: #70967775;
         }
-        main div{
+        main div {
             background-color: rgba(112, 150, 119, 0.36);
         }
 
-
-
-
-        .backk{
+        .backk {
             position: absolute;
             z-index: -5;
             animation-name: back;
@@ -33,24 +28,17 @@
             left: 0;
             margin-top: 64px;
         }
-        .backk p{
+        .backk p {
             font-size: 100px;
             margin-top: 60px;
         }
         @keyframes back {
-            0%{
-                background-color: #0b654b;
-            }
-            50%{
-                background-color: #591a9a;
-            }
-            100%{
-                background-color: #9c6733;
-            }
+            0% { background-color: #0b654b; }
+            50% { background-color: #591a9a; }
+            100% { background-color: #9c6733; }
         }
 
-
-        .back{
+        .back {
             position: absolute;
             z-index: -5;
             animation-name: backk;
@@ -64,34 +52,45 @@
             height: 250px;
             margin-top: 64px;
         }
-        .back p{
+        .back p {
             font-size: 100px;
             margin-top: 60px;
         }
         @keyframes backk {
-            0%{
-                background-color: #0b654b;
-            }
-            50%{
-                background-color: #591a9a;
-            }
-            100%{
-                background-color: #9c6733;
-            }
+            0% { background-color: #0b654b; }
+            50% { background-color: #591a9a; }
+            100% { background-color: #9c6733; }
+        }
+
+        /* Navbar right side styles */
+        .navbar-nav.vv {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ico-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+        }
+        .cart-count {
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .nav-link.logout-btn {
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 <div class="container-fluid body" data-bs-theme="light">
-    <!--    <button class="position-fixed btn btn-dark btn-sm cust" type="button" onclick=darkmode()><svg style="margin-right: 7px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#578eb7" d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/></svg>Customize</button>-->
-
-
-
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" href="#">
-            <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
+        <a class="navbar-brand" href="index.html">
+            <img src="img/Chazel.png" id="logo" alt="ChanZel" width="111px" height="82px" />
         </a>
-
 
         <div class="collapse navbar-collapse" id="x">
             <ul class="navbar-nav">
@@ -103,67 +102,60 @@
             </ul>
         </div>
 
-        <ul class="navbar-nav vv">
-            <i class="fa-solid fa-magnifying-glass ico-btn"></i>
-            <h6 class="nav-item dolar">$0.00</h6>
-            <i class="fa-solid fa-cart-shopping ico-btn"></i>
-            <a class="nav-link login" href="login.html">LOG IN</a>
+        <ul class="navbar-nav vv" id="nav-right">
+            <li class="nav-item d-flex align-items-center">
+                <i class="fa-solid fa-magnifying-glass ico-btn"></i>
+            </li>
+            <li class="nav-item d-flex align-items-center">
+                <span class="dolar">$0.00</span>
+            </li>
+            <li class="nav-item d-flex align-items-center position-relative">
+                <i class="fa-solid fa-cart-shopping ico-btn"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </li>
+            <li class="nav-item" id="auth-links">
+                <!-- Login or Logout button will be injected here -->
+                <a href="login.html" class="nav-link login-link">LOG IN</a>
+            </li>
         </ul>
-
 
         <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
             <span class="navbar-toggler-icon"></span>
         </a>
-
     </nav>
-
 
     <main class="container-fluid position-relative">
         <div class="z-1 position-absolute p-5 rounded-3 main-bg">
             <h2 class="h2">Men <span class="side">Side</span></h2>
-            <h3 class="slick"> Slick. Modern. <br> Awesome.</h3>
-            <button type="button" class="btn btn-darkk btn-sm">Shop NOW!</button>
+            <h3 class="slick"> Slick. Modern. <br /> Awesome.</h3>
+            <button type="button" class="btn btn-darkk btn-sm" onclick="location.href='men.html'">Shop NOW!</button>
         </div>
-        <img src="img/man.jpg" class="img-fluid" alt="home-bg">
+        <img src="img/man.jpg" class="img-fluid" alt="home-bg" />
     </main>
-
-
-
-
-
-
-
-
 
     <section class="container-lg mt-5 flexx">
         <h3 class="h33 text-center mb-4">Categories</h3>
         <div class="d-flex flex-row mb-3">
             <div class="backk"></div>
-            <div class="p-2 items"><h4 class="mt-2">Hats</h4><img src="img/Hats-Category.jpg" style="display: block"> <button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">Pants</h4><img src="img/men-pants.jpg" style="display: block"><button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">T-shirt</h4><img src="img/shirts.jpg" style="display: block"><button>GO!</button></div>
+            <div class="p-2 items"><h4 class="mt-2">Hats</h4><img src="img/Hats-Category.jpg" style="display: block" /> <button>GO!</button></div>
+            <div class="p-2 items"><h4 class="mt-2">Pants</h4><img src="img/men-pants.jpg" style="display: block" /><button>GO!</button></div>
+            <div class="p-2 items"><h4 class="mt-2">T-shirt</h4><img src="img/shirts.jpg" style="display: block" /><button>GO!</button></div>
         </div>
         <div class="d-flex flex-row-reverse reverse-do">
             <div class="back"></div>
-            <div class="p-2 items"><h4 class="mt-2">Watches</h4><img src="img/Watch-Category.jpg" style="display: block"><button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">Suits</h4><img src="img/men-suits.jpg" style="display: block"><button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">Shoes</h4><img src="img/shoes.jpg" style="display: block"><button>GO!</button></div>
+            <div class="p-2 items"><h4 class="mt-2">Watches</h4><img src="img/Watch-Category.jpg" style="display: block" /><button>GO!</button></div>
+            <div class="p-2 items"><h4 class="mt-2">Suits</h4><img src="img/men-suits.jpg" style="display: block" /><button>GO!</button></div>
+            <div class="p-2 items"><h4 class="mt-2">Shoes</h4><img src="img/shoes.jpg" style="display: block" /><button>GO!</button></div>
         </div>
     </section>
 
-
-
-
-
-
-
-
-
-
     <footer class="container-fluid mt-5" id="contact">
         <div class="d-flex align-items-center flex-column foo">
-            <h2 class="textt  fo">Subscribe To Get Offers In Your Inbox</h2>
-            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br> <br></span>
+            <h2 class="textt fo">Subscribe To Get Offers In Your Inbox</h2>
+            <span class="text fon" style="font-size: 20px">
+                Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum
+                <br /><br />
+            </span>
 
             <div class="navbar-nav vvv">
                 <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
@@ -189,12 +181,85 @@
         </div>
         <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
     </footer>
-
 </div>
+
+<!-- Firebase scripts -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+      authDomain: "chanzel-ecommerce.firebaseapp.com",
+      projectId: "chanzel-ecommerce",
+      storageBucket: "chanzel-ecommerce.appspot.com",
+      messagingSenderId: "379673191328",
+      appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const cartCountSpan = document.getElementById("cartCount");
+    const authLinks = document.getElementById("auth-links");
+
+    // Update cart count from localStorage
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((total, item) => total + (item.qty || 1), 0);
+      if (cartCountSpan) cartCountSpan.textContent = count;
+    }
+
+    // Handle login/logout UI
+    function setUserUI(user) {
+      if (user) {
+        // User logged in: show logout button
+        authLinks.innerHTML = `
+          <a href="#" class="nav-link logout-btn" id="logoutBtn">LOG OUT</a>
+        `;
+
+        // Attach logout event
+        const logoutBtn = document.getElementById("logoutBtn");
+        logoutBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          signOut(auth).then(() => {
+            alert("You have logged out.");
+            window.location.href = "index.html";
+          });
+        });
+      } else {
+        // User not logged in: show login link
+        authLinks.innerHTML = `
+          <a href="login.html" class="nav-link login-link">LOG IN</a>
+        `;
+      }
+    }
+
+    // Listen to auth state changes
+    onAuthStateChanged(auth, (user) => {
+      setUserUI(user);
+    });
+
+    // Update cart count on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCartCount();
+    });
+
+    // Listen to storage event (for cart updates from other tabs/windows)
+    window.addEventListener("storage", (event) => {
+      if (event.key === "cart") {
+        updateCartCount();
+      }
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
