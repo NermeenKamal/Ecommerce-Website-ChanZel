@@ -55,6 +55,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
     // إعداد Firebase
     const firebaseConfig = {
@@ -68,6 +69,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const cartContainer = document.getElementById("cartContainer");
     const emptyMessage = document.getElementById("emptyMessage");
@@ -76,8 +78,9 @@
     const cartCountSpan = document.getElementById("cartCount");
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let totalPrice = 0;
+    let currentUser = null;
 
+    // تحديث عداد السلة
     function updateCartCount() {
       const count = cart.reduce((total, item) => total + item.qty, 0);
       cartCountSpan.textContent = count;
@@ -93,7 +96,6 @@
       }
 
       emptyMessage.style.display = "none";
-      checkoutSection.style.display = "block";
 
       let html = `
         <table class="table table-striped">
@@ -110,7 +112,7 @@
           <tbody>
       `;
 
-      totalPrice = 0;
+      let totalPrice = 0;
 
       for (const item of cart) {
         const ref = doc(db, "products", item.id);
@@ -155,6 +157,9 @@
       cartContainer.innerHTML = html;
       updateCartCount();
       addEventListeners();
+
+      // اظهار زر الشراء فقط اذا المستخدم مسجل دخول
+      checkoutSection.style.display = currentUser && cart.length > 0 ? "block" : "none";
     }
 
     function addEventListeners() {
@@ -185,7 +190,25 @@
       });
     }
 
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (!user) {
+        // لو مش مسجل دخول، نوجهه لصفحة تسجيل الدخول
+        alert("يرجى تسجيل الدخول أولاً لإتمام عملية الشراء.");
+        window.location.href = "login.html";
+      } else {
+        // إذا مسجل دخول، نعرض زر الشراء ونعيد تحميل السلة
+        checkoutSection.style.display = cart.length > 0 ? "block" : "none";
+      }
+    });
+
     checkoutBtn.addEventListener("click", async () => {
+      if (!currentUser) {
+        alert("يرجى تسجيل الدخول أولاً لإتمام عملية الشراء.");
+        window.location.href = "login.html";
+        return;
+      }
+
       try {
         const totalPriceCents = Math.round(totalPrice * 100);
 
