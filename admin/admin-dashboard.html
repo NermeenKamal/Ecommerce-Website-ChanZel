@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8" />
-    <title>Admin Dashboard</title>
+    <title>لوحة تحكم المسؤول - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css" />
@@ -10,12 +10,31 @@
     <style>
         body { padding-bottom: 100px; }
         table img { width: 50px; height: auto; }
+        .color-input {
+          border: 1px solid #ccc;
+          padding: 10px;
+          margin-bottom: 8px;
+          border-radius: 5px;
+          background-color: #f8f9fa;
+        }
+        .color-input .remove-color {
+          cursor: pointer;
+          color: red;
+          font-weight: bold;
+          font-size: 20px;
+          position: absolute;
+          right: 15px;
+          top: 5px;
+        }
+        .color-input.position-relative {
+          position: relative;
+        }
     </style>
 </head>
-<body>
+<body dir="rtl">
 <div class="container-fluid body" data-bs-theme="light">
     <button class="position-fixed btn btn-dark btn-sm cust" type="button" onclick="darkmode()">
-        <i class="fa fa-moon"></i> Customize
+        <i class="fa fa-moon"></i> تخصيص الوضع الليلي
     </button>
 
     <nav class="navbar navbar-expand-lg">
@@ -24,37 +43,50 @@
         </a>
         <div class="collapse navbar-collapse" id="x">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
-                <li class="nav-item"><a class="nav-link" href="women.html">WOMEN</a></li>
-                <li class="nav-item"><a class="nav-link" href="men.html">MEN</a></li>
-                <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
-                <li class="nav-item"><a class="nav-link" href="#contact">CONTACT</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                <li class="nav-item"><a class="nav-link" href="women.html">نساء</a></li>
+                <li class="nav-item"><a class="nav-link" href="men.html">رجال</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">من نحن</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">تواصل معنا</a></li>
             </ul>
         </div>
     </nav>
 
     <section class="container mt-5">
-        <h3 class="mb-4 h33 text-center">Admin Dashboard</h3>
+        <h3 class="mb-4 h33 text-center">لوحة تحكم المسؤول</h3>
         <div class="row mb-4">
             <div class="col-md-6">
                 <div class="card p-3 shadow-sm">
                     <h5 class="card-title">➕ إضافة منتج جديد</h5>
-                    <form id="addProductForm">
+                    <form id="addProductForm" enctype="multipart/form-data">
                         <input type="text" id="name" class="form-control mb-2" placeholder="اسم المنتج" required />
-                        <input type="number" id="price" class="form-control mb-2" placeholder="السعر" required />
-                        <input type="number" id="stock" class="form-control mb-2" placeholder="المخزون" required />
-                        
+                        <input type="number" id="price" class="form-control mb-2" placeholder="السعر" min="0" step="0.01" required />
+                        <input type="number" id="stock" class="form-control mb-2" placeholder="المخزون" min="0" required />
+
                         <select id="gender" class="form-control mb-2" required>
                             <option value="" disabled selected>اختر الجنس</option>
                             <option value="women">نساء</option>
                             <option value="men">رجال</option>
                         </select>
+
                         <select id="category" class="form-control mb-2" required>
                             <option value="" disabled selected>اختر التصنيف</option>
                         </select>
 
-                        <input type="file" id="image" class="form-control mb-2" accept="image/*" required />
-                        <button type="submit" class="btn btn-dark btn-sm">إضافة</button>
+                        <div id="colorsContainer">
+                            <h6>الألوان المتاحة</h6>
+                            <div class="color-input position-relative">
+                                <span class="remove-color" style="display:none;">&times;</span>
+                                <input type="text" class="form-control mb-1 color-name" placeholder="اسم اللون" required />
+                                <input type="file" class="form-control color-image" accept="image/*" required />
+                            </div>
+                        </div>
+                        <button type="button" id="addColorBtn" class="btn btn-sm btn-outline-primary mb-3">➕ إضافة لون</button>
+
+                        <h6>المقاسات المتاحة (اكتبها مفصولة بفواصل مثلا: XS,S,M,L)</h6>
+                        <input type="text" id="sizesInput" class="form-control mb-3" placeholder="أدخل المقاسات" required />
+
+                        <button type="submit" class="btn btn-dark btn-sm">إضافة المنتج</button>
                     </form>
                 </div>
             </div>
@@ -74,7 +106,7 @@
 
         <div class="card p-3 shadow-sm">
             <h5 class="card-title">📦 المنتجات الحالية</h5>
-            <table class="table table-striped">
+            <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>الاسم</th>
@@ -82,12 +114,14 @@
                         <th>المخزون</th>
                         <th>الجنس</th>
                         <th>التصنيف</th>
-                        <th>الصورة</th>
+                        <th>الألوان</th>
+                        <th>المقاسات</th>
+                        <th>صور الألوان</th>
                         <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="productTable">
-                    <!-- يتم ملؤه ديناميكيًا من Firestore -->
+                    <!-- يمتلئ ديناميكيًا -->
                 </tbody>
             </table>
         </div>
@@ -95,14 +129,14 @@
 
     <footer class="container-fluid mt-5" id="contact">
         <div class="d-flex align-items-center flex-column foo">
-            <h2 class="textt fo">Subscribe To Get Offers In Your Inbox</h2>
-            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br /><br /></span>
+            <h2 class="textt fo">اشترك لتصلك العروض</h2>
+            <span class="text fon" style="font-size: 20px">نص تعريفي بسيط هنا للواجهة<br /><br /></span>
             <div class="navbar-nav vvv">
-                <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
-                <a href="women.html" class="nav-link text mr-4">Women</a>
-                <a href="men.html" class="nav-link text mr-4">Men</a>
-                <a href="about.html" class="nav-link text mr-4">About</a>
-                <a href="#contact" class="nav-link text">Contact</a>
+                <a href="index.html" class="nav-link text mr-4">الرئيسية</a>
+                <a href="women.html" class="nav-link text mr-4">نساء</a>
+                <a href="men.html" class="nav-link text mr-4">رجال</a>
+                <a href="about.html" class="nav-link text mr-4">من نحن</a>
+                <a href="#contact" class="nav-link text">تواصل معنا</a>
             </div>
             <div class="d-flex mt-3 btns">
                 <a class="ico-btn btn btn-lightt" href="https://www.facebook.com/NermeenKamalEldin"><i class="fa-brands fa-facebook"></i></a>
@@ -111,7 +145,7 @@
                 <a class="ico-btn btn btn-lightt" href="https://www.behance.net/Nermeen_Kamal"><i class="fa-brands fa-square-behance"></i></a>
             </div>
         </div>
-        <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
+        <div class="last-div copy mb-4">© 2024 ChanZel By NERMEEN</div>
     </footer>
 </div>
 
