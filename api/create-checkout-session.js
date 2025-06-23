@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       mode: "payment",
       payment_intent_data: {
         amount: amount,
-        currency: "usd", // عدل حسب العملة المطلوبة
+        currency: "usd",  // ممكن تغير العملة حسب المطلوب
       },
       success_url: `${req.headers.origin}/success`,
       cancel_url: `${req.headers.origin}/cancel`,
