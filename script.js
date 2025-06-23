@@ -1,8 +1,17 @@
-// استيراد الدوال اللازمة من Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+// Global Firebase + Auth + Cart + Product Script
 
-// إعدادات Firebase
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
   authDomain: "chanzel-ecommerce.firebaseapp.com",
@@ -12,12 +21,71 @@ const firebaseConfig = {
   appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
 };
 
-// تهيئة التطبيق
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-// دالة تحميل وعرض المنتجات
-async function loadProducts(category = "tshirt") {
+// Admin emails
+const adminEmails = ["admin@example.com"];
+
+// Auth state check (Login / Logout / Admin Dashboard)
+onAuthStateChanged(auth, (user) => {
+  const authLink = document.getElementById("authLink");
+  if (!authLink) return;
+
+  if (user) {
+    if (adminEmails.includes(user.email)) {
+      authLink.textContent = "Admin Dashboard";
+      authLink.href = "admin-dashboard.html";
+    } else {
+      authLink.textContent = "Logout";
+      authLink.href = "#";
+      authLink.addEventListener(
+        "click",
+        (e) => {
+          e.preventDefault();
+          signOut(auth).then(() => window.location.reload());
+        },
+        { once: true }
+      );
+    }
+  } else {
+    authLink.textContent = "LOG IN";
+    authLink.href = "login.html";
+  }
+});
+
+// Cart count logic
+function updateCartCount(count) {
+  const countElements = [
+    document.getElementById("cartCount"),
+    document.getElementById("navCartCount")
+  ];
+  countElements.forEach((el) => {
+    if (el) el.textContent = count;
+  });
+}
+
+function loadCartCount() {
+  let count = 0;
+  try {
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    if (cart && Array.isArray(cart)) count = cart.length;
+  } catch (e) {
+    count = 0;
+  }
+  updateCartCount(count);
+}
+
+window.addEventListener("load", () => {
+  loadCartCount();
+});
+
+// Load products from Firestore
+taskLoadProducts(); // Manual call for use in dynamic pages
+
+export async function taskLoadProducts(category = "tshirt") {
   const productsContainer = document.querySelector(".products-container");
   if (!productsContainer) return;
 
@@ -36,7 +104,6 @@ async function loadProducts(category = "tshirt") {
 
     querySnapshot.forEach((doc) => {
       const product = doc.data();
-
       const defaultImage =
         product.colors && product.colors.length > 0
           ? product.colors[0].image
@@ -84,7 +151,7 @@ async function loadProducts(category = "tshirt") {
       productsContainer.appendChild(card);
     });
 
-    // تغيير صورة المنتج عند اختيار لون
+    // Change image when color is selected
     document.querySelectorAll(".color-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const newImg = e.currentTarget.getAttribute("data-img");
@@ -100,8 +167,3 @@ async function loadProducts(category = "tshirt") {
     console.error("Error:", error);
   }
 }
-
-// تحميل المنتجات عند فتح الصفحة
-document.addEventListener("DOMContentLoaded", () => {
-  loadProducts("tshirt"); // يمكن تغيير التصنيف حسب الحاجة
-});
