@@ -1,33 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="icon" href="img/logo-light.png">
-    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+  <meta charset="UTF-8" />
+  <title>تسجيل الدخول - ChanZel</title>
+  <link rel="stylesheet" href="css/login.css" />
+  <link rel="icon" href="img/logo-light.png" />
 </head>
 <body>
 
-<video autoplay muted loop id="myVideo">
-    <source src="img/0826.mp4" type="video/mp4">
-</video>
-
 <div class="container">
-    <h1>LOGIN</h1>
-    <form>
-        <label>USERNAME</label> <br>
-        <input type="text">
-        <br>
-        <label>PASSWORD</label><br>
-        <input type="password"><br>
-        <a href="#">forget password?</a><br>
-        <span>Don't have an account?&nbsp;&nbsp;</span><a href="sign-up.html">Sign Up</a>
-        <br> <br>
-        <a type="submit" id="sign-in" href="index.html">Sign in</a>
-    </form>
+  <h1>تسجيل الدخول</h1>
+  <form id="loginForm">
+    <label for="email">البريد الإلكتروني</label><br />
+    <input type="email" id="email" required /><br /><br />
+    
+    <label for="password">كلمة المرور</label><br />
+    <input type="password" id="password" required /><br /><br />
+    
+    <button type="submit" id="sign-in">تسجيل الدخول</button><br /><br />
+    <span>ليس لديك حساب؟ </span><a href="sign-up.html">إنشاء حساب جديد</a>
+  </form>
+
+  <p id="errorMessage" style="color:red;"></p>
 </div>
 
-<script src="script.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+    authDomain: "chanzel-ecommerce.firebaseapp.com",
+    projectId: "chanzel-ecommerce",
+    storageBucket: "chanzel-ecommerce.appspot.com",
+    messagingSenderId: "379673191328",
+    appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const loginForm = document.getElementById("loginForm");
+  const errorMessage = document.getElementById("errorMessage");
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // بعد تسجيل الدخول الناجح، نعيد التوجيه لسلة المشتريات
+      window.location.href = "cart.html";
+    } catch (error) {
+      errorMessage.textContent = "فشل تسجيل الدخول: " + error.message;
+    }
+  });
+</script>
+
 </body>
 </html>
