@@ -76,13 +76,12 @@
     const cartCountSpan = document.getElementById("cartCount");
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let totalPrice = 0;
 
     function updateCartCount() {
       const count = cart.reduce((total, item) => total + item.qty, 0);
       cartCountSpan.textContent = count;
     }
-
-    let totalPrice = 0;
 
     async function loadCartItems() {
       if (cart.length === 0) {
