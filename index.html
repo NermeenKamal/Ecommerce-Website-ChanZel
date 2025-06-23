@@ -6,6 +6,247 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo-light.png">
     <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+    <title>ChanZel - Home</title>
+</head>
+<body>
+<div class="container-fluid body" data-bs-theme="light">
+    <!-- Language Toggle Button -->
+    <button class="position-fixed btn btn-dark btn-sm cust" type="button" onclick="darkmode()">
+        <svg style="margin-right: 7px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path fill="#578eb7" d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/>
+        </svg>
+        Customize
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="index.html">
+            <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
+        </a>
+        <div class="collapse navbar-collapse" id="x">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link active alert-link" aria-current="page" href="index.html" data-translate="nav_home">HOME</a></li>
+                <li class="nav-item"><a class="nav-link h" href="women.html" data-translate="nav_women">WOMEN</a></li>
+                <li class="nav-item"><a class="nav-link h" href="men.html" data-translate="nav_men">MEN</a></li>
+                <li class="nav-item"><a class="nav-link h" href="about.html" data-translate="nav_about">ABOUT</a></li>
+                <li class="nav-item"><a class="nav-link h" href="#contact" data-translate="nav_contact">CONTACT</a></li>
+            </ul>
+        </div>
+        <ul class="navbar-nav vv align-items-center">
+            <!-- Language Toggle -->
+            <li class="nav-item mr-3">
+                <button class="btn btn-outline-secondary btn-sm" id="languageToggle">
+                    <span id="currentLang">EN</span>
+                </button>
+            </li>
+            <!-- Search Icon -->
+            <li class="nav-item mr-3">
+                <a class="nav-link" href="#" title="Search" data-toggle="modal" data-target="#searchModal">
+                    <i class="fa-solid fa-search"></i>
+                </a>
+            </li>
+            <h6 class="nav-item dolar mr-3">$<span id="totalPrice">0.00</span></h6>
+            <li class="nav-item mr-3">
+                <a class="nav-link position-relative" href="cart.html" title="Your Cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="navCartCount" class="badge badge-danger position-absolute" style="top:0; right:0; font-size:0.6rem;">0</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link login" href="login.html" id="authLink" data-translate="nav_login">LOG IN</a>
+            </li>
+        </ul>
+        <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
+            <span class="navbar-toggler-icon"></span>
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="container-fluid position-relative">
+        <div class="z-1 position-absolute p-5 rounded-3 main-bg">
+            <h2 class="h2" data-translate="hero_women">Women</h2>
+            <h3 class="slick" data-translate="hero_slogan">Slick. Modern. <br> Awesome.</h3>
+            <button type="button" class="btn btn-darkk btn-sm" data-translate="hero_shop_now">Shop NOW!</button>
+        </div>
+        <img src="img/home-bg.jpg" class="img-fluid" alt="home-bg">
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center mt-5" style="display: none;">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p data-translate="loading_products">Loading products...</p>
+    </div>
+
+    <!-- Summer Collection Section -->
+    <section class="container-lg mt-5">
+        <h4 class="h44 text-center" data-translate="summer_collection">Summer Collection</h4>
+        <h3 class="h33 text-center mb-4" data-translate="popular_products">Popular Products</h3>
+        <div class="d-flex justify-content-start flex-wrap" id="summerProducts">
+            <!-- Summer products will be loaded here dynamically -->
+        </div>
+    </section>
+
+    <!-- Winter Collection Section -->
+    <section class="container-lg mt-5">
+        <h4 class="h44 text-center" data-translate="winter_collection">Winter Collection</h4>
+        <h3 class="h33 text-center mb-4" data-translate="featured_products">Featured Products</h3>
+        <div class="d-flex justify-content-start flex-wrap" id="winterProducts">
+            <!-- Winter products will be loaded here dynamically -->
+        </div>
+    </section>
+
+    <!-- Men Style Section -->
+    <section class="container-fluid mt-5">
+        <div class="d-flex align-items-star justify-content-center">
+            <div class="d-flex flex-column align-items-center div1">
+                <img src="img/man1.jpg" class="img-thumbnaill im1">
+                <p class="texttt h333" data-translate="men_style">MEN STYLE</p>
+                <h2 class="h333"><b data-translate="base_collection">The base collection - Ideal <br></b></h2>
+                <h2 class="h333 mb-3"><b data-translate="every_day">every day.</b></h2>
+                <button type="button" class="btn btn-dark btn-sm btnn" data-translate="shop_now">Shop NOW!</button>
+            </div>
+            <div class="div2">
+                <img src="img/man2.jpg" class="img-thumbnaill im2">
+            </div>
+        </div>
+    </section>
+
+    <!-- New Collection Section -->
+    <section class="container-fluid mt-5">
+        <div class="position-relative">
+            <div class="ddd position-absolute d-flex flex-column align-items-center">
+                <p class="h333" data-translate="new_collection">New Collection</p>
+                <h2 class="h333"><b data-translate="be_different">Be different in your own way!<br></b></h2>
+                <h2 class="h333 mb-3"><b data-translate="find_style">Find your unique style.</b></h2>
+                <button type="button" class="btn btn-darkk btn-sm" data-translate="shop_collection">Shop Collection!</button>
+            </div>
+            <div class="div-empty"></div>
+        </div>
+    </section>
+
+    <!-- Inspiring Section -->
+    <section class="container-fluid mt-5 position-relative mb-5 sec">
+        <div class="d-flex flex-row align-items-center justify-content-around position-relative">
+            <div class="div-img position-relative bll">
+                <div class="position-absolute bgdiv"></div>
+                <img src="img/inspiring.jpg" class="img-fluid rounded-start position-absolute" alt="inspiring">
+            </div>
+            <div class="d-flex flex-column align-items-left position-absolute bl">
+                <p class="h333 fo" data-translate="new_collection">New Collection</p>
+                <h2 class="h333 fon"><b data-translate="be_different">Be different in your own way!<br></b></h2>
+                <h2 class="h333 fon mb-3"><b data-translate="find_style">Find your unique style.</b></h2>
+                <button type="button" class="btn btn-dark btn-sm btnn" data-translate="shop_collection">Shop Collection!</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gender Categories Section -->
+    <section class="container-fluid mt-5">
+        <div class="d-flex ml-4 boy-girl">
+            <div class="d-flex flex-column position-relative">
+                <img src="img/girl.jpg" class="girl-img" alt="girl">
+                <button class="position-absolute bnn btn btn-lightt" type="button">
+                    <span data-translate="women_category">WOMEN</span><br>
+                    <span id="womenProductCount">5</span> <span data-translate="products">Products</span>
+                </button>
+            </div>
+            <div class="d-flex flex-column position-relative">
+                <img src="img/boy.jpg" class="boy-img" alt="boy">
+                <button class="position-absolute bnn btn btn-lightt">
+                    <span data-translate="men_category">MEN</span><br>
+                    <span id="menProductCount">5</span> <span data-translate="products">Products</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="container-fluid mt-5" id="contact">
+        <div class="d-flex align-items-center flex-column foo">
+            <h2 class="textt fo" data-translate="subscribe_title">Subscribe To Get Offers In Your Inbox</h2>
+            <span class="text fon" style="font-size: 20px" data-translate="subscribe_desc">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br><br></span>
+
+            <div class="navbar-nav vvv">
+                <a href="index.html" class="nav-link text mr-4" data-translate="footer_tshirts">Buy T-Shirts</a>
+                <a href="women.html" class="nav-link text mr-4" data-translate="nav_women">Women</a>
+                <a href="men.html" class="nav-link text mr-4" data-translate="nav_men">Men</a>
+                <a href="about.html" class="nav-link text mr-4" data-translate="nav_about">About</a>
+                <a href="#contact" class="nav-link text" data-translate="nav_contact">Contact</a>
+            </div>
+
+            <div class="d-flex mt-3 btns">
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+                <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
+                    <i class="fa-brands fa-linkedin"></i>
+                </a>
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
+                    <i class="fa-brands fa-square-behance"></i>
+                </a>
+            </div>
+        </div>
+        <div class="last-div copy mb-4" data-translate="copyright">Copyright &copy; 2024 ChanZel By NERMEEN</div>
+    </footer>
+</div>
+
+<!-- Search Modal -->
+<div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel" data-translate="search_products">Search Products</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search for products..." data-translate-placeholder="search_placeholder">
+                <div id="searchResults" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast -->
+<div class="toast position-fixed" id="successToast" style="top: 20px; right: 20px; z-index: 9999;" data-delay="3000">
+    <div class="toast-header">
+        <strong class="mr-auto text-success">Success</strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body" id="toastMessage">
+        Product added to cart successfully!
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+<!-- <!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/logo-light.png">
+    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
     <title>Ecommerce</title>
 </head>
 <body>
@@ -257,3 +498,4 @@
 
     
 </html> 
+ -->
