@@ -1,3 +1,18 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+    authDomain: "chanzel-ecommerce.firebaseapp.com",
+    projectId: "chanzel-ecommerce",
+    storageBucket: "chanzel-ecommerce.appspot.com",
+    messagingSenderId: "379673191328",
+    appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 function darkmode(){
     document.querySelector(".body").style.backgroundColor = 'rgb(57 35 35)';
     document.querySelector("body").style.backgroundColor = 'rgb(57 35 35)';
