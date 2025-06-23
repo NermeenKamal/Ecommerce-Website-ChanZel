@@ -5,6 +5,7 @@
   <title>تفاصيل المنتج</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="img/logo-light.png" />
   <style>
     .color-img {
       width: 50px;
@@ -16,8 +17,27 @@
   </style>
 </head>
 <body class="container mt-4">
+
+  <!-- ✅ شريط التنقل -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <a class="navbar-brand" href="index.html">
+      <img src="img/Chazel.png" alt="Chanzel" width="90" />
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="women.html">نساء</a></li>
+        <li class="nav-item"><a class="nav-link" href="men.html">رجال</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="cart.html">السلة 🛒 (<span id="cartCount">0</span>)</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
   <div id="productDetails">جاري تحميل التفاصيل...</div>
 
+  <!-- Firebase + السكربت -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -36,7 +56,6 @@
 
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-
     const productDetailsDiv = document.getElementById("productDetails");
 
     if (!id) {
@@ -53,7 +72,7 @@
 
         const colorsHtml = product.colors?.map(c => `
           <div class="d-flex align-items-center mb-2">
-            <img src="${c.image}" class="color-img" />
+            <img src="${c.image}" class="color-img" alt="${c.name}" />
             <span>${c.name}</span>
           </div>
         `).join("") || "لا توجد ألوان";
@@ -69,11 +88,12 @@
           <p><strong>التصنيف:</strong> ${product.category}</p>
           <p><strong>المقاسات:</strong> ${sizes}</p>
           <div><strong>الألوان:</strong><br/> ${colorsHtml}</div>
-          <button class="btn btn-success mt-3" onclick="addToCart('${id}')">Add to Cart 🛒</button>
+          <button class="btn btn-success mt-3" onclick="addToCart('${id}')">إضافة إلى السلة 🛒</button>
         `;
       });
     }
 
+    // ✅ إضافة إلى السلة
     window.addToCart = function(productId) {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
       const existing = cart.find(p => p.id === productId);
@@ -83,8 +103,19 @@
         cart.push({ id: productId, qty: 1 });
       }
       localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
       alert("✅ تم إضافة المنتج إلى السلة");
     };
+
+    // ✅ تحديث عداد السلة
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((total, item) => total + item.qty, 0);
+      const cartCountSpan = document.getElementById("cartCount");
+      if (cartCountSpan) cartCountSpan.textContent = count;
+    }
+
+    document.addEventListener("DOMContentLoaded", updateCartCount);
   </script>
 </body>
 </html>
