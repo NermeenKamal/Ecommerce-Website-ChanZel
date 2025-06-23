@@ -1,8 +1,6 @@
-// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// تهيئة Firebase مباشرة هنا
 const firebaseConfig = {
   apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
   authDomain: "chanzel-ecommerce.firebaseapp.com",
@@ -14,8 +12,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// باقي الكود لتحميل التصنيفات والمنتجات
 
 const categoriesContainer = document.querySelector(".categories-container");
 const productsContainer = document.querySelector(".products-container");
@@ -65,12 +61,17 @@ async function loadProducts(category = "tshirts") {
     querySnapshot.forEach(docSnap => {
       const product = docSnap.data();
 
+      // اختيار صورة للمنتج:
+      const productImage = product.mainImage && product.mainImage !== ""
+        ? product.mainImage
+        : (product.colors && product.colors.length > 0 ? product.colors[0].image : "img/default-product.jpg");
+
       const card = document.createElement("div");
       card.className = "card m-2";
       card.style.width = "18rem";
 
       card.innerHTML = `
-        <img src="${product.image}" class="card-img-top" alt="${product.name}" />
+        <img src="${productImage}" class="card-img-top" alt="${product.name}" />
         <div class="card-body">
           <h5 class="card-title">${product.name}</h5>
           <p class="card-text">$${product.price.toFixed(2)}</p>
