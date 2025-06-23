@@ -1,98 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="img/logo-light.png">
-    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
-
-
-    <title>ChanZel</title>
+    <meta charset="UTF-8" />
+    <title>Women - ChanZel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="img/logo-light.png" />
+    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css" />
 </head>
 <body>
 <div class="container-fluid body" data-bs-theme="light">
-<!--    <button class="position-fixed btn btn-dark btn-sm cust" type="button" onclick=darkmode()><svg style="margin-right: 7px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#578eb7" d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/></svg>Customize</button>-->
-
-
 
     <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" href="#">
-            <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
-        </a>
-
-
+        <a class="navbar-brand" href="#"><img src="img/Chazel.png" id="logo" alt="Chanzel" width="111" height="82" /></a>
         <div class="collapse navbar-collapse" id="x">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link h" aria-current="page" href="index.html">HOME</a></li>
+                <li class="nav-item"><a class="nav-link h" href="index.html">HOME</a></li>
                 <li class="nav-item"><a class="nav-link active alert-link" href="women.html">WOMEN</a></li>
                 <li class="nav-item"><a class="nav-link h" href="men.html">MEN</a></li>
                 <li class="nav-item"><a class="nav-link h" href="about.html">ABOUT</a></li>
                 <li class="nav-item"><a class="nav-link h" href="#contact">CONTACT</a></li>
             </ul>
         </div>
-
         <ul class="navbar-nav vv">
             <i class="fa-solid fa-magnifying-glass ico-btn"></i>
             <h6 class="nav-item dolar">$0.00</h6>
             <i class="fa-solid fa-cart-shopping ico-btn"></i>
             <a class="nav-link login" href="login.html">LOG IN</a>
         </ul>
-
-
         <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
             <span class="navbar-toggler-icon"></span>
         </a>
-
     </nav>
-
 
     <main class="container-fluid position-relative">
         <div class="z-1 position-absolute p-5 rounded-3 main-bg">
             <h2 class="h2">Women <span class="side">Side</span></h2>
-            <h3 class="slick"> Slick. Modern. <br> Awesome.</h3>
+            <h3 class="slick"> Slick. Modern. <br /> Awesome.</h3>
             <button type="button" class="btn btn-darkk btn-sm">Shop NOW!</button>
         </div>
-        <img src="img/women1.jpg" class="img-fluid" alt="home-bg">
+        <img src="img/women1.jpg" class="img-fluid" alt="home-bg" />
     </main>
-
-
-
-
-
-
-
-
 
     <section class="container-lg mt-5 flexx">
         <h3 class="h33 text-center mb-4">Categories</h3>
-        <div class="d-flex flex-row mb-3">
-            <div class="backk"></div>
-            <div class="p-2 items"><h4 class="mt-2">Dress</h4><img src="img/Dress-category.jpg" style="display: block"> <button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">Pants</h4><img src="img/Pants-Category.jpg" style="display: block"><button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">T-shirt</h4><img src="img/Tshirt-Category.jpg" style="display: block"><button>GO!</button></div>
+        <div class="d-flex flex-row mb-3 gap-2">
+            <button class="btn btn-outline-primary" onclick="loadProducts('dress')">Dress</button>
+            <button class="btn btn-outline-primary" onclick="loadProducts('pants')">Pants</button>
+            <button class="btn btn-outline-primary" onclick="loadProducts('tshirt')">T-shirt</button>
+            <button class="btn btn-outline-primary" onclick="loadProducts('bags')">Bags</button>
+            <button class="btn btn-outline-primary" onclick="loadProducts('suits')">Suits</button>
+            <button class="btn btn-outline-primary" onclick="loadProducts('shoes')">Shoes</button>
         </div>
-        <div class="d-flex flex-row-reverse reverse-do">
-            <div class="back"></div>
-            <div class="p-2 items"><h4 class="mt-2">Bags</h4><img src="img/Bags-Category.jpg" style="display: block"><button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">Suits</h4><img src="img/Suits-Category.jpg" style="display: block"><button>GO!</button></div>
-            <div class="p-2 items"><h4 class="mt-2">Shoes</h4><img src="img/shoes-category.jpg" style="display: block"><button>GO!</button></div>
+
+        <!-- هنا حنضيف المنتجات من Firebase -->
+        <div class="products-container d-flex flex-wrap justify-content-start gap-3 mt-4">
+            <!-- المنتجات هتظهر هنا -->
         </div>
     </section>
 
-
-
-
-
-
-
-
-
-
     <footer class="container-fluid mt-5" id="contact">
         <div class="d-flex align-items-center flex-column foo">
-            <h2 class="textt  fo">Subscribe To Get Offers In Your Inbox</h2>
-            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br> <br></span>
+            <h2 class="textt fo">Subscribe To Get Offers In Your Inbox</h2>
+            <span class="text fon" style="font-size: 20px">
+                Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br /><br />
+            </span>
 
             <div class="navbar-nav vvv">
                 <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
@@ -103,27 +75,80 @@
             </div>
 
             <div class="d-flex mt-3 btns">
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
-                    <i class="fa-brands fa-facebook"></i></a>
-
-                <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
-                    <i class="fa-brands fa-github"></i></a>
-
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
-                    <i class="fa-brands fa-linkedin"></i></a>
-
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
-                    <i class="fa-brands fa-square-behance"></i></a>
+                <a class="ico-btn btn btn-lightt" href="https://www.facebook.com/NermeenKamalEldin"><i class="fa-brands fa-facebook"></i></a>
+                <a class="ico-btn btn btn-lightt" href="https://github.com/NermeenKamal"><i class="fa-brands fa-github"></i></a>
+                <a class="ico-btn btn btn-lightt" href="https://www.linkedin.com/in/nirmn-kamal/"><i class="fa-brands fa-linkedin"></i></a>
+                <a class="ico-btn btn btn-lightt" href="https://www.behance.net/Nermeen_Kamal"><i class="fa-brands fa-square-behance"></i></a>
             </div>
         </div>
         <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
     </footer>
-
 </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+        authDomain: "chanzel-ecommerce.firebaseapp.com",
+        projectId: "chanzel-ecommerce",
+        storageBucket: "chanzel-ecommerce.appspot.com",
+        messagingSenderId: "379673191328",
+        appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadProducts(category) {
+        const productsContainer = document.querySelector('.products-container');
+        if (!productsContainer) return;
+
+        // فرغ المحتوى
+        productsContainer.innerHTML = '';
+
+        try {
+            const q = query(collection(db, "products"), where("category", "==", category));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                productsContainer.innerHTML = `<p class="text-muted">No products found in "${category}" category.</p>`;
+                return;
+            }
+
+            querySnapshot.forEach((doc) => {
+                const product = doc.data();
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.style.width = '18rem';
+
+                card.innerHTML = `
+                    <img src="${product.image}" class="card-img-top" alt="${product.name}">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text">$${product.price}</p>
+                        <button class="btn btn-dark btn-sm">Shop Now</button>
+                    </div>
+                `;
+
+                productsContainer.appendChild(card);
+            });
+        } catch (error) {
+            console.error("Error loading products:", error);
+            productsContainer.innerHTML = `<p class="text-danger">Failed to load products.</p>`;
+        }
+    }
+
+    // تحميل افتراضي لفئة 'dress' عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts('dress');
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script type="module" src="script.js"></script>
+
 </body>
 </html>
