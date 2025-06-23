@@ -190,6 +190,7 @@ async function loadProducts() {
       const p = docSnap.data();
       const id = docSnap.id;
 
+      // تأكد أن الحقول مصفوفات، وإلا عرّفها مصفوفات فارغة
       const colors = Array.isArray(p.colors) ? p.colors : [];
       const sizes = Array.isArray(p.sizes) ? p.sizes : [];
 
