@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>تسجيل دخول الأدمن</title>
+</head>
+<body>
+  <h2>تسجيل دخول الأدمن</h2>
+  <form id="adminLoginForm">
+    <label>البريد الإلكتروني:</label><br />
+    <input type="email" id="email" required /><br /><br />
+    <label>كلمة المرور:</label><br />
+    <input type="password" id="password" required /><br /><br />
+    <button type="submit">دخول</button>
+  </form>
+  <p id="errorMessage" style="color:red;"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+      authDomain: "chanzel-ecommerce.firebaseapp.com",
+      projectId: "chanzel-ecommerce",
+      storageBucket: "chanzel-ecommerce.appspot.com",
+      messagingSenderId: "379673191328",
+      appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const adminEmail = "admin@example.com"; // حطي هنا إيميل الأدمن اللي أنتي محدداه
+
+    const form = document.getElementById("adminLoginForm");
+    const errorMessage = document.getElementById("errorMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (email !== adminEmail) {
+        errorMessage.textContent = "هذا البريد غير مخول لدخول لوحة الأدمن.";
+        return;
+      }
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // تسجيل الدخول ناجح، توجه إلى لوحة التحكم
+        window.location.href = "admin-dashboard.html";
+      } catch (error) {
+        errorMessage.textContent = "خطأ في البريد أو كلمة المرور.";
+      }
+    });
+  </script>
+</body>
+</html>
