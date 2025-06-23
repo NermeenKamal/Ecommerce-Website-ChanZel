@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>تفاصيل المنتج</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .color-img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body class="container mt-4">
+  <div id="productDetails">جاري تحميل التفاصيل...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
+      authDomain: "chanzel-ecommerce.firebaseapp.com",
+      projectId: "chanzel-ecommerce",
+      storageBucket: "chanzel-ecommerce.appspot.com",
+      messagingSenderId: "379673191328",
+      appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    const productDetailsDiv = document.getElementById("productDetails");
+
+    if (!id) {
+      productDetailsDiv.innerHTML = "<p class='text-danger'>لم يتم العثور على المنتج.</p>";
+    } else {
+      const ref = doc(db, "products", id);
+      getDoc(ref).then(docSnap => {
+        if (!docSnap.exists()) {
+          productDetailsDiv.innerHTML = "<p class='text-danger'>المنتج غير موجود.</p>";
+          return;
+        }
+
+        const product = docSnap.data();
+
+        const colorsHtml = product.colors?.map(c => `
+          <div class="d-flex align-items-center mb-2">
+            <img src="${c.image}" class="color-img" />
+            <span>${c.name}</span>
+          </div>
+        `).join("") || "لا توجد ألوان";
+
+        const sizes = (product.sizes || []).join(", ");
+
+        productDetailsDiv.innerHTML = `
+          <h3>${product.name}</h3>
+          <img src="${product.mainImage}" class="img-fluid mb-3" style="max-width:300px;" />
+          <p><strong>السعر:</strong> $${product.price.toFixed(2)}</p>
+          <p><strong>المخزون:</strong> ${product.stock}</p>
+          <p><strong>الجنس:</strong> ${product.gender}</p>
+          <p><strong>التصنيف:</strong> ${product.category}</p>
+          <p><strong>المقاسات:</strong> ${sizes}</p>
+          <div><strong>الألوان:</strong><br/> ${colorsHtml}</div>
+          <button class="btn btn-success mt-3" onclick="addToCart('${id}')">Add to Cart 🛒</button>
+        `;
+      });
+    }
+
+    window.addToCart = function(productId) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const existing = cart.find(p => p.id === productId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id: productId, qty: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("✅ تم إضافة المنتج إلى السلة");
+    };
+  </script>
+</body>
+</html>
