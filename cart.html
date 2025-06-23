@@ -49,7 +49,7 @@
   <!-- رسالة فارغة -->
   <p id="emptyMessage" class="text-muted" style="display:none;">سلة المشتريات فارغة.</p>
 
-  <!-- Bootstrap + Stripe JS -->
+  <!-- Stripe JS -->
   <script src="https://js.stripe.com/v3/"></script>
 
   <script type="module">
@@ -84,7 +84,7 @@
       cartCountSpan.textContent = count;
     }
 
-    // تحميل تفاصيل كل منتج من Firestore
+    // تحميل تفاصيل كل منتج من Firestore وعرضها
     async function loadCartItems() {
       if (cart.length === 0) {
         cartContainer.innerHTML = "";
@@ -114,7 +114,6 @@
 
       let totalPrice = 0;
 
-      // لجمع المنتجات بالتفاصيل
       for (const item of cart) {
         const ref = doc(db, "products", item.id);
         const docSnap = await getDoc(ref);
@@ -191,29 +190,35 @@
       });
     }
 
-    // عند الضغط على زر الشراء
-    checkoutBtn.addEventListener("click", async () => {
-      // هنا المفروض ترسل الطلب للباك إند لمعالجة الدفع باستخدام Stripe أو غيره
-      // بس عشان تبسيط، هنفتح صفحة دفع (مثال)
-
-      // إرسال بيانات السلة للباك إند لمعالجة الدفع
+    // دالة إرسال بيانات السلة إلى باك إند لإنشاء جلسة الدفع باستخدام Stripe
+    async function checkout(cartItems) {
       try {
-        const response = await fetch("/create-checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cart })
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cart: cartItems }),
         });
+
         const data = await response.json();
 
         if (data.url) {
-          window.location.href = data.url; // نوجه المستخدم لصفحة الدفع الآمنة
+          window.location.href = data.url; // توجه المستخدم لصفحة الدفع الآمنة
         } else {
-          alert("حدث خطأ أثناء إنشاء جلسة الدفع.");
+          alert('حدث خطأ أثناء إنشاء جلسة الدفع.');
         }
       } catch (err) {
-        alert("فشل الاتصال بخدمة الدفع. حاول مرة أخرى.");
+        alert('فشل الاتصال بخدمة الدفع. حاول مرة أخرى.');
         console.error(err);
       }
+    }
+
+    // حدث عند الضغط على زر الشراء
+    checkoutBtn.addEventListener("click", () => {
+      if (cart.length === 0) {
+        alert("سلة المشتريات فارغة");
+        return;
+      }
+      checkout(cart);
     });
 
     document.addEventListener("DOMContentLoaded", loadCartItems);
