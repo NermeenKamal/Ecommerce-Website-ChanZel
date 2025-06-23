@@ -141,7 +141,7 @@ form.addEventListener("submit", async e => {
 
     // إذا ما فيش صورة أساسية ولا ألوان، استخدم صورة افتراضية محلية
     if (!mainImageUrl) {
-      mainImageUrl = "img/default-product.jpg";
+      mainImageUrl = "../img/default-product.jpg";
     }
 
     // إضافة المنتج لـ Firestore
