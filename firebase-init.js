@@ -96,6 +96,4 @@ try {
       console.log(`Fixed product: ${doc.id}`, updateData);
     }
   }
-
-  alert(`تم إصلاح ${fixedCount} منتج ناقص البيانات!`);
 })(); 
