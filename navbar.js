@@ -37,7 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
   </nav>
   `;
-  document.getElementById('navbar').innerHTML = navbarHTML;
+  const navbarDiv = document.getElementById('navbar');
+  if (navbarDiv) {
+    navbarDiv.innerHTML = navbarHTML;
+  }
 
   // Cart counter logic (reads from localStorage)
   function updateCartCount() {
