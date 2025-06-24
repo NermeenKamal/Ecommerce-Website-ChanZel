@@ -229,10 +229,11 @@ function translateDashboard(lang) {
   if(document.getElementById('stat-orders-label')) document.getElementById('stat-orders-label').textContent = t.statOrders;
   if(document.getElementById('stat-customers-label')) document.getElementById('stat-customers-label').textContent = t.statCustomers;
 }
-const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
-translateDashboard(savedLang);
-window.addEventListener('storage', function(e) {
-  if (e.key === 'lang') location.reload();
+const savedLangDash = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+translateDashboard(savedLangDash);
+window.addEventListener('storage', function() {
+  const lang = localStorage.getItem('lang') || 'en';
+  translateDashboard(lang);
 });
 setTimeout(() => {
   const langBtn = document.getElementById('lang-toggle');
