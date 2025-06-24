@@ -103,4 +103,33 @@ input{
     }
 }
 
+.login-bg {
+    min-height: 100vh;
+    background: url('../img/Screenshot 2024-08-26 155230.png') no-repeat center center fixed;
+    background-size: cover;
+}
+.login-container {
+    min-height: 100vh;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.login-box {
+    background: #f8f7e9;
+    border-radius: 24px;
+    border: 2px solid #353232;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 400px;
+}
+@media (max-width: 600px) {
+    .login-box {
+        max-width: 95vw;
+        padding: 1rem;
+    }
+    .login-container {
+        padding: 0;
+    }
+}
+
 
