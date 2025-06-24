@@ -22,14 +22,15 @@ try {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Enable offline persistence
-db.enablePersistence()
-    .catch((err) => {
-        if (err.code == 'failed-precondition') {
-            // Multiple tabs open, persistence can only be enabled in one tab at a time
-            console.warn('Firebase persistence failed: Multiple tabs open');
-        } else if (err.code == 'unimplemented') {
-            // The current browser doesn't support persistence
-            console.warn('Firebase persistence not supported in this browser');
-        }
-    }); 
+// Enable offline persistence using the new method
+db.settings({
+    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+}).catch((err) => {
+    if (err.code == 'failed-precondition') {
+        // Multiple tabs open, persistence can only be enabled in one tab at a time
+        console.warn('Firebase persistence failed: Multiple tabs open');
+    } else if (err.code == 'unimplemented') {
+        // The current browser doesn't support persistence
+        console.warn('Firebase persistence not supported in this browser');
+    }
+}); 
