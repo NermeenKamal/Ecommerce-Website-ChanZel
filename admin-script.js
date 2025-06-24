@@ -133,11 +133,26 @@ function buildFormOnLoad() {
   if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
   bindAddColorBtn();
 }
-window.addEventListener('DOMContentLoaded', function() {
-  // تتبع وجود العناصر
-  console.log('genderSelect:', genderSelect);
-  console.log('categorySelect:', categorySelect);
-  // كل كود البناء بعد تحميل الصفحة
+let genderSelect, categorySelect, colorsList, form;
+document.addEventListener('DOMContentLoaded', function() {
+  genderSelect = document.getElementById('gender');
+  categorySelect = document.getElementById('category');
+  colorsList = document.getElementById('colors-list');
+  form = document.getElementById("addProductForm");
+
+  // Place all code that uses these variables here or in functions called from here
+  // ... (move all event listeners and initializations here) ...
+
+  // Example: (move all event listeners and initializations here)
+  genderSelect.addEventListener('change', buildCategoryOptions);
+  form.addEventListener('reset', () => {
+    setTimeout(() => {
+      if (!genderSelect.value || genderSelect.value === '') {
+        genderSelect.value = 'women';
+      }
+      buildCategoryOptions();
+    }, 0);
+  });
   buildGenderAndCategorySelects();
   if (!genderSelect.value || genderSelect.value === '') {
     genderSelect.value = 'women';
@@ -174,12 +189,8 @@ function createColorRow(name = '', imageUrl = '', file = null) {
   setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
   return row;
 }
-const genderSelect = document.getElementById('gender');
-const categorySelect = document.getElementById('category');
-const colorsList = document.getElementById('colors-list');
 
 // Add Product
-const form = document.getElementById("addProductForm");
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("name").value.trim();
