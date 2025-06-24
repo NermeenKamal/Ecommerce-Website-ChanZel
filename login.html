@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -322,23 +322,23 @@
   </nav>
   <main class="login-main">
     <div class="login-card">
-      <h1>تسجيل الدخول</h1>
+      <h1>LOGIN</h1>
       <div id="verificationSection" class="verification-section" style="display: none;">
-        <p class="verification-message">البريد الإلكتروني غير مفعل. برجاء تفعيل حسابك من خلال الرابط المرسل إلى بريدك الإلكتروني.</p>
-        <button id="resendBtn" class="resend-btn">إعادة إرسال رابط التفعيل</button>
+        <p class="verification-message">Email not verified. Please verify your account through the link sent to your email.</p>
+        <button id="resendBtn" class="resend-btn">Resend Verification Link</button>
       </div>
       <form id="loginForm">
-        <label for="email">البريد الإلكتروني</label>
+        <label for="email">EMAIL</label>
         <input type="email" id="email" name="email" required>
-        <label for="password">كلمة المرور</label>
+        <label for="password">PASSWORD</label>
         <input type="password" id="password" name="password" required>
         <div class="login-links">
-          <a href="forget-password.html">نسيت كلمة المرور؟</a>
+          <a href="forget-password.html">Forgot Password?</a>
         </div>
-        <button type="submit" class="login-btn">تسجيل الدخول</button>
+        <button type="submit" class="login-btn">Sign In</button>
       </form>
       <div class="signup-link">
-        ليس لديك حساب؟ <a href="sign-up.html">إنشاء حساب جديد</a>
+        Don't have an account? <a href="sign-up.html">Sign Up</a>
       </div>
       <div id="login-error" class="alert alert-danger d-none" style="width:80%;margin:1rem auto 0 auto;text-align:center;"></div>
     </div>
@@ -430,7 +430,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       const loginForm = document.getElementById('loginForm');
-      const verificationMessage = document.getElementById('verificationMessage');
+      const verificationSection = document.getElementById('verificationSection');
       const resendBtn = document.getElementById('resendBtn');
       
       // Handle login form submission
@@ -444,8 +444,8 @@
           const user = userCredential.user;
           
           if (!user.emailVerified) {
-            // Show verification message and button if email is not verified
-            verificationMessage.style.display = 'block';
+            // Show verification section if email is not verified
+            verificationSection.style.display = 'block';
             return;
           }
           
@@ -463,14 +463,14 @@
           try {
             await user.sendEmailVerification();
             resendBtn.disabled = true;
-            alert('تم إرسال رابط التفعيل. برجاء التحقق من بريدك الإلكتروني.');
+            alert('Verification link has been sent. Please check your email.');
             
             // Enable the button after 60 seconds
             setTimeout(() => {
               resendBtn.disabled = false;
             }, 60000);
           } catch (error) {
-            alert('حدث خطأ أثناء إرسال رابط التفعيل. برجاء المحاولة مرة أخرى.');
+            alert('Error sending verification link. Please try again.');
           }
         }
       });
