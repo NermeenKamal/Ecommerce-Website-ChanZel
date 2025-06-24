@@ -167,6 +167,9 @@
 <script src="navbar.js"></script>
 <script src="footer.js"></script>
 <script>
+function getCurrentLang() {
+  return localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+}
 // Translation logic for dashboard content (EN/AR)
 const dashboardTranslations = {
   en: {
