@@ -46,7 +46,7 @@
         <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
             <span class="navbar-toggler-icon"></span>
         </a>
-
+        <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
     </nav>
 
 
@@ -163,6 +163,22 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('season-filter').addEventListener('change', loadProducts);
   document.getElementById('category-filter').addEventListener('change', loadProducts);
   loadProducts();
+});
+
+// Language toggle logic for all pages
+const translations = { en: { lang: 'AR' }, ar: { lang: 'EN' } };
+function setLangBtnText(lang) {
+  document.getElementById('lang-toggle').textContent = translations[lang].lang;
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+}
+const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+setLangBtnText(savedLang);
+document.getElementById('lang-toggle').addEventListener('click', function() {
+  const currentLang = localStorage.getItem('lang') || 'en';
+  const newLang = currentLang === 'en' ? 'ar' : 'en';
+  localStorage.setItem('lang', newLang);
+  setLangBtnText(newLang);
+  location.reload();
 });
 </script>
 </body>
