@@ -6,15 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const logoutBtn = document.getElementById('logout-btn');
 
   // Show/hide login/logout based on auth state
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      loginBtn.classList.add('d-none');
-      logoutBtn.classList.remove('d-none');
-    } else {
-      loginBtn.classList.remove('d-none');
-      logoutBtn.classList.add('d-none');
-    }
-  });
+  updateAuthButtons();
 
   // زر تسجيل الدخول يوجه دائماً إلى صفحة login
   if (loginBtn) {
@@ -31,4 +23,24 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   }
-}); 
+});
+
+function updateAuthButtons() {
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (!loginBtn || !logoutBtn) return;
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      loginBtn.classList.add('d-none');
+      logoutBtn.classList.remove('d-none');
+    } else {
+      loginBtn.classList.remove('d-none');
+      logoutBtn.classList.add('d-none');
+    }
+  });
+  logoutBtn.onclick = function() {
+    firebase.auth().signOut().then(function() {
+      window.location.href = 'index.html';
+    });
+  };
+} 
