@@ -171,33 +171,41 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       colors.push({ name: colorName, image: colorImgUrl });
     }
+    // Ensure at least one product image is selected
     if (!imagesFiles.length) {
       alert("Please select at least one product image.");
       return;
     }
+    // Prevent Cloudinary upload if no file
+    let imageUrls = [];
+    for (let img of imagesFiles) {
+      if (!img) continue;
+      imageUrls.push(await uploadImage(img));
+    }
+    // Upload main image if provided, else use first image
+    let mainImageUrl = null;
+    if (mainImageFile) {
+      mainImageUrl = await uploadImage(mainImageFile);
+    } else if (imageUrls.length > 0) {
+      mainImageUrl = imageUrls[0];
+    } else {
+      mainImageUrl = '';
+    }
+    // Ensure no undefined fields for Firebase
+    const safeColors = Array.isArray(colors) ? colors : [];
+    const safeSizes = Array.isArray(sizes) ? sizes : [];
+    const safeImages = Array.isArray(imageUrls) ? imageUrls : [];
     try {
-      // Upload all images
-      const imageUrls = [];
-      for (let img of imagesFiles) {
-        imageUrls.push(await uploadImage(img));
-      }
-      // Upload main image if provided, else use first image
-      let mainImageUrl = null;
-      if (mainImageFile) {
-        mainImageUrl = await uploadImage(mainImageFile);
-      } else {
-        mainImageUrl = imageUrls[0];
-      }
       await addDoc(collection(db, "products"), {
         name,
         price,
         stock,
         gender,
         category,
-        colors,
-        sizes,
-        mainImage: mainImageUrl,
-        images: imageUrls,
+        colors: safeColors,
+        sizes: safeSizes,
+        mainImage: mainImageUrl || '',
+        images: safeImages,
         createdAt: new Date()
       });
       alert("Product added successfully!");
@@ -220,6 +228,16 @@ document.addEventListener('DOMContentLoaded', function() {
   buildCategoryOptions();
   if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
   bindAddColorBtn();
+
+  // Null checks for dashboard/stat elements
+  function setStatText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  // Example usage:
+  // setStatText("stat-products", "10");
+  // setStatText("stat-orders", "5");
+  // setStatText("stat-customers", "3");
 });
 
 // Load Products
