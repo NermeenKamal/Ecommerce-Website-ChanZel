@@ -167,6 +167,8 @@
 <script src="navbar.js"></script>
 <script src="footer.js"></script>
 <script>
+const genderSelect = document.getElementById('gender');
+const colorsList = document.getElementById('colors-list');
 function getCurrentLang() {
   return localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
 }
