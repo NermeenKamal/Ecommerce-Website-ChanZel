@@ -1,117 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase-init.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/logo-light.png">
+    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-init.js"></script>
+
+    <title>ChanZel - Product Details</title>
 </head>
 <body>
-  <div id="navbar"></div>
-  <div class="container my-5">
-    <div id="product-details"></div>
-  </div>
-  <div id="footer"></div>
-  <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
-  <script src="navbar.js"></script>
-  <script src="footer.js"></script>
-  <script src="auth.js"></script>
-  <script src="products.js"></script>
-  <script>
-// Helper to get query param
-function getQueryParam(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
+<div class="container-fluid body" data-bs-theme="light">
+    <div id="navbar"></div>
 
-document.addEventListener('DOMContentLoaded', async function () {
-  const lang = localStorage.getItem('lang') || 'en';
-  const productId = getQueryParam('id');
-  if (!productId) return;
-  const product = await getProductById(productId);
-  if (!product) {
-    document.getElementById('product-details').innerHTML = '<div class="alert alert-danger">Product not found.</div>';
-    return;
-  }
-  const name = lang === 'ar' ? product.name_ar : product.name_en;
-  const sizes = (product.sizes || []);
-  const colors = (product.colors || []);
-  const images = (product.images && product.images.length) ? product.images : ['img/div-empty.jpg'];
-  let gallery = images.map((img, i) => `<img src="${img}" class="img-thumbnail mx-1" style="width:80px;cursor:pointer;" onclick="document.getElementById('main-img').src='${img}'">`).join('');
-  let sizeOptions = sizes.map(size => `<option value="${size}">${size}</option>`).join('');
-  let colorOptions = colors.map(color => `<option value="${color}">${color}</option>`).join('');
-  document.getElementById('product-details').innerHTML = `
-    <div class="row">
-      <div class="col-md-6 text-center">
-        <img id="main-img" src="${images[0]}" class="img-fluid mb-2" style="max-height:350px;">
-        <div>${gallery}</div>
-      </div>
-      <div class="col-md-6">
-        <h2>${name}</h2>
-        <h4 class="text-primary">${product.price} EGP</h4>
-        <div><strong>${lang === 'ar' ? 'المخزون' : 'Stock'}:</strong> ${product.stock}</div>
-        <div><strong>${lang === 'ar' ? 'الجنس' : 'Gender'}:</strong> ${lang === 'ar' ? (product.gender === 'men' ? 'رجال' : 'نساء') : (product.gender === 'men' ? 'Men' : 'Women')}</div>
-        <div><strong>${lang === 'ar' ? 'الفئة' : 'Category'}:</strong> ${product.category}</div>
-        <div class="form-group mt-3">
-          <label for="size-select"><strong>${lang === 'ar' ? 'المقاس' : 'Size'}:</strong></label>
-          <select id="size-select" class="form-control">${sizeOptions}</select>
+    <div class="container mt-5">
+        <div id="product-details">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="color-select"><strong>${lang === 'ar' ? 'اللون' : 'Color'}:</strong></label>
-          <select id="color-select" class="form-control">${colorOptions}</select>
-        </div>
-        <div class="form-group">
-          <label><strong>${lang === 'ar' ? 'الكمية' : 'Quantity'}:</strong></label>
-          <div class="input-group" style="max-width:120px;">
-            <div class="input-group-prepend"><button class="btn btn-outline-secondary" id="qty-minus">-</button></div>
-            <input type="number" id="qty-input" class="form-control text-center" value="1" min="1" max="${product.stock}">
-            <div class="input-group-append"><button class="btn btn-outline-secondary" id="qty-plus">+</button></div>
-          </div>
-        </div>
-        <button class="btn btn-success btn-block mt-3" id="add-to-cart">${lang === 'ar' ? 'أضف إلى السلة' : 'Add to Cart'}</button>
-      </div>
     </div>
-  `;
-  // Quantity controls
-  document.getElementById('qty-minus').onclick = function() {
-    let qty = parseInt(document.getElementById('qty-input').value);
-    if (qty > 1) document.getElementById('qty-input').value = qty - 1;
-  };
-  document.getElementById('qty-plus').onclick = function() {
-    let qty = parseInt(document.getElementById('qty-input').value);
-    if (qty < product.stock) document.getElementById('qty-input').value = qty + 1;
-  };
-  // Add to cart
-  document.getElementById('add-to-cart').onclick = function() {
-    const size = document.getElementById('size-select').value;
-    const color = document.getElementById('color-select').value;
-    const qty = parseInt(document.getElementById('qty-input').value);
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    // Check if product with same id/size/color exists
-    let existing = cart.find(item => item.id === product.id && item.size === size && item.color === color);
-    if (existing) {
-      existing.quantity += qty;
-    } else {
-      cart.push({ id: product.id, name, price: product.price, size, color, quantity: qty, image: images[0] });
+
+    <div id="footer"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="script.js"></script>
+<script src="navbar.js"></script>
+<script src="footer.js"></script>
+<script src="auth.js"></script>
+<script src="products.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+    const lang = localStorage.getItem('lang') || 'en';
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    
+    if (!productId) {
+        window.location.href = 'index.html';
+        return;
     }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert(lang === 'ar' ? 'تمت الإضافة إلى السلة' : 'Added to cart!');
-    window.dispatchEvent(new Event('storage')); // update cart counter
-  };
+
+    async function loadProductDetails() {
+        const container = document.getElementById('product-details');
+        
+        try {
+            const product = await getProductById(productId);
+            if (!product) {
+                container.innerHTML = `
+                    <div class="alert alert-warning text-center">
+                        ${lang === 'ar' ? 'المنتج غير موجود' : 'Product not found'}
+                    </div>
+                `;
+                return;
+            }
+
+            const name = lang === 'ar' ? product.name_ar : product.name_en;
+            const description = lang === 'ar' ? product.description_ar : product.description_en;
+            const sizes = (product.sizes || []).map(size => `<span class='badge badge-secondary mx-1'>${size}</span>`).join(' ');
+            const colors = (product.colors || []).map(color => `<span style='display:inline-block;width:25px;height:25px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:8px;cursor:pointer;' onclick="selectColor('${color}')"></span>`).join(' ');
+            const images = product.images || ['img/div-empty.jpg'];
+
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="product-images mb-4">
+                            <img src="${images[0]}" class="img-fluid main-image rounded shadow" alt="${name}" style="width:100%;height:500px;object-fit:cover;">
+                            <div class="d-flex mt-3 gap-2 thumbnail-container">
+                                ${images.map((img, idx) => `
+                                    <img src="${img}" class="thumbnail ${idx === 0 ? 'active' : ''}" 
+                                         onclick="changeMainImage(this)" alt="${name}"
+                                         style="width:80px;height:80px;object-fit:cover;cursor:pointer;border-radius:4px;">
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent px-0">
+                                <li class="breadcrumb-item"><a href="index.html">${lang === 'ar' ? 'الرئيسية' : 'Home'}</a></li>
+                                <li class="breadcrumb-item"><a href="${product.gender}.html">${lang === 'ar' ? (product.gender === 'women' ? 'نساء' : 'رجال') : product.gender}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">${name}</li>
+                            </ol>
+                        </nav>
+                        <h2 class="mb-3">${name}</h2>
+                        <p class="text-muted mb-4">${description}</p>
+                        <div class="price-section mb-4">
+                            <h3 class="text-primary mb-0">$${product.price.toFixed(2)}</h3>
+                            ${product.oldPrice ? `<small class="text-muted"><del>$${product.oldPrice.toFixed(2)}</del></small>` : ''}
+                        </div>
+                        <div class="sizes-section mb-4">
+                            <h5>${lang === 'ar' ? 'المقاسات المتوفرة' : 'Available Sizes'}</h5>
+                            <div class="sizes-container">
+                                ${sizes}
+                            </div>
+                        </div>
+                        <div class="colors-section mb-4">
+                            <h5>${lang === 'ar' ? 'الألوان المتوفرة' : 'Available Colors'}</h5>
+                            <div class="colors-container">
+                                ${colors}
+                            </div>
+                        </div>
+                        <div class="quantity-section mb-4">
+                            <h5>${lang === 'ar' ? 'الكمية' : 'Quantity'}</h5>
+                            <div class="input-group" style="width: 130px;">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(-1)">-</button>
+                                <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="10">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(1)">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-lg w-100" onclick="addToCart()">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            ${lang === 'ar' ? 'إضافة إلى السلة' : 'Add to Cart'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Initialize global variables for the product
+            window.selectedColor = product.colors ? product.colors[0] : null;
+            window.selectedSize = product.sizes ? product.sizes[0] : null;
+            window.productDetails = product;
+
+            // Add click handlers for sizes
+            document.querySelectorAll('.badge-secondary').forEach((badge, idx) => {
+                badge.style.cursor = 'pointer';
+                badge.onclick = function() {
+                    document.querySelectorAll('.badge-secondary').forEach(b => b.classList.remove('badge-primary'));
+                    this.classList.add('badge-primary');
+                    window.selectedSize = product.sizes[idx];
+                };
+            });
+
+            // Select first size by default
+            document.querySelector('.badge-secondary').classList.add('badge-primary');
+        } catch (error) {
+            console.error('Error loading product:', error);
+            container.innerHTML = `
+                <div class="alert alert-danger text-center">
+                    ${lang === 'ar' ? 'حدث خطأ أثناء تحميل المنتج' : 'Error loading product'}
+                </div>
+            `;
+        }
+    }
+
+    // Load initial product details
+    await loadProductDetails();
 });
 
-// Language toggle logic for all pages
-const langBtnTranslations = { en: { lang: 'AR' }, ar: { lang: 'EN' } };
-function setLangBtnText(lang) {
-  document.getElementById('lang-toggle').textContent = langBtnTranslations[lang].lang;
-  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+// Function to change main product image
+function changeMainImage(thumbnail) {
+    const mainImage = document.querySelector('.main-image');
+    mainImage.src = thumbnail.src;
+    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+    thumbnail.classList.add('active');
 }
-const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
-setLangBtnText(savedLang);
-document.getElementById('lang-toggle').addEventListener('click', function() {
-  const currentLang = localStorage.getItem('lang') || 'en';
-  const newLang = currentLang === 'en' ? 'ar' : 'en';
-  localStorage.setItem('lang', newLang);
-  setLangBtnText(newLang);
-  location.reload();
-});
+
+// Function to select color
+function selectColor(color) {
+    window.selectedColor = color;
+    document.querySelectorAll('.colors-container span').forEach(span => {
+        span.style.boxShadow = span.style.backgroundColor === color ? '0 0 0 2px #000' : 'none';
+    });
+}
+
+// Function to update quantity
+function updateQuantity(change) {
+    const input = document.getElementById('quantity');
+    const newValue = parseInt(input.value) + change;
+    if (newValue >= 1 && newValue <= 10) {
+        input.value = newValue;
+    }
+}
+
+// Function to add product to cart
+function addToCart() {
+    const quantity = parseInt(document.getElementById('quantity').value);
+    if (!window.selectedColor || !window.selectedSize) {
+        alert(localStorage.getItem('lang') === 'ar' ? 'يرجى اختيار المقاس واللون' : 'Please select size and color');
+        return;
+    }
+
+    const product = window.productDetails;
+    const cartItem = {
+        id: product.id,
+        name: localStorage.getItem('lang') === 'ar' ? product.name_ar : product.name_en,
+        price: product.price,
+        quantity: quantity,
+        color: window.selectedColor,
+        size: window.selectedSize,
+        image: product.images[0]
+    };
+
+    // Get existing cart
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Check if item already exists in cart
+    const existingItemIndex = cart.findIndex(item => 
+        item.id === cartItem.id && 
+        item.color === cartItem.color && 
+        item.size === cartItem.size
+    );
+
+    if (existingItemIndex > -1) {
+        // Update quantity if item exists
+        cart[existingItemIndex].quantity += quantity;
+    } else {
+        // Add new item if it doesn't exist
+        cart.push(cartItem);
+    }
+
+    // Save cart back to localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Show success message
+    alert(localStorage.getItem('lang') === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
+
+    // Trigger cart update event
+    window.dispatchEvent(new Event('storage'));
+}
 </script>
-</body> 
+</body>
+</html> 
