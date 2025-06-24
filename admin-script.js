@@ -1,6 +1,6 @@
 // admin-script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
@@ -11,86 +11,479 @@ const firebaseConfig = {
     appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ 2. Upload image to Cloudinary
+// 1. إعداد كائن التصنيفات متعدد اللغات
+const categoriesByLang = {
+  en: {
+    women: ["Dress", "Pants", "T-shirt", "Bags", "Suits", "Shoes"],
+    men: ["Hats", "Pants", "T-shirt", "Watches", "Suits", "Shoes"]
+  },
+  ar: {
+    women: ["فساتين", "بنطلونات", "تيشيرت", "شنط", "بدل", "أحذية"],
+    men: ["قبعات", "بنطلونات", "تيشيرت", "ساعات", "بدل", "أحذية"]
+  }
+};
+
+// Helper: upload image to Cloudinary
 async function uploadImage(imageFile) {
     const formData = new FormData();
     formData.append("file", imageFile);
     formData.append("upload_preset", "unsigned_preset");
-
     const res = await fetch("https://api.cloudinary.com/v1_1/dqgkjyaqz/image/upload", {
         method: "POST",
         body: formData
     });
-
     const data = await res.json();
     return data.secure_url;
 }
 
-// ✅ 3. Add Product
+// Helper to get current language
+function getCurrentLang() {
+  return localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+}
+
+// Helper to get dashboard translations
+function getDashboardT(lang) {
+  if (window.dashboardTranslations) return window.dashboardTranslations[lang];
+  // fallback (should not happen)
+  return {
+    edit: 'Edit', delete: 'Delete', women: 'Women', men: 'Men', select: 'Select', addColor: 'Add Color', colorName: 'Color name', actions: 'Actions',
+    statProducts: 'Products', statOrders: 'Orders', statCustomers: 'Customers',
+  };
+}
+
+// 2. بناء قائمة الجنس والقائمة المنسدلة للتصنيفات بالنصوص الصحيحة
+function buildGenderAndCategorySelects() {
+  const lang = getCurrentLang();
+  const t = getDashboardT(lang);
+  // Gender select
+  genderSelect.innerHTML = '';
+  const optSelect = document.createElement('option');
+  optSelect.value = '';
+  optSelect.textContent = t.select;
+  genderSelect.appendChild(optSelect);
+  const optWomen = document.createElement('option');
+  optWomen.value = 'women';
+  optWomen.textContent = t.women;
+  genderSelect.appendChild(optWomen);
+  const optMen = document.createElement('option');
+  optMen.value = 'men';
+  optMen.textContent = t.men;
+  genderSelect.appendChild(optMen);
+  // اجعل القيمة الافتراضية women إذا كانت فارغة
+  if (!genderSelect.value || genderSelect.value === '') {
+    genderSelect.value = 'women';
+  }
+  // استدعِ بناء التصنيفات يدويًا بعد تعيين القيمة
+  buildCategoryOptions();
+}
+function buildCategoryOptions() {
+  const lang = getCurrentLang();
+  const t = getDashboardT(lang);
+  const gender = genderSelect.value;
+  console.log('buildCategoryOptions: gender =', gender); // تتبع القيمة
+  categorySelect.innerHTML = '';
+  const optSelect = document.createElement('option');
+  optSelect.value = '';
+  optSelect.textContent = t.select;
+  categorySelect.appendChild(optSelect);
+  if (gender && categoriesByLang[lang][gender]) {
+    categoriesByLang[lang][gender].forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      categorySelect.appendChild(opt);
+    });
+  }
+}
+// عند تغيير الجنس
+genderSelect.addEventListener('change', buildCategoryOptions);
+// عند reset للفورم بعد إضافة منتج
+form.addEventListener('reset', () => {
+  setTimeout(() => {
+    if (!genderSelect.value || genderSelect.value === '') {
+      genderSelect.value = 'women';
+    }
+    buildCategoryOptions();
+  }, 0);
+});
+// عند تحميل الصفحة
+buildGenderAndCategorySelects();
+if (!genderSelect.value || genderSelect.value === '') {
+  genderSelect.value = 'women';
+}
+buildCategoryOptions();
+
+// 4. بناء زر Add Color وربطه
+function bindAddColorBtn() {
+  const btn = document.getElementById('add-color-btn');
+  if (btn) {
+    btn.onclick = function() {
+      colorsList.appendChild(createColorRow());
+    };
+  }
+}
+// 5. بناء الفورم عند تحميل الصفحة
+function buildFormOnLoad() {
+  buildGenderAndCategorySelects();
+  if (!genderSelect.value) genderSelect.value = 'women';
+  buildCategoryOptions();
+  if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
+  bindAddColorBtn();
+}
+window.addEventListener('DOMContentLoaded', function() {
+  // تتبع وجود العناصر
+  console.log('genderSelect:', genderSelect);
+  console.log('categorySelect:', categorySelect);
+  // كل كود البناء بعد تحميل الصفحة
+  buildGenderAndCategorySelects();
+  if (!genderSelect.value || genderSelect.value === '') {
+    genderSelect.value = 'women';
+  }
+  buildCategoryOptions();
+  if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
+  bindAddColorBtn();
+});
+
+// --- Colors dynamic input logic ---
+function createColorRow(name = '', imageUrl = '', file = null) {
+  const lang = getCurrentLang();
+  const t = getDashboardT(lang);
+  const row = document.createElement('div');
+  row.className = 'd-flex align-items-center mb-2 color-row';
+  row.innerHTML = `
+    <input type="text" class="form-control form-control-sm mr-2 color-name" placeholder="${t.colorName}" value="${name}" style="max-width:120px;">
+    <input type="file" accept="image/*" class="form-control-file form-control-sm mr-2 color-image">
+    <img src="${imageUrl}" class="product-img-thumb mr-2 d-none" style="width:36px;height:36px;" alt="color-img">
+    <button type="button" class="btn btn-danger btn-sm remove-color-btn">&times;</button>
+  `;
+  if (imageUrl) {
+    row.querySelector('img').src = imageUrl;
+    row.querySelector('img').classList.remove('d-none');
+  }
+  row.querySelector('.remove-color-btn').onclick = () => row.remove();
+  row.querySelector('.color-image').onchange = function(e) {
+    if (this.files && this.files[0]) {
+      const url = URL.createObjectURL(this.files[0]);
+      row.querySelector('img').src = url;
+      row.querySelector('img').classList.remove('d-none');
+    }
+  };
+  setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
+  return row;
+}
+const colorsList = document.getElementById('colors-list');
+
+// Add Product
 const form = document.getElementById("addProductForm");
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name = document.getElementById("name").value;
+    const name = document.getElementById("name").value.trim();
     const price = parseFloat(document.getElementById("price").value);
     const stock = parseInt(document.getElementById("stock").value);
-    const image = document.getElementById("image").files[0];
-
+    const gender = document.getElementById("gender").value;
+    const category = document.getElementById("category").value;
+    const sizes = document.getElementById("sizes").value.split(',').map(s => s.trim()).filter(Boolean);
+    const mainImageFile = document.getElementById("mainImage").files[0] || null;
+    const imagesFiles = Array.from(document.getElementById("images").files);
+    // --- Colors ---
+    const colorRows = Array.from(document.querySelectorAll('#colors-list .color-row'));
+    const colors = [];
+    for (let row of colorRows) {
+      const colorName = row.querySelector('.color-name').value.trim();
+      const colorFile = row.querySelector('.color-image').files[0] || null;
+      let colorImgUrl = row.querySelector('img').src && !row.querySelector('img').classList.contains('d-none') ? row.querySelector('img').src : '';
+      if (!colorName) continue;
+      if (colorFile) {
+        colorImgUrl = await uploadImage(colorFile);
+      } else if (colorImgUrl.startsWith('blob:')) {
+        // If preview but not uploaded, skip
+        continue;
+      }
+      colors.push({ name: colorName, image: colorImgUrl });
+    }
+    if (!imagesFiles.length) {
+      alert("Please select at least one product image.");
+      return;
+    }
     try {
-        const imageUrl = await uploadImage(image);
+        // Upload all images
+        const imageUrls = [];
+        for (let img of imagesFiles) {
+          imageUrls.push(await uploadImage(img));
+        }
+        // Upload main image if provided, else use first image
+        let mainImageUrl = null;
+        if (mainImageFile) {
+          mainImageUrl = await uploadImage(mainImageFile);
+        } else {
+          mainImageUrl = imageUrls[0];
+        }
         await addDoc(collection(db, "products"), {
             name,
             price,
             stock,
-            image: imageUrl,
+            gender,
+            category,
+            colors,
+            sizes,
+            mainImage: mainImageUrl,
+            images: imageUrls,
             createdAt: new Date()
         });
-        alert("✅ تمت الإضافة بنجاح!");
+        alert("Product added successfully!");
         form.reset();
-        loadProducts();
+        buildGenderAndCategorySelects();
+        colorsList.innerHTML = '';
+        colorsList.appendChild(createColorRow());
+        loadProducts().then(loadStats);
     } catch (err) {
-        alert("❌ فشل في الإضافة");
+        alert("Failed to add product.");
         console.error(err);
     }
 });
 
-// ✅ 4. Load Products
+// Load Products
 async function loadProducts() {
+    const lang = getCurrentLang();
+    const t = getDashboardT(lang);
     const table = document.getElementById("productTable");
     table.innerHTML = "";
-
     const snapshot = await getDocs(collection(db, "products"));
-    document.getElementById("productCount").textContent = snapshot.size;
-
     snapshot.forEach(docSnap => {
         const data = docSnap.data();
         const row = document.createElement("tr");
         row.innerHTML = `
       <td>${data.name}</td>
-      <td>$${data.price}</td>
+      <td>${data.price}</td>
       <td>${data.stock}</td>
-      <td><img src="${data.image}" alt="image"></td>
+      <td>${t[data.gender] || data.gender}</td>
+      <td>${data.category}</td>
+      <td><img src="${data.mainImage}" class="product-img-thumb" alt="main"></td>
+      <td>${(data.images||[]).map(img=>`<img src='${img}' class='product-img-thumb' alt='img'>`).join('')}</td>
+      <td>${(data.colors||[]).map(color=>`<div class='d-flex align-items-center mb-1'><span class='size-badge mr-1'>${color.name}</span><img src='${color.image}' class='product-img-thumb' style='width:32px;height:32px;'></div>`).join('')}</td>
+      <td>${(data.sizes||[]).map(size=>`<span class='size-badge'>${size}</span>`).join('')}</td>
       <td>
-        <button class="btn btn-sm btn-danger" onclick="deleteProduct(\"${docSnap.id}\")">حذف</button>
+        <button class="btn btn-sm btn-outline-primary edit-btn" onclick="window.editProduct('${docSnap.id}')">${t.edit}</button>
+        <button class="btn btn-sm btn-outline-danger delete-btn" onclick="window.deleteProduct('${docSnap.id}')">${t.delete}</button>
       </td>
     `;
         table.appendChild(row);
     });
+    if (typeof translateDashboard === 'function') translateDashboard(lang);
+    return snapshot.size;
 }
 
-// ✅ 5. Delete Product
+// Delete Product
 window.deleteProduct = async function (id) {
+    if (!confirm("Are you sure you want to delete this product?")) return;
     await deleteDoc(doc(db, "products", id));
-    loadProducts();
+    loadProducts().then(loadStats);
 };
+
+// Edit Product (open modal)
+window.editProduct = async function (id) {
+    const lang = getCurrentLang();
+    const t = getDashboardT(lang);
+    const modal = $('#editProductModal');
+    const form = document.getElementById('editProductForm');
+    form.innerHTML = '<div class="text-center">Loading...</div>';
+    modal.modal('show');
+    const docRef = doc(db, "products", id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      form.innerHTML = '<div class="alert alert-danger">Product not found.</div>';
+      return;
+    }
+    const data = docSnap.data();
+    form.innerHTML = `
+      <input type="hidden" id="edit-id" value="${id}">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="edit-name">${t.name}</label>
+          <input type="text" id="edit-name" class="form-control" value="${data.name}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="edit-price">${t.price}</label>
+          <input type="number" id="edit-price" class="form-control" min="0" step="0.01" value="${data.price}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="edit-stock">${t.stock}</label>
+          <input type="number" id="edit-stock" class="form-control" min="0" value="${data.stock}" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="edit-mainImage">${t.mainImage} (optional)</label>
+          <input type="file" id="edit-mainImage" class="form-control" accept="image/*">
+          <img src="${data.mainImage}" class="product-img-thumb mt-2" alt="main">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="edit-images">${t.images} (add more)</label>
+          <input type="file" id="edit-images" class="form-control" accept="image/*" multiple>
+          ${(data.images||[]).map(img=>`<img src='${img}' class='product-img-thumb mt-2' alt='img'>`).join('')}
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="edit-gender">${t.gender}</label>
+          <select id="edit-gender" class="form-control" required>
+            <option value="">${t.select}</option>
+            <option value="women" ${data.gender==='women'?'selected':''}>${t.women}</option>
+            <option value="men" ${data.gender==='men'?'selected':''}>${t.men}</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="edit-category">${t.category}</label>
+          <select id="edit-category" class="form-control" required>
+            <option value="">${t.select}</option>
+            ${(categoriesByLang[lang][data.gender]||[]).map(cat=>`<option value="${cat}" ${data.category===cat?'selected':''}>${cat}</option>`).join('')}
+          </select>
+        </div>
+        <div class="col-md-12 mb-3">
+          <label>${t.colors}</label>
+          <div id="edit-colors-list"></div>
+          <button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="edit-add-color-btn">${t.addColor}</button>
+        </div>
+        <div class="col-md-12 mb-3">
+          <label for="edit-sizes">${t.sizes} (comma separated)</label>
+          <input type="text" id="edit-sizes" class="form-control" value="${(data.sizes||[]).join(', ')}" required>
+        </div>
+      </div>
+    `;
+    // Colors dynamic rows for edit
+    const editColorsList = form.querySelector('#edit-colors-list');
+    function createEditColorRow(name = '', imageUrl = '', file = null) {
+      const row = document.createElement('div');
+      row.className = 'd-flex align-items-center mb-2 color-row';
+      row.innerHTML = `
+        <input type="text" class="form-control form-control-sm mr-2 color-name" placeholder="${t.colorName}" value="${name}" style="max-width:120px;">
+        <input type="file" accept="image/*" class="form-control-file form-control-sm mr-2 color-image">
+        <img src="${imageUrl}" class="product-img-thumb mr-2 d-none" style="width:36px;height:36px;" alt="color-img">
+        <button type="button" class="btn btn-danger btn-sm remove-color-btn">&times;</button>
+      `;
+      if (imageUrl) {
+        row.querySelector('img').src = imageUrl;
+        row.querySelector('img').classList.remove('d-none');
+      }
+      row.querySelector('.remove-color-btn').onclick = () => row.remove();
+      row.querySelector('.color-image').onchange = function(e) {
+        if (this.files && this.files[0]) {
+          const url = URL.createObjectURL(this.files[0]);
+          row.querySelector('img').src = url;
+          row.querySelector('img').classList.remove('d-none');
+        }
+      };
+      setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
+      return row;
+    }
+    (data.colors||[]).forEach(c => editColorsList.appendChild(createEditColorRow(c.name, c.image)));
+    if (editColorsList.childElementCount === 0) editColorsList.appendChild(createEditColorRow());
+    form.querySelector('#edit-add-color-btn').onclick = function() {
+      editColorsList.appendChild(createEditColorRow());
+    };
+    form.querySelector('#edit-gender').addEventListener('change', function() {
+      const g = this.value;
+      const catSel = form.querySelector('#edit-category');
+      catSel.innerHTML = `<option value="">${t.select}</option>`;
+      (categoriesByLang[lang][g]||[]).forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        catSel.appendChild(opt);
+      });
+      if (typeof translateDashboard === 'function') translateDashboard(lang);
+    });
+    setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
+};
+
+// Save Edit
+const saveEditBtn = document.getElementById('saveEditBtn');
+saveEditBtn.onclick = async function(e) {
+    e.preventDefault();
+    const form = document.getElementById('editProductForm');
+    const id = form.querySelector('#edit-id').value;
+    const name = form.querySelector('#edit-name').value.trim();
+    const price = parseFloat(form.querySelector('#edit-price').value);
+    const stock = parseInt(form.querySelector('#edit-stock').value);
+    const gender = form.querySelector('#edit-gender').value;
+    const category = form.querySelector('#edit-category').value;
+    const sizes = form.querySelector('#edit-sizes').value.split(',').map(s => s.trim()).filter(Boolean);
+    const mainImageFile = form.querySelector('#edit-mainImage').files[0] || null;
+    const imagesFiles = Array.from(form.querySelector('#edit-images').files);
+    // --- Colors ---
+    const colorRows = Array.from(form.querySelectorAll('#edit-colors-list .color-row'));
+    const colors = [];
+    for (let row of colorRows) {
+      const colorName = row.querySelector('.color-name').value.trim();
+      const colorFile = row.querySelector('.color-image').files[0] || null;
+      let colorImgUrl = row.querySelector('img').src && !row.querySelector('img').classList.contains('d-none') ? row.querySelector('img').src : '';
+      if (!colorName) continue;
+      if (colorFile) {
+        colorImgUrl = await uploadImage(colorFile);
+      } else if (colorImgUrl.startsWith('blob:')) {
+        continue;
+      }
+      colors.push({ name: colorName, image: colorImgUrl });
+    }
+    // Upload new images if any
+    let mainImageUrl = null;
+    if (mainImageFile) {
+      mainImageUrl = await uploadImage(mainImageFile);
+    } else {
+      mainImageUrl = form.querySelector('img[alt="main"]').src;
+    }
+    let imageUrls = Array.from(form.querySelectorAll('img[alt="img"]')).map(img=>img.src);
+    if (imagesFiles.length) {
+      for (let img of imagesFiles) {
+        imageUrls.push(await uploadImage(img));
+      }
+    }
+    await updateDoc(doc(db, "products", id), {
+      name, price, stock, gender, category, colors, sizes, mainImage: mainImageUrl, images: imageUrls
+    });
+    $('#editProductModal').modal('hide');
+    loadProducts().then(loadStats);
+};
+
+// Load statistics (products, orders, customers)
+async function loadStats() {
+  // Products count
+  const productsSnap = await getDocs(collection(db, "products"));
+  document.getElementById("stat-products").textContent = productsSnap.size;
+  // Orders count
+  let ordersCount = 0;
+  try {
+    const ordersSnap = await getDocs(collection(db, "orders"));
+    ordersCount = ordersSnap.size;
+  } catch (e) {
+    // If orders collection doesn't exist yet
+    ordersCount = 0;
+  }
+  document.getElementById("stat-orders").textContent = ordersCount;
+  // Customers count
+  let customersCount = 0;
+  try {
+    const usersSnap = await getDocs(collection(db, "users"));
+    customersCount = usersSnap.size;
+  } catch (e) {
+    customersCount = 0;
+  }
+  document.getElementById("stat-customers").textContent = customersCount;
+}
+
+// Initial load
+buildGenderAndCategorySelects();
+loadProducts().then(loadStats);
+// ترجمة أولية عند تحميل الصفحة
+if (typeof translateDashboard === 'function') translateDashboard(getCurrentLang());
 
 // ✅ 6. Load stats (mockup)
 document.getElementById("userCount").textContent = "10";
 document.getElementById("orderCount").textContent = "5";
 document.getElementById("topProduct").textContent = "Black T-Shirt";
 
-// ✅ Initial Load
-loadProducts();
+// عند تحميل الصفحة، اجعل الجنس الافتراضي women إذا كان فارغًا
+if (!genderSelect.value) {
+  genderSelect.value = 'women';
+}
+buildCategoryOptions();
+bindAddColorBtn();
