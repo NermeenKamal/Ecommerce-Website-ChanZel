@@ -18,9 +18,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // زر تسجيل الخروج
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function() {
-      firebase.auth().signOut().then(() => {
+      if (window.firebase && firebase.auth) {
+        firebase.auth().signOut().then(() => {
+          window.location.href = 'index.html';
+        });
+      } else {
         window.location.href = 'index.html';
-      });
+      }
     });
   }
 });
@@ -29,18 +33,26 @@ function updateAuthButtons() {
   const loginBtn = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
   if (!loginBtn || !logoutBtn) return;
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      loginBtn.classList.add('d-none');
-      logoutBtn.classList.remove('d-none');
-    } else {
-      loginBtn.classList.remove('d-none');
-      logoutBtn.classList.add('d-none');
-    }
-  });
-  logoutBtn.onclick = function() {
-    firebase.auth().signOut().then(function() {
-      window.location.href = 'index.html';
+  
+  if (window.firebase && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        loginBtn.classList.add('d-none');
+        logoutBtn.classList.remove('d-none');
+      } else {
+        loginBtn.classList.remove('d-none');
+        logoutBtn.classList.add('d-none');
+      }
     });
-  };
+    
+    logoutBtn.onclick = function() {
+      firebase.auth().signOut().then(function() {
+        window.location.href = 'index.html';
+      });
+    };
+  } else {
+    // If Firebase is not available, show login button
+    loginBtn.classList.remove('d-none');
+    logoutBtn.classList.add('d-none');
+  }
 } 
