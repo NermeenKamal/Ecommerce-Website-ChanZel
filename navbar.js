@@ -46,7 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateCartCount() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    document.getElementById('cart-count').textContent = count;
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) {
+      cartCount.textContent = count;
+    }
   }
   updateCartCount();
   window.addEventListener('storage', updateCartCount);
