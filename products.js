@@ -1,11 +1,21 @@
 // products.js
 
-// Initialize Firestore reference if not already initialized
+// Use the db reference from firebase-init.js
 let productsDb;
-if (typeof db === 'undefined') {
+if (typeof db !== 'undefined') {
+    productsDb = db;
+} else if (typeof firebase !== 'undefined' && firebase.firestore) {
     productsDb = firebase.firestore();
 } else {
-    productsDb = db;
+    console.error('Firebase Firestore not available');
+    // Create a mock db for fallback
+    productsDb = {
+        collection: () => ({
+            get: () => Promise.resolve({ docs: [] }),
+            where: () => ({ where: () => ({ limit: () => ({ get: () => Promise.resolve({ docs: [] }) }) }) }),
+            doc: () => ({ get: () => Promise.resolve({ exists: false }) })
+        })
+    };
 }
 
 // Default product image
