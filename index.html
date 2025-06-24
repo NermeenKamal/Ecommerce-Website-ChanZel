@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/logo-light.png">
+    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="products.js"></script>
+
+    <title>Ecommerce</title>
+</head>
+<body>
+<div class="container-fluid body" data-bs-theme="light">
+    <button class="position-fixed btn btn-dark btn-sm cust" type="button" onclick=darkmode()><svg style="margin-right: 7px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#578eb7" d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/></svg>Customize</button>
+
+
+
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="#">
+            <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
+        </a>
+
+
+        <div class="collapse navbar-collapse" id="x">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link active alert-link" aria-current="page" href="index.html">HOME</a></li>
+            <li class="nav-item"><a class="nav-link h" href="women.html">WOMEN</a></li>
+        <li class="nav-item"><a class="nav-link h" href="men.html">MEN</a></li>
+        <li class="nav-item"><a class="nav-link h" href="about.html">ABOUT</a></li>
+        <li class="nav-item"><a class="nav-link h" href="#contact">CONTACT</a></li>
+            </ul>
+        </div>
+
+        <ul class="navbar-nav vv">
+            <i class="fa-solid fa-magnifying-glass ico-btn"></i>
+            <h6 class="nav-item dolar">$0.00</h6>
+            <i class="fa-solid fa-cart-shopping ico-btn"></i>
+            <a class="nav-link login" href="login.html">LOG IN</a>
+        </ul>
+
+
+        <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
+            <span class="navbar-toggler-icon"></span>
+        </a>
+
+    </nav>
+
+    <main class="container-fluid position-relative">
+        <div class="z-1 position-absolute p-5 rounded-3 main-bg">
+            <h2 class="h2">Women</h2>
+            <h3 class="slick"> Slick. Modern. <br> Awesome.</h3>
+            <button type="button" class="btn btn-darkk btn-sm">Shop NOW!</button>
+        </div>
+        <img src="img/home-bg.jpg" class="img-fluid" alt="home-bg">
+    </main>
+
+    <section class="container-lg mt-5">
+        <h4 class="h44 text-center">Summer Collection</h4>
+        <h3 class="h33 text-center mb-4">Popular T-Shirts</h3>
+        <div class="d-flex justify-content-between divparent">
+            <div class="card mr-2" style="width: 18rem;">
+                <img src="img/pic1.jpg" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="card-title">Black T-Shirt</h5>
+                    <p class="card-text">$36.00 – $39.00</p>
+                    <div class="d-flex ff">
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn color1 c1"></button>
+                        <button type="button" class="btn color2 c2"></button>
+                        <button type="button" class="btn color3 c3"></button>
+
+                    </div>
+                    <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-outline-dark mr-2">XS</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">S</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">M</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">L</button>
+                        <button type="button" class="btn btn-outline-dark">XL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mr-2" style="width: 18rem;">
+                <img src="img/pic2.jpg" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="card-title">White T-Shirt</h5>
+                    <p class="card-text">$21.00 – $25.00</p>
+                    <div class="d-flex ff">
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn color1 c4"></button>
+                        <button type="button" class="btn color2 c5"></button>
+                        <button type="button" class="btn color3 c6"></button>
+
+                    </div>
+                    <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-outline-dark mr-2">XS</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">S</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">M</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">L</button>
+                        <button type="button" class="btn btn-outline-dark">XL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mr-2" style="width: 18rem;">
+                <img src="img/pic3.jpg" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="card-title">Rose T-Shirt</h5>
+                    <p class="card-text">$23.00 – $28.00</p>
+                    <div class="d-flex ff">
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn color1 c7"></button>
+                        <button type="button" class="btn color2 c8"></button>
+                        <button type="button" class="btn color3 c9"></button>
+
+                    </div>
+                    <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-outline-dark mr-2">XS</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">S</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">M</button>
+                        <button type="button" class="btn btn-outline-dark mr-2">L</button>
+                        <button type="button" class="btn btn-outline-dark">XL</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mr-2" style="width: 18rem;">
+                <img src="img/pic4.jpg" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="card-title">White T-Shirt</h5>
+                    <p class="card-text">$33.00 – $36.00</p>
+                    <div class="d-flex ff">
+                        <div class="btn-group " role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn color1"></button>
+                        <button type="button" class="btn color2"></button>
+                        <button type="button" class="btn color3"></button>
+
+                    </div>
+                        <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
+                            <button type="button" class="btn btn-outline-dark mr-2">XS</button>
+                            <button type="button" class="btn btn-outline-dark mr-2">S</button>
+                            <button type="button" class="btn btn-outline-dark mr-2">M</button>
+                            <button type="button" class="btn btn-outline-dark mr-2">L</button>
+                            <button type="button" class="btn btn-outline-dark">XL</button>
+
+                        </div></div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="container-fluid mt-5">
+        <div class="d-flex align-items-star justify-content-center">
+            <div class="d-flex flex-column align-items-center div1">
+                    <img src="img/man1.jpg" class="img-thumbnaill im1">
+                    <p class="texttt h333">MEN STYLE</p>
+                    <h2 class="h333"><b>The base collection - Ideal <br> </b></h2>
+                    <h2 class="h333 mb-3"><b>every day.</b></h2>
+                    <button type="button" class="btn btn-dark btn-sm btnn">Shop NOW!</button>
+            </div>
+            <div class="div2">
+                    <img src="img/man2.jpg" class="img-thumbnaill im2">
+            </div>
+        </div>
+    </section>
+
+    <section class="container-fluid mt-5">
+        <div class="position-relative">
+            <div class="ddd position-absolute d-flex flex-column align-items-center">
+                <p class="h333">New Collection</p>
+                <h2 class="h333"><b>Be different in your own way!<br> </b></h2>
+                <h2 class="h333 mb-3"><b>Find your unique style.</b></h2>
+                <button type="button" class="btn btn-darkk btn-sm">Shop Collection!</button>
+            </div>
+            <div class="div-empty">
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="container-fluid mt-5 position-relative mb-5 sec">
+        <div class="d-flex flex-row align-items-center justify-content-around position-relative">
+            <div class="div-img position-relative bll">
+                <div class="position-absolute bgdiv"></div>
+                <img src="img/inspiring.jpg" class="img-fluid rounded-start position-absolute" alt="inspiring">
+            </div>
+        <div class="d-flex flex-column align-items-left position-absolute bl">
+            <p class="h333 fo">New Collection</p>
+            <h2 class="h333 fon"><b>Be different in your own way!<br> </b></h2>
+            <h2 class="h333 fon mb-3"><b>Find your unique style.</b></h2>
+            <button type="button" class="btn btn-dark btn-sm btnn">Shop Collection!</button>
+        </div>
+        </div>
+    </section>
+
+
+    <section class="container-fluid mt-5">
+
+        <div class="d-flex ml-4 boy-girl">
+
+        <div class="d-flex flex-column position-relative">
+        <img src="img/girl.jpg" class="girl-img" alt="girl">
+        <button class="position-absolute bnn btn btn-lightt" type="button">WOMEN <br> 5 Products</button>
+        </div>
+
+        <div class="d-flex flex-column position-relative">
+        <img src="img/boy.jpg" class="boy-img" alt="boy">
+        <button class="position-absolute bnn btn btn-lightt">MEN <br> 5 Products</button>
+        </div></div>
+    </section>
+
+    <footer class="container-fluid mt-5" id="contact">
+        <div class="d-flex align-items-center flex-column foo">
+            <h2 class="textt  fo">Subscribe To Get Offers In Your Inbox</h2>
+            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br> <br></span>
+
+            <div class="navbar-nav vvv">
+            <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
+            <a href="women.html" class="nav-link text mr-4">Women</a>
+            <a href="men.html" class="nav-link text mr-4">Men</a>
+            <a href="about.html" class="nav-link text mr-4">About</a>
+            <a href="#contact" class="nav-link text">Contact</a>
+            </div>
+
+            <div class="d-flex mt-3 btns">
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
+                    <i class="fa-brands fa-facebook"></i></a>
+
+                <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
+                    <i class="fa-brands fa-github"></i></a>
+
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
+                    <i class="fa-brands fa-linkedin"></i></a>
+
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
+                    <i class="fa-brands fa-square-behance"></i></a>
+            </div>
+        </div>
+        <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
+    </footer>
+    
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="script.js"></script>
+<div id="footer"></div>
+<script src="navbar.js"></script>
+<script src="footer.js"></script>
+<script src="auth.js"></script>
+<body>
+  <div id="navbar"></div>
+  <section class="container my-5">
+    <h2 id="summer-title">Summer Collection</h2>
+    <div id="summer-collection" class="row"></div>
+    <h2 id="winter-title" class="mt-5">Winter Collection</h2>
+    <div id="winter-collection" class="row"></div>
+  </section>
+</body>
+
+    
+</html>

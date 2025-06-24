@@ -1,0 +1,100 @@
+<head>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-init.js"></script>
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="container my-5">
+    <div id="product-details"></div>
+  </div>
+  <div id="footer"></div>
+  <script src="navbar.js"></script>
+  <script src="footer.js"></script>
+  <script src="auth.js"></script>
+  <script src="products.js"></script>
+  <script>
+// Helper to get query param
+function getQueryParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+  const lang = localStorage.getItem('lang') || 'en';
+  const productId = getQueryParam('id');
+  if (!productId) return;
+  const product = await getProductById(productId);
+  if (!product) {
+    document.getElementById('product-details').innerHTML = '<div class="alert alert-danger">Product not found.</div>';
+    return;
+  }
+  const name = lang === 'ar' ? product.name_ar : product.name_en;
+  const sizes = (product.sizes || []);
+  const colors = (product.colors || []);
+  const images = (product.images && product.images.length) ? product.images : ['img/div-empty.jpg'];
+  let gallery = images.map((img, i) => `<img src="${img}" class="img-thumbnail mx-1" style="width:80px;cursor:pointer;" onclick="document.getElementById('main-img').src='${img}'">`).join('');
+  let sizeOptions = sizes.map(size => `<option value="${size}">${size}</option>`).join('');
+  let colorOptions = colors.map(color => `<option value="${color}">${color}</option>`).join('');
+  document.getElementById('product-details').innerHTML = `
+    <div class="row">
+      <div class="col-md-6 text-center">
+        <img id="main-img" src="${images[0]}" class="img-fluid mb-2" style="max-height:350px;">
+        <div>${gallery}</div>
+      </div>
+      <div class="col-md-6">
+        <h2>${name}</h2>
+        <h4 class="text-primary">${product.price} EGP</h4>
+        <div><strong>${lang === 'ar' ? 'المخزون' : 'Stock'}:</strong> ${product.stock}</div>
+        <div><strong>${lang === 'ar' ? 'الجنس' : 'Gender'}:</strong> ${lang === 'ar' ? (product.gender === 'men' ? 'رجال' : 'نساء') : (product.gender === 'men' ? 'Men' : 'Women')}</div>
+        <div><strong>${lang === 'ar' ? 'الفئة' : 'Category'}:</strong> ${product.category}</div>
+        <div class="form-group mt-3">
+          <label for="size-select"><strong>${lang === 'ar' ? 'المقاس' : 'Size'}:</strong></label>
+          <select id="size-select" class="form-control">${sizeOptions}</select>
+        </div>
+        <div class="form-group">
+          <label for="color-select"><strong>${lang === 'ar' ? 'اللون' : 'Color'}:</strong></label>
+          <select id="color-select" class="form-control">${colorOptions}</select>
+        </div>
+        <div class="form-group">
+          <label><strong>${lang === 'ar' ? 'الكمية' : 'Quantity'}:</strong></label>
+          <div class="input-group" style="max-width:120px;">
+            <div class="input-group-prepend"><button class="btn btn-outline-secondary" id="qty-minus">-</button></div>
+            <input type="number" id="qty-input" class="form-control text-center" value="1" min="1" max="${product.stock}">
+            <div class="input-group-append"><button class="btn btn-outline-secondary" id="qty-plus">+</button></div>
+          </div>
+        </div>
+        <button class="btn btn-success btn-block mt-3" id="add-to-cart">${lang === 'ar' ? 'أضف إلى السلة' : 'Add to Cart'}</button>
+      </div>
+    </div>
+  `;
+  // Quantity controls
+  document.getElementById('qty-minus').onclick = function() {
+    let qty = parseInt(document.getElementById('qty-input').value);
+    if (qty > 1) document.getElementById('qty-input').value = qty - 1;
+  };
+  document.getElementById('qty-plus').onclick = function() {
+    let qty = parseInt(document.getElementById('qty-input').value);
+    if (qty < product.stock) document.getElementById('qty-input').value = qty + 1;
+  };
+  // Add to cart
+  document.getElementById('add-to-cart').onclick = function() {
+    const size = document.getElementById('size-select').value;
+    const color = document.getElementById('color-select').value;
+    const qty = parseInt(document.getElementById('qty-input').value);
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    // Check if product with same id/size/color exists
+    let existing = cart.find(item => item.id === product.id && item.size === size && item.color === color);
+    if (existing) {
+      existing.quantity += qty;
+    } else {
+      cart.push({ id: product.id, name, price: product.price, size, color, quantity: qty, image: images[0] });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(lang === 'ar' ? 'تمت الإضافة إلى السلة' : 'Added to cart!');
+    window.dispatchEvent(new Event('storage')); // update cart counter
+  };
+});
+</script>
+</body> 
