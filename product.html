@@ -10,6 +10,7 @@
     <div id="product-details"></div>
   </div>
   <div id="footer"></div>
+  <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
   <script src="navbar.js"></script>
   <script src="footer.js"></script>
   <script src="auth.js"></script>
@@ -95,6 +96,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     alert(lang === 'ar' ? 'تمت الإضافة إلى السلة' : 'Added to cart!');
     window.dispatchEvent(new Event('storage')); // update cart counter
   };
+});
+
+// Language toggle logic for all pages
+const translations = { en: { lang: 'AR' }, ar: { lang: 'EN' } };
+function setLangBtnText(lang) {
+  document.getElementById('lang-toggle').textContent = translations[lang].lang;
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+}
+const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+setLangBtnText(savedLang);
+document.getElementById('lang-toggle').addEventListener('click', function() {
+  const currentLang = localStorage.getItem('lang') || 'en';
+  const newLang = currentLang === 'en' ? 'ar' : 'en';
+  localStorage.setItem('lang', newLang);
+  setLangBtnText(newLang);
+  location.reload();
 });
 </script>
 </body> 
