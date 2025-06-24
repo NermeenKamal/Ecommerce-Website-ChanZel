@@ -335,7 +335,13 @@
                         photoURL: '',
                         role: role
                     }).then(() => {
-                        window.location.href = 'index.html';
+                        // Send email verification
+                        user.sendEmailVerification().then(() => {
+                            document.getElementById('signup-error').classList.remove('alert-danger');
+                            document.getElementById('signup-error').classList.add('alert-success');
+                            document.getElementById('signup-error').textContent = 'Account created! Please check your email and verify your account before logging in.';
+                            document.getElementById('signup-error').classList.remove('d-none');
+                        });
                     }).catch((err) => {
                         document.getElementById('signup-error').textContent = 'Signup succeeded but failed to save user data.';
                         document.getElementById('signup-error').classList.remove('d-none');
