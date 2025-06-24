@@ -96,18 +96,27 @@ function translateFooter(lang) {
     const footer = document.querySelector('footer');
     
     if (footer) {
-        footer.querySelector('h5:nth-of-type(1)').textContent = t.about;
-        footer.querySelector('p:nth-of-type(1)').textContent = t.aboutText;
-        footer.querySelector('h5:nth-of-type(2)').textContent = t.quickLinks;
+        // Check if elements exist before accessing them
+        const aboutTitle = footer.querySelector('h5:nth-of-type(1)');
+        const aboutText = footer.querySelector('p:nth-of-type(1)');
+        const quickLinksTitle = footer.querySelector('h5:nth-of-type(2)');
+        const connectTitle = footer.querySelector('h5:nth-of-type(3)');
+        const copyrightText = footer.querySelector('.footer-bottom p');
+        
+        if (aboutTitle) aboutTitle.textContent = t.about;
+        if (aboutText) aboutText.textContent = t.aboutText;
+        if (quickLinksTitle) quickLinksTitle.textContent = t.quickLinks;
         
         const quickLinks = footer.querySelectorAll('.list-unstyled li a');
-        quickLinks[0].textContent = t.home;
-        quickLinks[1].textContent = t.women;
-        quickLinks[2].textContent = t.men;
-        quickLinks[3].textContent = t.about;
+        if (quickLinks.length >= 4) {
+            if (quickLinks[0]) quickLinks[0].textContent = t.home;
+            if (quickLinks[1]) quickLinks[1].textContent = t.women;
+            if (quickLinks[2]) quickLinks[2].textContent = t.men;
+            if (quickLinks[3]) quickLinks[3].textContent = t.about;
+        }
         
-        footer.querySelector('h5:nth-of-type(3)').textContent = t.connect;
-        footer.querySelector('.footer-bottom p').textContent = t.copyright;
+        if (connectTitle) connectTitle.textContent = t.connect;
+        if (copyrightText) copyrightText.textContent = t.copyright;
     }
 }
 
