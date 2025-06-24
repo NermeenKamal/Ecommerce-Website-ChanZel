@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateAuthButtons(user) {
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
+    if (!loginBtn || !logoutBtn) return;
     if (user) {
       loginBtn.classList.add('d-none');
       logoutBtn.classList.remove('d-none');
@@ -121,17 +122,23 @@ document.addEventListener('DOMContentLoaded', function () {
     updateAuthButtons(null);
   }
   // زر تسجيل الدخول
-  document.getElementById('login-btn').onclick = function() {
-    window.location.href = 'login.html';
-  };
+  const loginBtn = document.getElementById('login-btn');
+  if (loginBtn) {
+    loginBtn.onclick = function() {
+      window.location.href = 'login.html';
+    };
+  }
   // زر تسجيل الخروج
-  document.getElementById('logout-btn').onclick = function() {
-    if (window.firebase && firebase.auth) {
-      firebase.auth().signOut().then(function() {
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.onclick = function() {
+      if (window.firebase && firebase.auth) {
+        firebase.auth().signOut().then(function() {
+          window.location.reload();
+        });
+      } else {
         window.location.reload();
-      });
-    } else {
-      window.location.reload();
-    }
-  };
+      }
+    };
+  }
 }); 
