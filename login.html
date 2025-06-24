@@ -322,19 +322,23 @@
                 <button id="resendBtn" class="resend-btn">Resend Verification Link</button>
             </div>
             <form id="loginForm">
-                <label for="email">EMAIL</label>
-                <input type="email" id="email" name="email" required>
-                <label for="password">PASSWORD</label>
-                <input type="password" id="password" name="password" required>
+                <div class="form-group">
+                    <label for="email">EMAIL</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
                 <div class="login-links">
                     <a href="forget-password.html">Forgot Password?</a>
                 </div>
                 <button type="submit" class="login-btn">Sign In</button>
             </form>
-            <div class="signup-link" style="text-align: center; margin-top: 15px; width: 100%; color: #785c4a;">
-                Don't have an account? <a href="sign-up.html" style="color: #9c2c2c; text-decoration: none; font-weight: bold;">Sign Up</a>
+            <div class="signup-link">
+                Don't have an account? <a href="sign-up.html">Sign Up</a>
             </div>
-            <div id="login-error" class="alert alert-danger d-none" style="width:80%;margin:1rem auto 0 auto;text-align:center;"></div>
+            <div id="login-error" class="alert alert-danger d-none" style="margin-top:1rem;"></div>
         </div>
     </main>
 
@@ -465,7 +469,7 @@
                 document.querySelector('label[for="password"]').textContent = t.password;
                 document.querySelector('.login-card button[type="submit"]').textContent = t.signIn;
                 document.querySelector('.login-links a').textContent = t.forgot;
-                document.querySelector('.signup-link').innerHTML = t.noAccount + `<a href="sign-up.html" style="color: #9c2c2c; text-decoration: none; font-weight: bold;">${t.signUp}</a>`;
+                document.querySelector('.signup-link').innerHTML = t.noAccount + `<a href="sign-up.html">${t.signUp}</a>`;
                 document.querySelector('.verification-message').textContent = t.verify;
                 document.querySelector('#resendBtn').textContent = t.resend;
                 document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
