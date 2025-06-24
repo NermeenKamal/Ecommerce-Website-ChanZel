@@ -234,7 +234,11 @@
         } else if (user.email === "nermeenkamal92@gmail.com") {
           window.location.href = "admin-dashboard.html";
         } else {
-          loadMyOrders(user.uid);
+          // Get admin UID
+          db.collection('users').where('email', '==', 'nermeenkamal92@gmail.com').get().then(snap => {
+            window.ADMIN_UID = snap.empty ? null : snap.docs[0].id;
+            loadMyOrders(user.uid);
+          });
         }
       });
     });
@@ -277,6 +281,17 @@
           const orderId = this.getAttribute('data-id');
           if (confirm('Are you sure you want to cancel this order?')) {
             await db.collection('orders').doc(orderId).update({status: 'rejected'});
+            // إشعار للأدمن
+            if(window.ADMIN_UID) {
+              await db.collection('notifications').add({
+                userId: window.ADMIN_UID,
+                orderId: orderId,
+                type: 'cancel',
+                message: 'A client has cancelled an order.',
+                createdAt: new Date(),
+                read: false
+              });
+            }
             loadMyOrders(uid);
             alert('Order cancelled.');
           }
@@ -380,6 +395,17 @@
           phone: newPhone,
           products: newProducts
         });
+        // إشعار للأدمن
+        if(window.ADMIN_UID) {
+          await db.collection('notifications').add({
+            userId: window.ADMIN_UID,
+            orderId: order.id,
+            type: 'edit',
+            message: 'A client has edited an order.',
+            createdAt: new Date(),
+            read: false
+          });
+        }
         if (window.$ && $('#editOrderModal').modal) {
           $('#editOrderModal').modal('hide');
         } else {
