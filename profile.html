@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | ChanZel</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="firebase-init.js"></script>
+  <style>
+    .profile-card { max-width: 420px; margin: 40px auto; box-shadow: 0 2px 12px #0001; border-radius: 18px; padding: 2rem; background: #fff; }
+    .profile-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 2px solid #eee; }
+    .profile-label { font-weight: bold; color: #785c4a; }
+    .profile-value { margin-bottom: 1rem; }
+    .logout-btn { margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="container">
+    <div class="profile-card text-center">
+      <img id="profile-avatar" class="profile-avatar" src="img/Chazel.png" alt="Avatar">
+      <h3 id="profile-name">User Name</h3>
+      <div class="profile-value"><span class="profile-label">Email:</span> <span id="profile-email"></span></div>
+      <div class="profile-value"><span class="profile-label" id="address-label">Address:</span> <span id="profile-address"></span></div>
+      <div class="profile-value"><span class="profile-label">Phone:</span> <span id="profile-phone"></span></div>
+      <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
+    </div>
+  </div>
+  <div id="footer"></div>
+  <script src="navbar.js"></script>
+  <script src="footer.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (!user) {
+          window.location.href = 'login.html';
+          return;
+        }
+        // Basic info
+        document.getElementById('profile-name').textContent = user.displayName || 'No Name';
+        document.getElementById('profile-email').textContent = user.email || '';
+        document.getElementById('profile-avatar').src = user.photoURL || 'img/Chazel.png';
+        // Custom claims or Firestore for address/phone
+        // For demo: use localStorage or fallback
+        let isAdmin = user.email === 'nermeenkamal92@gmail.com';
+        let address = isAdmin ? 'ChanZel Store, Cairo, Egypt' : (localStorage.getItem('deliveryAddress') || 'Not set');
+        let phone = localStorage.getItem('userPhone') || 'Not set';
+        document.getElementById('profile-address').textContent = address;
+        document.getElementById('profile-phone').textContent = phone;
+        document.getElementById('address-label').textContent = isAdmin ? 'Store Address:' : 'Delivery Address:';
+      });
+      document.getElementById('logout-btn').onclick = function() {
+        firebase.auth().signOut().then(function() {
+          window.location.href = 'login.html';
+        });
+      };
+    });
+  </script>
+</body>
+</html> 
