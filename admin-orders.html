@@ -305,6 +305,22 @@
         const newStatus = document.getElementById('statusSelect').value;
         await db.collection('orders').doc(order.id).update({status: newStatus});
         document.getElementById('orderStatus').textContent = newStatus;
+        // إشعار للعميل
+        let msg = '';
+        if(newStatus==='accepted') msg = 'Your order has been accepted!';
+        else if(newStatus==='rejected') msg = 'Your order has been rejected.';
+        else if(newStatus==='delivering') msg = 'Your order is out for delivery!';
+        else if(newStatus==='delivered') msg = 'Your order has been delivered!';
+        if(msg) {
+          await db.collection('notifications').add({
+            userId: order.userId,
+            orderId: order.id,
+            type: newStatus,
+            message: msg,
+            createdAt: new Date(),
+            read: false
+          });
+        }
         loadOrders();
         alert('Order status updated!');
       };
