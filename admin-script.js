@@ -238,6 +238,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
   bindAddColorBtn();
 
+  // Load products and stats immediately on page load
+  loadProducts().then(loadStats);
+
   // Null checks for dashboard/stat elements
   function setStatText(id, value) {
     const el = document.getElementById(id);
