@@ -394,3 +394,17 @@ background-color: #d7a1a766;
 /*        flex-wrap: wrap;*/
 /*    }*/
 /*}*/
+
+/* Prevent images from overflowing their containers */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Prevent container overflow for images */
+.img-fluid, .main-bg img, .main-bg, .container-fluid img {
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
