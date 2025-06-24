@@ -195,6 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const safeColors = Array.isArray(colors) ? colors : [];
     const safeSizes = Array.isArray(sizes) ? sizes : [];
     const safeImages = Array.isArray(imageUrls) ? imageUrls : [];
+    const safeMainImage = mainImageUrl || '';
     try {
       await addDoc(collection(db, "products"), {
         name,
@@ -204,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         category,
         colors: safeColors,
         sizes: safeSizes,
-        mainImage: mainImageUrl || '',
+        mainImage: safeMainImage,
         images: safeImages,
         createdAt: new Date()
       });
@@ -432,8 +433,17 @@ saveEditBtn.onclick = async function(e) {
         imageUrls.push(await uploadImage(img));
       }
     }
+    // Ensure no undefined fields for Firebase
+    const safeColors = Array.isArray(colors) ? colors : [];
+    const safeSizes = Array.isArray(sizes) ? sizes : [];
+    const safeImages = Array.isArray(imageUrls) ? imageUrls : [];
+    const safeMainImage = mainImageUrl || '';
     await updateDoc(doc(db, "products", id), {
-      name, price, stock, gender, category, colors, sizes, mainImage: mainImageUrl, images: imageUrls
+      name, price, stock, gender, category,
+      colors: safeColors,
+      sizes: safeSizes,
+      mainImage: safeMainImage,
+      images: safeImages
     });
     $('#editProductModal').modal('hide');
     loadProducts().then(loadStats);
@@ -443,7 +453,8 @@ saveEditBtn.onclick = async function(e) {
 async function loadStats() {
   // Products count
   const productsSnap = await getDocs(collection(db, "products"));
-  document.getElementById("stat-products").textContent = productsSnap.size;
+  const statProducts = document.getElementById("stat-products");
+  if (statProducts) statProducts.textContent = productsSnap.size;
   // Orders count
   let ordersCount = 0;
   try {
@@ -453,7 +464,8 @@ async function loadStats() {
     // If orders collection doesn't exist yet
     ordersCount = 0;
   }
-  document.getElementById("stat-orders").textContent = ordersCount;
+  const statOrders = document.getElementById("stat-orders");
+  if (statOrders) statOrders.textContent = ordersCount;
   // Customers count
   let customersCount = 0;
   try {
@@ -462,13 +474,17 @@ async function loadStats() {
   } catch (e) {
     customersCount = 0;
   }
-  document.getElementById("stat-customers").textContent = customersCount;
+  const statCustomers = document.getElementById("stat-customers");
+  if (statCustomers) statCustomers.textContent = customersCount;
 }
 
 // ✅ 6. Load stats (mockup)
-document.getElementById("userCount").textContent = "10";
-document.getElementById("orderCount").textContent = "5";
-document.getElementById("topProduct").textContent = "Black T-Shirt";
+const userCount = document.getElementById("userCount");
+if (userCount) userCount.textContent = "10";
+const orderCount = document.getElementById("orderCount");
+if (orderCount) orderCount.textContent = "5";
+const topProduct = document.getElementById("topProduct");
+if (topProduct) topProduct.textContent = "Black T-Shirt";
 
 // ترجمة أولية عند تحميل الصفحة
 if (typeof translateDashboard === 'function') translateDashboard(getCurrentLang());
