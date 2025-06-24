@@ -1,51 +1,97 @@
 // navbar.js
 
-document.addEventListener('DOMContentLoaded', function () {
-  const navbarHTML = `
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top animate__animated animate__fadeInDown" style="z-index:1000;">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center p-0" href="index.html">
-        <img src="img/Chazel.png" width="60" height="60" alt="ChanZel" style="object-fit:contain;">
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="index.html" data-translate="home">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="women.html" data-translate="women">Women</a></li>
-          <li class="nav-item"><a class="nav-link" href="men.html" data-translate="men">Men</a></li>
-          <li class="nav-item"><a class="nav-link" href="about.html" data-translate="about">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="#contact" data-translate="contact">Contact</a></li>
-        </ul>
-        <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item">
-            <a class="nav-link position-relative" href="cart.html">
-              <i class="fas fa-shopping-cart"></i>
-              <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">0</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="profile.html"><i class="fas fa-user-circle"></i> <span data-translate="profile">Profile</span></a>
-          </li>
-          <li class="nav-item">
-            <button id="lang-toggle" class="btn btn-outline-secondary btn-sm">AR</button>
-          </li>
-          <li class="nav-item">
-            <button id="login-btn" class="btn btn-primary btn-sm" data-translate="login">Login</button>
-            <button id="logout-btn" class="btn btn-danger btn-sm d-none" data-translate="logout">Logout</button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  `;
-  
-  const navbarDiv = document.getElementById('navbar');
-  if (navbarDiv) {
-    navbarDiv.innerHTML = navbarHTML;
-  }
+// Get current page name
+const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+const isAuthPage = ['login.html', 'sign-up.html', 'forget-password.html'].includes(currentPage);
 
+// Define navbar HTML based on page type
+const navbarHTML = isAuthPage ? `
+    <nav class="navbar navbar-expand-lg auth-navbar">
+        <a class="navbar-brand" href="index.html">
+            <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
+        </a>
+        <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
+    </nav>
+` : `
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="index.html">
+            <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
+        </a>
+
+        <div class="collapse navbar-collapse" id="x">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'index.html' ? 'active alert-link' : ''}" aria-current="page" href="index.html">HOME</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'women.html' ? 'active alert-link' : ''}" href="women.html">WOMEN</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'men.html' ? 'active alert-link' : ''}" href="men.html">MEN</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'about.html' ? 'active alert-link' : ''}" href="about.html">ABOUT</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'contact.html' ? 'active alert-link' : ''}" href="#contact">CONTACT</a></li>
+            </ul>
+        </div>
+
+        <ul class="navbar-nav vv">
+            <h6 class="nav-item dolar">$0.00</h6>
+            <i class="fa-solid fa-cart-shopping ico-btn cart-icon"></i>
+            <a class="nav-link login" href="login.html">LOG IN</a>
+        </ul>
+
+        <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
+            <span class="navbar-toggler-icon"></span>
+        </a>
+        <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
+    </nav>
+`;
+
+// Insert navbar
+document.getElementById('navbar').innerHTML = navbarHTML;
+
+// Update cart count
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartIcon = document.querySelector('.cart-icon');
+    if (cartIcon) {
+        if (cart.length > 0) {
+            cartIcon.setAttribute('data-count', cart.length);
+            cartIcon.classList.add('has-items');
+        } else {
+            cartIcon.removeAttribute('data-count');
+            cartIcon.classList.remove('has-items');
+        }
+    }
+}
+
+// Update price display
+function updateTotalPrice() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const dolarElement = document.querySelector('.dolar');
+    if (dolarElement) {
+        dolarElement.textContent = `$${total.toFixed(2)}`;
+    }
+}
+
+// Cart icon click handler
+document.addEventListener('DOMContentLoaded', function() {
+    const cartIcon = document.querySelector('.cart-icon');
+    if (cartIcon) {
+        cartIcon.addEventListener('click', function() {
+            window.location.href = 'cart.html';
+        });
+    }
+
+    // Initial updates
+    updateCartCount();
+    updateTotalPrice();
+
+    // Listen for cart changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'cart') {
+            updateCartCount();
+            updateTotalPrice();
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
   // Translation object
   const translations = {
     en: {
@@ -128,18 +174,6 @@ document.addEventListener('DOMContentLoaded', function () {
       translatePage(newLang);
     });
   }
-
-  // Cart counter logic
-  function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    const cartCount = document.getElementById('cart-count');
-    if (cartCount) {
-      cartCount.textContent = count;
-    }
-  }
-  updateCartCount();
-  window.addEventListener('storage', updateCartCount);
 
   // Authentication buttons logic
   function updateAuthButtons(user) {
