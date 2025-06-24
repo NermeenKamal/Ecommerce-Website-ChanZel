@@ -11,12 +11,40 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo-light.png">
+    <style>
+        .product-card {
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-image {
+            height: 300px;
+            object-fit: cover;
+        }
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+        }
+        .size-badge {
+            margin: 2px;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid body" data-bs-theme="light">
-        <!-- Navbar will be loaded here -->
+        <!-- Navbar -->
         <div id="navbar"></div>
 
+        <!-- Hero Section -->
         <main class="container-fluid position-relative">
             <div class="z-1 position-absolute p-5 rounded-3 main-bg">
                 <h2 class="h2" data-translate="women">Women</h2>
@@ -26,152 +54,36 @@
             <img src="img/home-bg.jpg" class="img-fluid" alt="home-bg">
         </main>
 
+        <!-- Featured Products Section -->
         <section class="container-lg mt-5">
             <h4 class="h44 text-center" data-translate="summerCollection">Summer Collection</h4>
             <h3 class="h33 text-center mb-4" data-translate="popularTshirts">Popular T-Shirts</h3>
-            <div class="d-flex justify-content-between divparent">
-                <div class="card mr-2" style="width: 18rem;">
-                    <img src="img/pic1.jpg" class="card-img-top" alt="">
-                    <div class="card-body">
-                        <h5 class="card-title">Black T-Shirt</h5>
-                        <p class="card-text">$36.00 – $39.00</p>
-                        <div class="d-flex ff">
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn color1 c1"></button>
-                            <button type="button" class="btn color2 c2"></button>
-                            <button type="button" class="btn color3 c3"></button>
-                        </div>
-                        <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn btn-outline-dark mr-2">XS</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">S</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">M</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">L</button>
-                            <button type="button" class="btn btn-outline-dark">XL</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card mr-2" style="width: 18rem;">
-                    <img src="img/pic2.jpg" class="card-img-top" alt="">
-                    <div class="card-body">
-                        <h5 class="card-title">White T-Shirt</h5>
-                        <p class="card-text">$21.00 – $25.00</p>
-                        <div class="d-flex ff">
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn color1 c4"></button>
-                            <button type="button" class="btn color2 c5"></button>
-                            <button type="button" class="btn color3 c6"></button>
-                        </div>
-                        <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn btn-outline-dark mr-2">XS</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">S</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">M</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">L</button>
-                            <button type="button" class="btn btn-outline-dark">XL</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card mr-2" style="width: 18rem;">
-                    <img src="img/pic3.jpg" class="card-img-top" alt="">
-                    <div class="card-body">
-                        <h5 class="card-title">Rose T-Shirt</h5>
-                        <p class="card-text">$23.00 – $28.00</p>
-                        <div class="d-flex ff">
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn color1 c7"></button>
-                            <button type="button" class="btn color2 c8"></button>
-                            <button type="button" class="btn color3 c9"></button>
-                        </div>
-                        <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn btn-outline-dark mr-2">XS</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">S</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">M</button>
-                            <button type="button" class="btn btn-outline-dark mr-2">L</button>
-                            <button type="button" class="btn btn-outline-dark">XL</button>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card mr-2" style="width: 18rem;">
-                    <img src="img/pic4.jpg" class="card-img-top" alt="">
-                    <div class="card-body">
-                        <h5 class="card-title">White T-Shirt</h5>
-                        <p class="card-text">$33.00 – $36.00</p>
-                        <div class="d-flex ff">
-                            <div class="btn-group " role="group" aria-label="Basic outlined example">
-                            <button type="button" class="btn color1"></button>
-                            <button type="button" class="btn color2"></button>
-                            <button type="button" class="btn color3"></button>
-                        </div>
-                            <div class="btn-group pt-3" role="group" aria-label="Basic outlined example">
-                                <button type="button" class="btn btn-outline-dark mr-2">XS</button>
-                                <button type="button" class="btn btn-outline-dark mr-2">S</button>
-                                <button type="button" class="btn btn-outline-dark mr-2">M</button>
-                                <button type="button" class="btn btn-outline-dark mr-2">L</button>
-                                <button type="button" class="btn btn-outline-dark">XL</button>
-                            </div></div>
-                    </div>
-                </div>
+            <div class="row" id="featured-products">
+                <!-- Products will be loaded here dynamically -->
             </div>
         </section>
 
-        <section class="container-fluid mt-5">
-            <div class="d-flex align-items-star justify-content-center">
-                <div class="d-flex flex-column align-items-center div1">
-                        <img src="img/man1.jpg" class="img-thumbnaill im1">
-                        <p class="texttt h333">MEN STYLE</p>
-                        <h2 class="h333"><b>The base collection - Ideal <br> </b></h2>
-                        <h2 class="h333 mb-3"><b>every day.</b></h2>
-                        <button type="button" class="btn btn-dark btn-sm btnn">Shop NOW!</button>
-                </div>
-                <div class="div2">
-                        <img src="img/man2.jpg" class="img-thumbnaill im2">
-                </div>
-            </div>
-        </section>
+        <!-- Rest of your sections -->
 
-        <section class="container-fluid mt-5">
-            <div class="position-relative">
-                <div class="ddd position-absolute d-flex flex-column align-items-center">
-                    <p class="h333">New Collection</p>
-                    <h2 class="h333"><b>Be different in your own way!<br> </b></h2>
-                    <h2 class="h333 mb-3"><b>Find your unique style.</b></h2>
-                    <button type="button" class="btn btn-darkk btn-sm">Shop Collection!</button>
-                </div>
-                <div class="div-empty">
-                </div>
-            </div>
-        </section>
-
-        <section class="container-fluid mt-5 position-relative mb-5 sec">
-            <div class="d-flex flex-row align-items-center justify-content-around position-relative">
-                <div class="div-img position-relative bll">
-                    <div class="position-absolute bgdiv"></div>
-                    <img src="img/inspiring.jpg" class="img-fluid rounded-start position-absolute" alt="inspiring">
-                </div>
-            <div class="d-flex flex-column align-items-left position-absolute bl">
-                <p class="h333 fo">New Collection</p>
-                <h2 class="h333 fon"><b>Be different in your own way!<br> </b></h2>
-                <h2 class="h333 fon mb-3"><b>Find your unique style.</b></h2>
-                <button type="button" class="btn btn-dark btn-sm btnn">Shop Collection!</button>
-            </div>
-            </div>
-        </section>
-
+        <!-- Products Count Section -->
         <section class="container-fluid mt-5">
             <div class="d-flex ml-4 boy-girl">
-            <div class="d-flex flex-column position-relative">
-            <img src="img/girl.jpg" class="girl-img" alt="girl">
-            <button class="position-absolute bnn btn btn-lightt" type="button">WOMEN <br> 5 Products</button>
+                <div class="d-flex flex-column position-relative">
+                    <img src="img/girl.jpg" class="girl-img" alt="girl">
+                    <button class="position-absolute bnn btn btn-lightt">
+                        WOMEN<br><span id="women-count">Loading...</span>
+                    </button>
+                </div>
+                <div class="d-flex flex-column position-relative">
+                    <img src="img/boy.jpg" class="boy-img" alt="boy">
+                    <button class="position-absolute bnn btn btn-lightt">
+                        MEN<br><span id="men-count">Loading...</span>
+                    </button>
+                </div>
             </div>
-            <div class="d-flex flex-column position-relative">
-            <img src="img/boy.jpg" class="boy-img" alt="boy">
-            <button class="position-absolute bnn btn btn-lightt">MEN <br> 5 Products</button>
-            </div></div>
         </section>
 
-        <!-- Footer will be loaded here -->
+        <!-- Footer -->
         <div id="footer"></div>
     </div>
 
@@ -188,6 +100,81 @@
     <script src="navbar.js"></script>
     <script src="footer.js"></script>
     <script src="products.js"></script>
+    <script>
+        // Function to format price
+        function formatPrice(price) {
+            return `$${price.toFixed(2)}`;
+        }
+
+        // Function to create color dots HTML
+        function createColorDots(colors) {
+            return colors.map(color => 
+                `<span class="color-dot" style="background-color: ${color};"></span>`
+            ).join('');
+        }
+
+        // Function to create size badges HTML
+        function createSizeBadges(sizes) {
+            return sizes.map(size => 
+                `<span class="size-badge">${size}</span>`
+            ).join('');
+        }
+
+        // Function to create product card
+        function createProductCard(product) {
+            return `
+                <div class="col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="${product.images[0]}" class="card-img-top product-image" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">${formatPrice(product.price)}</p>
+                            <div class="colors mb-2">
+                                ${createColorDots(product.colors)}
+                            </div>
+                            <div class="sizes">
+                                ${createSizeBadges(product.sizes)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load featured products
+        async function loadFeaturedProducts() {
+            try {
+                const products = await getFeaturedProducts({ limit: 4 });
+                const productsHTML = products.map(createProductCard).join('');
+                document.getElementById('featured-products').innerHTML = productsHTML;
+            } catch (error) {
+                console.error('Error loading featured products:', error);
+            }
+        }
+
+        // Load product counts
+        async function loadProductCounts() {
+            try {
+                const [womenProducts, menProducts] = await Promise.all([
+                    getProductsByGender('women'),
+                    getProductsByGender('men')
+                ]);
+                
+                document.getElementById('women-count').textContent = 
+                    `${womenProducts.length} Products`;
+                document.getElementById('men-count').textContent = 
+                    `${menProducts.length} Products`;
+            } catch (error) {
+                console.error('Error loading product counts:', error);
+            }
+        }
+
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedProducts();
+            loadProductCounts();
+        });
+    </script>
 </body>
 </html>
 
