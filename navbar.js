@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
       navLinks[3].textContent = t.about;
       navLinks[4].textContent = t.contact;
     }
-    document.getElementById('login-btn').textContent = t.login;
-    document.getElementById('logout-btn').textContent = t.logout;
+    if (document.getElementById('login-btn')) document.getElementById('login-btn').textContent = t.login;
+    if (document.getElementById('logout-btn')) document.getElementById('logout-btn').textContent = t.logout;
   }
 
   // Language toggle logic
