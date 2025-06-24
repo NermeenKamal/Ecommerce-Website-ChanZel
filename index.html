@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChanZel - Home</title>
     
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <!-- Initialize Firebase -->
-    <script src="firebase-init.js"></script>
-    
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
@@ -166,6 +158,14 @@
     <!-- Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- Initialize Firebase -->
+    <script src="firebase-init.js"></script>
+    
     <!-- Custom JS -->
     <script src="script.js"></script>
     <script src="navbar.js"></script>
@@ -173,7 +173,8 @@
     <script src="auth.js"></script>
     <script src="products.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function () {
+        // Wait for Firebase to be fully initialized
+        firebase.auth().onAuthStateChanged(function(user) {
             const lang = localStorage.getItem('lang') || 'en';
             
             // Load category counts
@@ -280,8 +281,8 @@
             }
 
             // Load both category counts and featured products
-            await loadCategoryCounts();
-            await loadRandomProducts();
+            loadCategoryCounts();
+            loadRandomProducts();
         });
     </script>
 </body>
