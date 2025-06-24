@@ -58,6 +58,45 @@
             padding: 20px;
             color: #dc3545;
         }
+        .category-link {
+            display: block;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-decoration: none;
+        }
+        .category-link img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .category-link:hover img {
+            transform: scale(1.05);
+        }
+        .category-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .category-overlay h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .category-overlay p {
+            margin: 5px 0 0;
+            font-size: 16px;
+        }
+        [dir="rtl"] .category-overlay {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -69,26 +108,50 @@
         <main class="container-fluid position-relative">
             <div class="z-1 position-absolute p-5 rounded-3 main-bg">
                 <h2 class="h2">Welcome To <span class="side">ChanZel</span></h2>
-                <h3 class="slick"> Slick. Modern. <br> Awesome.</h3>
-                <button type="button" class="btn btn-darkk btn-sm">Shop NOW!</button>
+                <h3 class="slick">Slick. Modern. <br> Awesome.</h3>
             </div>
             <img src="img/home-bg.jpg" class="img-fluid" alt="home-bg">
         </main>
+
+        <!-- Categories Section -->
+        <section class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="women.html" class="category-link">
+                        <img src="img/women1.jpg" alt="Women's Collection" class="img-fluid">
+                        <div class="category-overlay">
+                            <h3 class="women-title">WOMEN</h3>
+                            <p class="women-count">Loading products...</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="men.html" class="category-link">
+                        <img src="img/man.jpg" alt="Men's Collection" class="img-fluid">
+                        <div class="category-overlay">
+                            <h3 class="men-title">MEN</h3>
+                            <p class="men-count">Loading products...</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
 
         <!-- Featured Products Section -->
         <section class="container-lg mt-5">
             <div class="row mb-4">
                 <div class="col-12 text-center">
                     <h3 class="h33 mb-4">Featured Products</h3>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="women.html" class="btn btn-outline-primary category-btn">Women Products</a>
-                        <a href="men.html" class="btn btn-outline-primary category-btn">Men Products</a>
-                    </div>
                 </div>
             </div>
 
             <div class="row" id="featured-products">
                 <!-- Random products will be loaded here -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -110,47 +173,91 @@
     <script src="auth.js"></script>
     <script src="products.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             const lang = localStorage.getItem('lang') || 'en';
             
-            async function loadRandomProducts() {
-                // Get both men's and women's products
-                const womenProducts = await getProductsByGender('women');
-                const menProducts = await getProductsByGender('men');
-                const allProducts = [...womenProducts, ...menProducts];
-                
-                // Shuffle array and take first 8 items
-                const shuffled = allProducts.sort(() => 0.5 - Math.random());
-                const randomProducts = shuffled.slice(0, 8);
-
-                function renderProductCard(product) {
-                    const name = lang === 'ar' ? product.name_ar : product.name_en;
-                    const sizes = (product.sizes || []).map(size => `<span class='badge bg-secondary mx-1'>${size}</span>`).join(' ');
-                    const colors = (product.colors || []).map(color => `<span style='display:inline-block;width:18px;height:18px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:4px;'></span>`).join(' ');
-                    const img = (product.images && product.images.length) ? product.images[0] : 'img/div-empty.jpg';
+            // Load category counts
+            async function loadCategoryCounts() {
+                try {
+                    const womenProducts = await getProductsByGender('women');
+                    const menProducts = await getProductsByGender('men');
                     
-                    return `
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                            <div class="card h-100 shadow-sm">
-                                <img src="${img}" class="card-img-top" alt="${name}" style="height:220px;object-fit:cover;">
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">${name}</h5>
-                                    <div class="mb-1"><strong>${lang === 'ar' ? 'المقاسات' : 'Sizes'}:</strong> ${sizes}</div>
-                                    <div class="mb-2"><strong>${lang === 'ar' ? 'الألوان' : 'Colors'}:</strong> ${colors}</div>
-                                    <a href="product.html?id=${product.id}" class="btn btn-outline-primary mt-auto w-100">
-                                        ${lang === 'ar' ? 'عرض التفاصيل' : 'View Details'}
-                                    </a>
+                    document.querySelector('.women-title').textContent = lang === 'ar' ? 'نساء' : 'WOMEN';
+                    document.querySelector('.men-title').textContent = lang === 'ar' ? 'رجال' : 'MEN';
+                    
+                    document.querySelector('.women-count').textContent = 
+                        `${womenProducts.length} ${lang === 'ar' ? 'منتج' : 'Products'}`;
+                    document.querySelector('.men-count').textContent = 
+                        `${menProducts.length} ${lang === 'ar' ? 'منتج' : 'Products'}`;
+                } catch (error) {
+                    console.error('Error loading category counts:', error);
+                }
+            }
+
+            // Load random featured products
+            async function loadRandomProducts() {
+                const productsContainer = document.getElementById('featured-products');
+                
+                try {
+                    // Get both men's and women's products
+                    const womenProducts = await getProductsByGender('women');
+                    const menProducts = await getProductsByGender('men');
+                    const allProducts = [...womenProducts, ...menProducts];
+                    
+                    // Shuffle array and take first 8 items
+                    const shuffled = allProducts.sort(() => 0.5 - Math.random());
+                    const randomProducts = shuffled.slice(0, 8);
+
+                    function renderProductCard(product) {
+                        const name = lang === 'ar' ? product.name_ar : product.name_en;
+                        const description = lang === 'ar' ? product.description_ar : product.description_en;
+                        const sizes = (product.sizes || []).map(size => `<span class='badge badge-secondary mx-1'>${size}</span>`).join(' ');
+                        const colors = (product.colors || []).map(color => `<span style='display:inline-block;width:18px;height:18px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:4px;'></span>`).join(' ');
+                        const img = (product.images && product.images.length) ? product.images[0] : 'img/div-empty.jpg';
+                        
+                        return `
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card h-100 shadow-sm product-card">
+                                    <img src="${img}" class="card-img-top" alt="${name}" style="height:300px;object-fit:cover;">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${name}</h5>
+                                        <p class="card-text text-truncate">${description}</p>
+                                        <div class="product-details">
+                                            <div class="mb-2">
+                                                <strong class="text-primary">$${product.price.toFixed(2)}</strong>
+                                            </div>
+                                            <div class="mb-2">
+                                                <small class="text-muted">${lang === 'ar' ? 'المقاسات المتوفرة' : 'Available Sizes'}:</small><br>
+                                                ${sizes}
+                                            </div>
+                                            <div class="mb-3">
+                                                <small class="text-muted">${lang === 'ar' ? 'الألوان المتوفرة' : 'Available Colors'}:</small><br>
+                                                ${colors}
+                                            </div>
+                                        </div>
+                                        <a href="product.html?id=${product.id}" class="btn btn-outline-primary mt-auto">
+                                            ${lang === 'ar' ? 'عرض التفاصيل' : 'View Details'}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
+                        `;
+                    }
+
+                    productsContainer.innerHTML = randomProducts.map(renderProductCard).join('');
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    productsContainer.innerHTML = `
+                        <div class="col-12 text-center">
+                            <p class="text-danger">${lang === 'ar' ? 'حدث خطأ أثناء تحميل المنتجات' : 'Error loading products'}</p>
                         </div>
                     `;
                 }
-
-                document.getElementById('featured-products').innerHTML = randomProducts.map(renderProductCard).join('');
             }
 
-            // Initial load
-            loadRandomProducts();
+            // Load both category counts and featured products
+            await loadCategoryCounts();
+            await loadRandomProducts();
         });
     </script>
 </body>
