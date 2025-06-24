@@ -1,8 +1,14 @@
 // footer.js
 
-// Get current page name
-const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-const isAuthPage = ['login.html', 'sign-up.html', 'forget-password.html'].includes(currentPage);
+// Get current page name if not already defined
+let footerCurrentPage;
+if (typeof currentPage === 'undefined') {
+    footerCurrentPage = window.location.pathname.split('/').pop() || 'index.html';
+} else {
+    footerCurrentPage = currentPage;
+}
+
+const isAuthPage = ['login.html', 'sign-up.html', 'forget-password.html'].includes(footerCurrentPage);
 
 // Define footer HTML based on page type
 const footerHTML = isAuthPage ? `
@@ -82,6 +88,7 @@ const translations = {
     }
 };
 
+// Function to translate footer
 function translateFooter(lang) {
     if (isAuthPage) return;
     
