@@ -186,11 +186,13 @@
                     document.querySelector('.men-title').textContent = lang === 'ar' ? 'رجال' : 'MEN';
                     
                     document.querySelector('.women-count').textContent = 
-                        `${womenProducts.length} ${lang === 'ar' ? 'منتج' : 'Products'}`;
+                        `${womenProducts ? womenProducts.length : 0} ${lang === 'ar' ? 'منتج' : 'Products'}`;
                     document.querySelector('.men-count').textContent = 
-                        `${menProducts.length} ${lang === 'ar' ? 'منتج' : 'Products'}`;
+                        `${menProducts ? menProducts.length : 0} ${lang === 'ar' ? 'منتج' : 'Products'}`;
                 } catch (error) {
                     console.error('Error loading category counts:', error);
+                    document.querySelector('.women-count').textContent = lang === 'ar' ? 'غير متاح' : 'Not available';
+                    document.querySelector('.men-count').textContent = lang === 'ar' ? 'غير متاح' : 'Not available';
                 }
             }
 
@@ -202,8 +204,27 @@
                     // Get both men's and women's products
                     const womenProducts = await getProductsByGender('women');
                     const menProducts = await getProductsByGender('men');
-                    const allProducts = [...womenProducts, ...menProducts];
                     
+                    if (!womenProducts && !menProducts) {
+                        productsContainer.innerHTML = `
+                            <div class="col-12 text-center">
+                                <p class="text-muted">${lang === 'ar' ? 'لا توجد منتجات متاحة حالياً' : 'No products available at the moment'}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const allProducts = [...(womenProducts || []), ...(menProducts || [])];
+                    
+                    if (allProducts.length === 0) {
+                        productsContainer.innerHTML = `
+                            <div class="col-12 text-center">
+                                <p class="text-muted">${lang === 'ar' ? 'لا توجد منتجات متاحة حالياً' : 'No products available at the moment'}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
                     // Shuffle array and take first 8 items
                     const shuffled = allProducts.sort(() => 0.5 - Math.random());
                     const randomProducts = shuffled.slice(0, 8);
@@ -249,7 +270,10 @@
                     console.error('Error loading products:', error);
                     productsContainer.innerHTML = `
                         <div class="col-12 text-center">
-                            <p class="text-danger">${lang === 'ar' ? 'حدث خطأ أثناء تحميل المنتجات' : 'Error loading products'}</p>
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                ${lang === 'ar' ? 'عذراً، حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً.' : 'Sorry, there was an error loading the products. Please try again later.'}
+                            </div>
                         </div>
                     `;
                 }
