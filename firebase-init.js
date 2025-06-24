@@ -54,4 +54,48 @@ try {
     }
 } catch (error) {
     console.warn('Error configuring Firestore settings:', error);
-} 
+}
+
+(async function fixProducts() {
+  const DEFAULTS = {
+    name_en: 'New Product',
+    name_ar: 'منتج جديد',
+    description_en: 'Product Description',
+    description_ar: 'وصف المنتج',
+    price: 0,
+    sizes: [],
+    colors: [],
+    images: ['img/div-empty.jpg'],
+    mainImage: 'img/div-empty.jpg'
+  };
+
+  const productsRef = db.collection('products');
+  const snapshot = await productsRef.get();
+  let fixedCount = 0;
+
+  for (const doc of snapshot.docs) {
+    const data = doc.data();
+    let needsUpdate = false;
+    const updateData = {};
+
+    // Check each field
+    for (const key in DEFAULTS) {
+      if (
+        typeof data[key] === 'undefined' ||
+        (Array.isArray(DEFAULTS[key]) && (!Array.isArray(data[key]) || data[key].length === 0)) ||
+        (typeof DEFAULTS[key] === 'string' && (!data[key] || data[key].trim() === ''))
+      ) {
+        updateData[key] = DEFAULTS[key];
+        needsUpdate = true;
+      }
+    }
+
+    if (needsUpdate) {
+      await productsRef.doc(doc.id).update(updateData);
+      fixedCount++;
+      console.log(`Fixed product: ${doc.id}`, updateData);
+    }
+  }
+
+  alert(`تم إصلاح ${fixedCount} منتج ناقص البيانات!`);
+})(); 
