@@ -307,6 +307,38 @@
       };
     }
     updateAuthButtons();
+
+    // Language translation logic
+    const translations = {
+      en: {
+        login: 'LOGIN', email: 'EMAIL', password: 'PASSWORD', signIn: 'Sign in', forgot: 'forget password?', noAccount: "Don't have an account? ", signUp: 'Sign Up', loginBtn: 'Login', logoutBtn: 'Logout', lang: 'AR',
+      },
+      ar: {
+        login: 'تسجيل الدخول', email: 'البريد الإلكتروني', password: 'كلمة المرور', signIn: 'دخول', forgot: 'نسيت كلمة المرور؟', noAccount: 'ليس لديك حساب؟ ', signUp: 'سجّل الآن', loginBtn: 'تسجيل الدخول', logoutBtn: 'تسجيل الخروج', lang: 'EN',
+      }
+    };
+    function translatePage(lang) {
+      const t = translations[lang];
+      document.querySelector('.login-card h1').textContent = t.login;
+      document.querySelector('label[for="email"]').textContent = t.email;
+      document.querySelector('label[for="password"]').textContent = t.password;
+      document.querySelector('.login-card button[type="submit"]').textContent = t.signIn;
+      document.querySelector('.login-links a').textContent = t.forgot;
+      document.querySelector('.login-links span').innerHTML = t.noAccount + `<a href="sign-up.html">${t.signUp}</a>`;
+      document.getElementById('loginBtn').textContent = t.loginBtn;
+      document.getElementById('logoutBtn').textContent = t.logoutBtn;
+      document.getElementById('lang-toggle').textContent = t.lang;
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    }
+    // On load
+    const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+    translatePage(savedLang);
+    document.getElementById('lang-toggle').addEventListener('click', function() {
+      const currentLang = localStorage.getItem('lang') || 'en';
+      const newLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('lang', newLang);
+      translatePage(newLang);
+    });
     // Login form logic
     document.getElementById('login-form').onsubmit = function(e) {
       e.preventDefault();
@@ -315,6 +347,12 @@
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           const user = userCredential.user;
+          if (!user.emailVerified) {
+            document.getElementById('login-error').textContent = 'Please verify your email before logging in. Check your inbox.';
+            document.getElementById('login-error').classList.remove('d-none');
+            firebase.auth().signOut();
+            return;
+          }
           if (user.email === 'nermeenkamal92@gmail.com') {
             window.location.href = 'admin-dashboard.html';
           } else {
