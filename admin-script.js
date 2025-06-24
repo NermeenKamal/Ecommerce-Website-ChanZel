@@ -28,6 +28,10 @@ const categoriesByLang = {
 
 // Helper: upload image to Cloudinary
 async function uploadImage(imageFile) {
+    if (!imageFile || !imageFile.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return '';
+    }
     const formData = new FormData();
     formData.append("file", imageFile);
     formData.append("upload_preset", "unsigned_preset");
@@ -36,6 +40,10 @@ async function uploadImage(imageFile) {
         body: formData
     });
     const data = await res.json();
+    if (!data.secure_url) {
+        alert('Image upload failed. Please check your Cloudinary preset and try again.');
+        return '';
+    }
     return data.secure_url;
 }
 
@@ -488,3 +496,6 @@ if (topProduct) topProduct.textContent = "Black T-Shirt";
 
 // ترجمة أولية عند تحميل الصفحة
 if (typeof translateDashboard === 'function') translateDashboard(getCurrentLang());
+
+// Helper to ensure no undefined values
+const safeValue = (val, fallback) => (typeof val === 'undefined' ? fallback : val);
