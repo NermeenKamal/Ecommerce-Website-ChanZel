@@ -1,18 +1,29 @@
 <!DOCTYPE HTML>
-<html lang="en"> 
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChanZel - Home</title>
+    
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- Initialize Firebase -->
+    <script src="firebase-init.js"></script>
+    
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo-light.png">
     <style>
         .product-card {
             transition: transform 0.2s;
+            cursor: pointer;
         }
         .product-card:hover {
             transform: translateY(-5px);
@@ -36,6 +47,17 @@
             border-radius: 4px;
             font-size: 0.8rem;
         }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -58,11 +80,9 @@
             <h4 class="h44 text-center" data-translate="summerCollection">Summer Collection</h4>
             <h3 class="h33 text-center mb-4" data-translate="popularTshirts">Popular T-Shirts</h3>
             <div class="row" id="featured-products">
-                <!-- Products will be loaded here dynamically -->
+                <div class="col-12 loading">Loading products...</div>
             </div>
         </section>
-
-        <!-- Rest of your sections -->
 
         <!-- Products Count Section -->
         <section class="container-fluid mt-5">
@@ -86,93 +106,134 @@
         <div id="footer"></div>
     </div>
 
-    <!-- Required JavaScript -->
-    <!-- jQuery first, then Bootstrap JS -->
+    <!-- jQuery first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
     <!-- Custom JS -->
-    <script src="firebase-init.js"></script>
     <script src="navbar.js"></script>
     <script src="footer.js"></script>
-    <script src="products.js"></script>
     <script>
-        // Function to format price
-        function formatPrice(price) {
-            return `$${price.toFixed(2)}`;
-        }
+        // Wait for Firebase to be ready
+        firebase.auth().onAuthStateChanged(function(user) {
+            // Load products.js after Firebase is ready
+            const script = document.createElement('script');
+            script.src = 'products.js';
+            script.onload = function() {
+                // Initialize products after products.js is loaded
+                initializeProducts();
+            };
+            document.body.appendChild(script);
+        });
 
-        // Function to create color dots HTML
-        function createColorDots(colors) {
-            return colors.map(color => 
-                `<span class="color-dot" style="background-color: ${color};"></span>`
-            ).join('');
-        }
+        function initializeProducts() {
+            const db = firebase.firestore();
+            
+            // Function to format price
+            function formatPrice(price) {
+                return `$${parseFloat(price).toFixed(2)}`;
+            }
 
-        // Function to create size badges HTML
-        function createSizeBadges(sizes) {
-            return sizes.map(size => 
-                `<span class="size-badge">${size}</span>`
-            ).join('');
-        }
+            // Function to create color dots HTML
+            function createColorDots(colors) {
+                if (!Array.isArray(colors)) return '';
+                return colors.map(color => 
+                    `<span class="color-dot" style="background-color: ${color};"></span>`
+                ).join('');
+            }
 
-        // Function to create product card
-        function createProductCard(product) {
-            return `
-                <div class="col-md-3 mb-4">
-                    <div class="card product-card">
-                        <img src="${product.images[0]}" class="card-img-top product-image" alt="${product.name}">
-                        <div class="card-body">
-                            <h5 class="card-title">${product.name}</h5>
-                            <p class="card-text">${formatPrice(product.price)}</p>
-                            <div class="colors mb-2">
-                                ${createColorDots(product.colors)}
-                            </div>
-                            <div class="sizes">
-                                ${createSizeBadges(product.sizes)}
+            // Function to create size badges HTML
+            function createSizeBadges(sizes) {
+                if (!Array.isArray(sizes)) return '';
+                return sizes.map(size => 
+                    `<span class="size-badge">${size}</span>`
+                ).join('');
+            }
+
+            // Function to create product card
+            function createProductCard(product) {
+                if (!product || !product.images || !product.images.length) {
+                    return '';
+                }
+                
+                return `
+                    <div class="col-md-3 mb-4">
+                        <div class="card product-card" onclick="window.location.href='product.html?id=${product.id}'">
+                            <img src="${product.images[0]}" class="card-img-top product-image" alt="${product.name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text">${formatPrice(product.price)}</p>
+                                <div class="colors mb-2">
+                                    ${createColorDots(product.colors)}
+                                </div>
+                                <div class="sizes">
+                                    ${createSizeBadges(product.sizes)}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
-        }
-
-        // Load featured products
-        async function loadFeaturedProducts() {
-            try {
-                const products = await getFeaturedProducts({ limit: 4 });
-                const productsHTML = products.map(createProductCard).join('');
-                document.getElementById('featured-products').innerHTML = productsHTML;
-            } catch (error) {
-                console.error('Error loading featured products:', error);
+                `;
             }
-        }
 
-        // Load product counts
-        async function loadProductCounts() {
-            try {
-                const [womenProducts, menProducts] = await Promise.all([
-                    getProductsByGender('women'),
-                    getProductsByGender('men')
-                ]);
-                
-                document.getElementById('women-count').textContent = 
-                    `${womenProducts.length} Products`;
-                document.getElementById('men-count').textContent = 
-                    `${menProducts.length} Products`;
-            } catch (error) {
-                console.error('Error loading product counts:', error);
+            // Load featured products
+            async function loadFeaturedProducts() {
+                const featuredSection = document.getElementById('featured-products');
+                try {
+                    // Get featured products from Firestore
+                    const snapshot = await db.collection('products')
+                        .where('featured', '==', true)
+                        .limit(4)
+                        .get();
+                    
+                    if (snapshot.empty) {
+                        featuredSection.innerHTML = '<div class="col-12 text-center">No featured products available.</div>';
+                        return;
+                    }
+
+                    // Convert to array and shuffle
+                    const products = snapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() }))
+                        .sort(() => 0.5 - Math.random());
+
+                    // Generate HTML
+                    const productsHTML = products
+                        .slice(0, 4)
+                        .map(createProductCard)
+                        .join('');
+
+                    featuredSection.innerHTML = productsHTML;
+                } catch (error) {
+                    console.error('Error loading featured products:', error);
+                    featuredSection.innerHTML = '<div class="col-12 error-message">Error loading products. Please try again later.</div>';
+                }
             }
-        }
 
-        // Initialize when document is ready
-        document.addEventListener('DOMContentLoaded', function() {
+            // Load product counts
+            async function loadProductCounts() {
+                try {
+                    // Get counts from Firestore
+                    const [womenSnapshot, menSnapshot] = await Promise.all([
+                        db.collection('products').where('gender', '==', 'women').get(),
+                        db.collection('products').where('gender', '==', 'men').get()
+                    ]);
+                    
+                    // Update the count displays
+                    document.getElementById('women-count').textContent = 
+                        `${womenSnapshot.size} Products`;
+                    document.getElementById('men-count').textContent = 
+                        `${menSnapshot.size} Products`;
+                } catch (error) {
+                    console.error('Error loading product counts:', error);
+                    document.getElementById('women-count').textContent = 'Error';
+                    document.getElementById('men-count').textContent = 'Error';
+                }
+            }
+
+            // Initialize
             loadFeaturedProducts();
             loadProductCounts();
-        });
+        }
     </script>
 </body>
 </html>
