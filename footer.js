@@ -72,20 +72,28 @@ const translations = {
 };
 
 function translateFooter(lang) {
-  document.querySelector('#footer h5').textContent = translations[lang].aboutChanzel;
-  document.querySelector('#footer p').textContent = translations[lang].aboutText;
-  document.querySelectorAll('#footer h5')[1].textContent = translations[lang].quickLinks;
-  const quickLinks = document.querySelectorAll('#footer .list-unstyled')[0].children;
-  quickLinks[0].querySelector('a').textContent = translations[lang].home;
-  quickLinks[1].querySelector('a').textContent = translations[lang].women;
-  quickLinks[2].querySelector('a').textContent = translations[lang].men;
-  quickLinks[3].querySelector('a').textContent = translations[lang].about;
-  quickLinks[4].querySelector('a').textContent = translations[lang].contact;
-  document.querySelectorAll('#footer h5')[2].textContent = translations[lang].subscribeTitle;
-  document.querySelector('#subscribe-form button').textContent = translations[lang].subscribe;
-  document.querySelector('#subscribe-form input').placeholder = translations[lang].email;
-  document.querySelectorAll('#footer h5')[3].textContent = translations[lang].contactTitle;
-  document.querySelectorAll('#footer h5')[4].textContent = translations[lang].follow;
+  if (document.querySelector('#footer h5'))
+    document.querySelector('#footer h5').textContent = translations[lang].aboutChanzel;
+  if (document.querySelector('#footer p'))
+    document.querySelector('#footer p').textContent = translations[lang].aboutText;
+  if (document.querySelectorAll('#footer h5')[1])
+    document.querySelectorAll('#footer h5')[1].textContent = translations[lang].quickLinks;
+  const quickLinks = document.querySelectorAll('#footer .list-unstyled')[0]?.children;
+  if (quickLinks && quickLinks[0]) quickLinks[0].querySelector('a').textContent = translations[lang].home;
+  if (quickLinks && quickLinks[1]) quickLinks[1].querySelector('a').textContent = translations[lang].women;
+  if (quickLinks && quickLinks[2]) quickLinks[2].querySelector('a').textContent = translations[lang].men;
+  if (quickLinks && quickLinks[3]) quickLinks[3].querySelector('a').textContent = translations[lang].about;
+  if (quickLinks && quickLinks[4]) quickLinks[4].querySelector('a').textContent = translations[lang].contact;
+  if (document.querySelectorAll('#footer h5')[2])
+    document.querySelectorAll('#footer h5')[2].textContent = translations[lang].subscribeTitle;
+  if (document.querySelector('#subscribe-form button'))
+    document.querySelector('#subscribe-form button').textContent = translations[lang].subscribe;
+  if (document.querySelector('#subscribe-form input'))
+    document.querySelector('#subscribe-form input').placeholder = translations[lang].email;
+  if (document.querySelectorAll('#footer h5')[3])
+    document.querySelectorAll('#footer h5')[3].textContent = translations[lang].contactTitle;
+  if (document.querySelectorAll('#footer h5')[4])
+    document.querySelectorAll('#footer h5')[4].textContent = translations[lang].follow;
 }
 
 // On load, set language from localStorage or default
