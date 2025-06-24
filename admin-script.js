@@ -34,7 +34,7 @@ async function uploadImage(imageFile) {
     }
     const formData = new FormData();
     formData.append("file", imageFile);
-    formData.append("upload_preset", "unsigned_preset");
+    formData.append("upload_preset", "upload_preset");
     const res = await fetch("https://api.cloudinary.com/v1_1/dqgkjyaqz/image/upload", {
         method: "POST",
         body: formData
