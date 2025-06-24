@@ -54,85 +54,7 @@ function getDashboardT(lang) {
   };
 }
 
-// 2. بناء قائمة الجنس والقائمة المنسدلة للتصنيفات بالنصوص الصحيحة
-function buildGenderAndCategorySelects() {
-  const lang = getCurrentLang();
-  const t = getDashboardT(lang);
-  // Gender select
-  genderSelect.innerHTML = '';
-  const optSelect = document.createElement('option');
-  optSelect.value = '';
-  optSelect.textContent = t.select;
-  genderSelect.appendChild(optSelect);
-  const optWomen = document.createElement('option');
-  optWomen.value = 'women';
-  optWomen.textContent = t.women;
-  genderSelect.appendChild(optWomen);
-  const optMen = document.createElement('option');
-  optMen.value = 'men';
-  optMen.textContent = t.men;
-  genderSelect.appendChild(optMen);
-  // اجعل القيمة الافتراضية women إذا كانت فارغة
-  if (!genderSelect.value || genderSelect.value === '') {
-    genderSelect.value = 'women';
-  }
-  // استدعِ بناء التصنيفات يدويًا بعد تعيين القيمة
-  buildCategoryOptions();
-}
-function buildCategoryOptions() {
-  const lang = getCurrentLang();
-  const t = getDashboardT(lang);
-  const gender = genderSelect.value;
-  console.log('buildCategoryOptions: gender =', gender); // تتبع القيمة
-  categorySelect.innerHTML = '';
-  const optSelect = document.createElement('option');
-  optSelect.value = '';
-  optSelect.textContent = t.select;
-  categorySelect.appendChild(optSelect);
-  if (gender && categoriesByLang[lang][gender]) {
-    categoriesByLang[lang][gender].forEach(cat => {
-      const opt = document.createElement('option');
-      opt.value = cat;
-      opt.textContent = cat;
-      categorySelect.appendChild(opt);
-    });
-  }
-}
-// عند تغيير الجنس
-genderSelect.addEventListener('change', buildCategoryOptions);
-// عند reset للفورم بعد إضافة منتج
-form.addEventListener('reset', () => {
-  setTimeout(() => {
-    if (!genderSelect.value || genderSelect.value === '') {
-      genderSelect.value = 'women';
-    }
-    buildCategoryOptions();
-  }, 0);
-});
-// عند تحميل الصفحة
-buildGenderAndCategorySelects();
-if (!genderSelect.value || genderSelect.value === '') {
-  genderSelect.value = 'women';
-}
-buildCategoryOptions();
-
-// 4. بناء زر Add Color وربطه
-function bindAddColorBtn() {
-  const btn = document.getElementById('add-color-btn');
-  if (btn) {
-    btn.onclick = function() {
-      colorsList.appendChild(createColorRow());
-    };
-  }
-}
-// 5. بناء الفورم عند تحميل الصفحة
-function buildFormOnLoad() {
-  buildGenderAndCategorySelects();
-  if (!genderSelect.value) genderSelect.value = 'women';
-  buildCategoryOptions();
-  if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
-  bindAddColorBtn();
-}
+// All DOM-dependent code inside DOMContentLoaded
 let genderSelect, categorySelect, colorsList, form;
 document.addEventListener('DOMContentLoaded', function() {
   genderSelect = document.getElementById('gender');
@@ -140,10 +62,80 @@ document.addEventListener('DOMContentLoaded', function() {
   colorsList = document.getElementById('colors-list');
   form = document.getElementById("addProductForm");
 
-  // Place all code that uses these variables here or in functions called from here
-  // ... (move all event listeners and initializations here) ...
+  function buildGenderAndCategorySelects() {
+    const lang = getCurrentLang();
+    const t = getDashboardT(lang);
+    genderSelect.innerHTML = '';
+    const optSelect = document.createElement('option');
+    optSelect.value = '';
+    optSelect.textContent = t.select;
+    genderSelect.appendChild(optSelect);
+    const optWomen = document.createElement('option');
+    optWomen.value = 'women';
+    optWomen.textContent = t.women;
+    genderSelect.appendChild(optWomen);
+    const optMen = document.createElement('option');
+    optMen.value = 'men';
+    optMen.textContent = t.men;
+    genderSelect.appendChild(optMen);
+    if (!genderSelect.value || genderSelect.value === '') {
+      genderSelect.value = 'women';
+    }
+    buildCategoryOptions();
+  }
+  function buildCategoryOptions() {
+    const lang = getCurrentLang();
+    const t = getDashboardT(lang);
+    const gender = genderSelect.value;
+    categorySelect.innerHTML = '';
+    const optSelect = document.createElement('option');
+    optSelect.value = '';
+    optSelect.textContent = t.select;
+    categorySelect.appendChild(optSelect);
+    if (gender && categoriesByLang[lang][gender]) {
+      categoriesByLang[lang][gender].forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        categorySelect.appendChild(opt);
+      });
+    }
+  }
+  function bindAddColorBtn() {
+    const btn = document.getElementById('add-color-btn');
+    if (btn) {
+      btn.onclick = function() {
+        colorsList.appendChild(createColorRow());
+      };
+    }
+  }
+  function createColorRow(name = '', imageUrl = '', file = null) {
+    const lang = getCurrentLang();
+    const t = getDashboardT(lang);
+    const row = document.createElement('div');
+    row.className = 'd-flex align-items-center mb-2 color-row';
+    row.innerHTML = `
+      <input type="text" class="form-control form-control-sm mr-2 color-name" placeholder="${t.colorName}" value="${name}" style="max-width:120px;">
+      <input type="file" accept="image/*" class="form-control-file form-control-sm mr-2 color-image">
+      <img src="${imageUrl}" class="product-img-thumb mr-2 d-none" style="width:36px;height:36px;" alt="color-img">
+      <button type="button" class="btn btn-danger btn-sm remove-color-btn">&times;</button>
+    `;
+    if (imageUrl) {
+      row.querySelector('img').src = imageUrl;
+      row.querySelector('img').classList.remove('d-none');
+    }
+    row.querySelector('.remove-color-btn').onclick = () => row.remove();
+    row.querySelector('.color-image').onchange = function(e) {
+      if (this.files && this.files[0]) {
+        const url = URL.createObjectURL(this.files[0]);
+        row.querySelector('img').src = url;
+        row.querySelector('img').classList.remove('d-none');
+      }
+    };
+    setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
+    return row;
+  }
 
-  // Example: (move all event listeners and initializations here)
   genderSelect.addEventListener('change', buildCategoryOptions);
   form.addEventListener('reset', () => {
     setTimeout(() => {
@@ -153,45 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
       buildCategoryOptions();
     }, 0);
   });
-  buildGenderAndCategorySelects();
-  if (!genderSelect.value || genderSelect.value === '') {
-    genderSelect.value = 'women';
-  }
-  buildCategoryOptions();
-  if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
-  bindAddColorBtn();
-});
-
-// --- Colors dynamic input logic ---
-function createColorRow(name = '', imageUrl = '', file = null) {
-  const lang = getCurrentLang();
-  const t = getDashboardT(lang);
-  const row = document.createElement('div');
-  row.className = 'd-flex align-items-center mb-2 color-row';
-  row.innerHTML = `
-    <input type="text" class="form-control form-control-sm mr-2 color-name" placeholder="${t.colorName}" value="${name}" style="max-width:120px;">
-    <input type="file" accept="image/*" class="form-control-file form-control-sm mr-2 color-image">
-    <img src="${imageUrl}" class="product-img-thumb mr-2 d-none" style="width:36px;height:36px;" alt="color-img">
-    <button type="button" class="btn btn-danger btn-sm remove-color-btn">&times;</button>
-  `;
-  if (imageUrl) {
-    row.querySelector('img').src = imageUrl;
-    row.querySelector('img').classList.remove('d-none');
-  }
-  row.querySelector('.remove-color-btn').onclick = () => row.remove();
-  row.querySelector('.color-image').onchange = function(e) {
-    if (this.files && this.files[0]) {
-      const url = URL.createObjectURL(this.files[0]);
-      row.querySelector('img').src = url;
-      row.querySelector('img').classList.remove('d-none');
-    }
-  };
-  setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
-  return row;
-}
-
-// Add Product
-form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("name").value.trim();
     const price = parseFloat(document.getElementById("price").value);
@@ -222,40 +176,50 @@ form.addEventListener("submit", async (e) => {
       return;
     }
     try {
-        // Upload all images
-        const imageUrls = [];
-        for (let img of imagesFiles) {
-          imageUrls.push(await uploadImage(img));
-        }
-        // Upload main image if provided, else use first image
-        let mainImageUrl = null;
-        if (mainImageFile) {
-          mainImageUrl = await uploadImage(mainImageFile);
-        } else {
-          mainImageUrl = imageUrls[0];
-        }
-        await addDoc(collection(db, "products"), {
-            name,
-            price,
-            stock,
-            gender,
-            category,
-            colors,
-            sizes,
-            mainImage: mainImageUrl,
-            images: imageUrls,
-            createdAt: new Date()
-        });
-        alert("Product added successfully!");
-        form.reset();
-        buildGenderAndCategorySelects();
-        colorsList.innerHTML = '';
-        colorsList.appendChild(createColorRow());
-        loadProducts().then(loadStats);
+      // Upload all images
+      const imageUrls = [];
+      for (let img of imagesFiles) {
+        imageUrls.push(await uploadImage(img));
+      }
+      // Upload main image if provided, else use first image
+      let mainImageUrl = null;
+      if (mainImageFile) {
+        mainImageUrl = await uploadImage(mainImageFile);
+      } else {
+        mainImageUrl = imageUrls[0];
+      }
+      await addDoc(collection(db, "products"), {
+        name,
+        price,
+        stock,
+        gender,
+        category,
+        colors,
+        sizes,
+        mainImage: mainImageUrl,
+        images: imageUrls,
+        createdAt: new Date()
+      });
+      alert("Product added successfully!");
+      form.reset();
+      buildGenderAndCategorySelects();
+      colorsList.innerHTML = '';
+      colorsList.appendChild(createColorRow());
+      loadProducts().then(loadStats);
     } catch (err) {
-        alert("Failed to add product.");
-        console.error(err);
+      alert("Failed to add product.");
+      console.error(err);
     }
+  });
+
+  // Initial build
+  buildGenderAndCategorySelects();
+  if (!genderSelect.value || genderSelect.value === '') {
+    genderSelect.value = 'women';
+  }
+  buildCategoryOptions();
+  if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
+  bindAddColorBtn();
 });
 
 // Load Products
@@ -483,20 +447,10 @@ async function loadStats() {
   document.getElementById("stat-customers").textContent = customersCount;
 }
 
-// Initial load
-buildGenderAndCategorySelects();
-loadProducts().then(loadStats);
-// ترجمة أولية عند تحميل الصفحة
-if (typeof translateDashboard === 'function') translateDashboard(getCurrentLang());
-
 // ✅ 6. Load stats (mockup)
 document.getElementById("userCount").textContent = "10";
 document.getElementById("orderCount").textContent = "5";
 document.getElementById("topProduct").textContent = "Black T-Shirt";
 
-// عند تحميل الصفحة، اجعل الجنس الافتراضي women إذا كان فارغًا
-if (!genderSelect.value) {
-  genderSelect.value = 'women';
-}
-buildCategoryOptions();
-bindAddColorBtn();
+// ترجمة أولية عند تحميل الصفحة
+if (typeof translateDashboard === 'function') translateDashboard(getCurrentLang());
