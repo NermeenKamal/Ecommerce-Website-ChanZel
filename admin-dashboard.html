@@ -9,15 +9,20 @@
     <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
     <link rel="icon" href="img/logo-light.png">
     <style>
-      .admin-section { max-width: 1100px; margin: 40px auto 0 auto; }
+      .admin-section { max-width: 1200px; margin: 40px auto 0 auto; }
       .admin-section .card { border-radius: 18px; }
       .admin-section h3 { font-size: 2.2rem; font-weight: bold; }
       .admin-section .card-title { font-size: 1.2rem; font-weight: 600; }
       .admin-section .form-control, .admin-section .btn { font-size: 1rem; }
       .admin-section .table th, .admin-section .table td { vertical-align: middle; }
+      .product-img-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 4px; }
+      .color-dot { display:inline-block; width:22px; height:22px; border-radius:50%; border:1px solid #ccc; margin-right:4px; }
+      .size-badge { display:inline-block; background:#eee; border-radius:6px; padding:2px 8px; margin-right:3px; font-size:0.95em; }
+      .edit-btn, .delete-btn { min-width: 70px; }
       @media (max-width: 900px) {
         .admin-section { padding: 0 8px; }
         .admin-section h3 { font-size: 1.3rem; }
+        .product-img-thumb { width: 40px; height: 40px; }
       }
     </style>
 </head>
@@ -28,49 +33,129 @@
     <!-- Admin Dashboard Section -->
     <section class="admin-section">
         <h3 class="mb-4 h33 text-center" id="dashboard-title">Admin Dashboard</h3>
-        <div class="row mb-4">
-            <div class="col-md-6 mb-3 mb-md-0">
-                <div class="card p-3 shadow-sm">
-                    <h5 class="card-title" id="add-product-title">➕ Add New Product</h5>
-                    <form id="addProductForm">
-                        <input type="text" id="name" class="form-control mb-2" placeholder="Product Name" required>
-                        <input type="number" id="price" class="form-control mb-2" placeholder="Price" required>
-                        <input type="number" id="stock" class="form-control mb-2" placeholder="Stock" required>
-                        <input type="file" id="image" class="form-control mb-2" accept="image/*" required>
-                        <button type="submit" class="btn btn-dark btn-sm" id="add-btn">Add</button>
-                    </form>
-                </div>
+        <!-- Statistics Row -->
+        <div class="row mb-4" id="stats-row">
+          <div class="col-md-4 mb-2">
+            <div class="card text-center shadow-sm p-3">
+              <div><i class="fas fa-box fa-2x mb-2"></i></div>
+              <div class="h4 mb-1" id="stat-products">0</div>
+              <div class="stat-label" id="stat-products-label">Products</div>
             </div>
-            <div class="col-md-6">
-                <div class="card p-3 shadow-sm">
-                    <h5 class="card-title" id="stats-title">📊 Statistics</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item" id="users-label">Users: <span id="userCount">0</span></li>
-                        <li class="list-group-item" id="products-label">Products: <span id="productCount">0</span></li>
-                        <li class="list-group-item" id="orders-label">Orders: <span id="orderCount">0</span></li>
-                        <li class="list-group-item" id="top-label">Top Product: <span id="topProduct">-</span></li>
-                    </ul>
-                </div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <div class="card text-center shadow-sm p-3">
+              <div><i class="fas fa-shopping-cart fa-2x mb-2"></i></div>
+              <div class="h4 mb-1" id="stat-orders">0</div>
+              <div class="stat-label" id="stat-orders-label">Orders</div>
             </div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <div class="card text-center shadow-sm p-3">
+              <div><i class="fas fa-users fa-2x mb-2"></i></div>
+              <div class="h4 mb-1" id="stat-customers">0</div>
+              <div class="stat-label" id="stat-customers-label">Customers</div>
+            </div>
+          </div>
         </div>
-        <div class="card p-3 shadow-sm">
-            <h5 class="card-title" id="current-products-title">📦 Current Products</h5>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th id="th-name">Name</th>
-                    <th id="th-price">Price</th>
-                    <th id="th-stock">Stock</th>
-                    <th id="th-image">Image</th>
-                    <th id="th-actions">Actions</th>
-                </tr>
-                </thead>
-                <tbody id="productTable">
-                <!-- Dynamically filled from Firestore -->
-                </tbody>
-            </table>
+        <div class="card p-4 shadow-sm mb-4">
+            <h5 class="card-title mb-3" id="add-product-title">Add New Product</h5>
+            <form id="addProductForm" autocomplete="off">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name">Product Name</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="price">Price (EGP)</label>
+                        <input type="number" id="price" class="form-control" min="0" step="0.01" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" class="form-control" min="0" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="mainImage">Main Image (optional)</label>
+                        <input type="file" id="mainImage" class="form-control" accept="image/*">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="images">Product Images</label>
+                        <input type="file" id="images" class="form-control" accept="image/*" multiple required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="gender">Gender</label>
+                        <select id="gender" class="form-control" required>
+                            <option value="">Select</option>
+                            <option value="women">Women</option>
+                            <option value="men">Men</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="category">Category</label>
+                        <select id="category" class="form-control" required>
+                            <option value="">Select</option>
+                            <!-- Categories will be loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label>Colors</label>
+                        <div id="colors-list"></div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="add-color-btn">Add Color</button>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label>Sizes (comma separated)</label>
+                        <input type="text" id="sizes" class="form-control" placeholder="S, M, L, XL, ..." required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-dark btn-block mt-2" id="add-btn">Add Product</button>
+            </form>
+        </div>
+        <div class="card p-4 shadow-sm">
+            <h5 class="card-title mb-3" id="current-products-title">Current Products</h5>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle" id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Gender</th>
+                            <th>Category</th>
+                            <th>Main Image</th>
+                            <th>Images</th>
+                            <th>Colors</th>
+                            <th>Sizes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTable">
+                        <!-- Products will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="editProductForm">
+              <!-- Fields will be filled dynamically -->
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-dark" id="saveEditBtn">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Footer -->
     <div id="footer"></div>
 </div>
@@ -82,40 +167,73 @@
 <script src="navbar.js"></script>
 <script src="footer.js"></script>
 <script>
-// Language translation for dashboard content
+// Translation logic for dashboard content (EN/AR)
 const dashboardTranslations = {
   en: {
-    dashboard: 'Admin Dashboard', addProduct: '➕ Add New Product', addBtn: 'Add', stats: '📊 Statistics', users: 'Users', products: 'Products', orders: 'Orders', top: 'Top Product', currentProducts: '📦 Current Products', thName: 'Name', thPrice: 'Price', thStock: 'Stock', thImage: 'Image', thActions: 'Actions',
+    dashboard: 'Admin Dashboard', addProduct: 'Add New Product', addBtn: 'Add Product', currentProducts: 'Current Products', edit: 'Edit', delete: 'Delete', save: 'Save Changes', cancel: 'Cancel', name: 'Product Name', price: 'Price (EGP)', stock: 'Stock', gender: 'Gender', category: 'Category', mainImage: 'Main Image', images: 'Product Images', colors: 'Colors', sizes: 'Sizes', women: 'Women', men: 'Men', select: 'Select', addColor: 'Add Color', colorName: 'Color name', actions: 'Actions', statProducts: 'Products', statOrders: 'Orders', statCustomers: 'Customers',
   },
   ar: {
-    dashboard: 'لوحة تحكم المدير', addProduct: '➕ إضافة منتج جديد', addBtn: 'إضافة', stats: '📊 إحصائيات', users: 'عدد المستخدمين', products: 'عدد المنتجات', orders: 'عدد الطلبات', top: 'الأكثر مبيعًا', currentProducts: '📦 المنتجات الحالية', thName: 'الاسم', thPrice: 'السعر', thStock: 'المخزون', thImage: 'الصورة', thActions: 'الإجراءات',
+    dashboard: 'لوحة تحكم المدير', addProduct: 'إضافة منتج جديد', addBtn: 'إضافة المنتج', currentProducts: 'المنتجات الحالية', edit: 'تعديل', delete: 'حذف', save: 'حفظ التغييرات', cancel: 'إلغاء', name: 'اسم المنتج', price: 'السعر (جنيه)', stock: 'المخزون', gender: 'الجنس', category: 'التصنيف', mainImage: 'الصورة الرئيسية', images: 'صور المنتج', colors: 'الألوان', sizes: 'المقاسات', women: 'نساء', men: 'رجال', select: 'اختر', addColor: 'إضافة اللون', colorName: 'اسم اللون', actions: 'الإجراءات', statProducts: 'المنتجات', statOrders: 'الطلبات', statCustomers: 'العملاء',
   }
 };
 function translateDashboard(lang) {
   const t = dashboardTranslations[lang];
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
   document.getElementById('dashboard-title').textContent = t.dashboard;
   document.getElementById('add-product-title').textContent = t.addProduct;
   document.getElementById('add-btn').textContent = t.addBtn;
-  document.getElementById('stats-title').textContent = t.stats;
-  document.getElementById('users-label').innerHTML = t.users + ': <span id="userCount">' + document.getElementById('userCount').textContent + '</span>';
-  document.getElementById('products-label').innerHTML = t.products + ': <span id="productCount">' + document.getElementById('productCount').textContent + '</span>';
-  document.getElementById('orders-label').innerHTML = t.orders + ': <span id="orderCount">' + document.getElementById('orderCount').textContent + '</span>';
-  document.getElementById('top-label').innerHTML = t.top + ': <span id="topProduct">' + document.getElementById('topProduct').textContent + '</span>';
   document.getElementById('current-products-title').textContent = t.currentProducts;
-  document.getElementById('th-name').textContent = t.thName;
-  document.getElementById('th-price').textContent = t.thPrice;
-  document.getElementById('th-stock').textContent = t.thStock;
-  document.getElementById('th-image').textContent = t.thImage;
-  document.getElementById('th-actions').textContent = t.thActions;
+  // Table headers
+  const ths = document.querySelectorAll('#productsTable thead th');
+  ths[0].textContent = t.name;
+  ths[1].textContent = t.price;
+  ths[2].textContent = t.stock;
+  ths[3].textContent = t.gender;
+  ths[4].textContent = t.category;
+  ths[5].textContent = t.mainImage;
+  ths[6].textContent = t.images;
+  ths[7].textContent = t.colors;
+  ths[8].textContent = t.sizes;
+  ths[9].textContent = t.actions || 'Actions';
+  document.getElementById('add-color-btn').textContent = t.addColor || 'Add Color';
+  // Form labels
+  document.querySelector('label[for="name"]').textContent = t.name;
+  document.querySelector('label[for="price"]').textContent = t.price;
+  document.querySelector('label[for="stock"]').textContent = t.stock;
+  document.querySelector('label[for="mainImage"]').textContent = t.mainImage + ' (optional)';
+  document.querySelector('label[for="images"]').textContent = t.images;
+  document.querySelector('label[for="gender"]').textContent = t.gender;
+  document.querySelector('label[for="category"]').textContent = t.category;
+  // Colors label
+  document.querySelectorAll('.admin-section label').forEach(lab => {
+    if (lab.textContent.trim().toLowerCase().startsWith('colors')) lab.textContent = t.colors;
+    if (lab.textContent.trim().toLowerCase().startsWith('sizes')) lab.textContent = t.sizes + ' (comma separated)';
+  });
+  document.getElementById('gender').options[0].textContent = t.select;
+  document.getElementById('gender').options[1].textContent = t.women;
+  document.getElementById('gender').options[2].textContent = t.men;
+  document.getElementById('category').options[0].textContent = t.select;
+  // Modal
+  document.getElementById('editProductModalLabel').textContent = t.edit;
+  document.getElementById('saveEditBtn').textContent = t.save;
+  document.querySelector('#editProductModal .btn-secondary').textContent = t.cancel;
+  // Translate Add Color in edit modal if open
+  const editAddColorBtn = document.getElementById('edit-add-color-btn');
+  if (editAddColorBtn) editAddColorBtn.textContent = t.addColor || 'Add Color';
+  // Translate color row placeholders
+  document.querySelectorAll('.color-row .color-name').forEach(input => {
+    input.placeholder = t.colorName || 'Color name';
+  });
+  // Translate statistics labels
+  if(document.getElementById('stat-products-label')) document.getElementById('stat-products-label').textContent = t.statProducts;
+  if(document.getElementById('stat-orders-label')) document.getElementById('stat-orders-label').textContent = t.statOrders;
+  if(document.getElementById('stat-customers-label')) document.getElementById('stat-customers-label').textContent = t.statCustomers;
 }
-// On load, set language from localStorage or default
 const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
 translateDashboard(savedLang);
-window.addEventListener('storage', function() {
-  const lang = localStorage.getItem('lang') || 'en';
-  translateDashboard(lang);
+window.addEventListener('storage', function(e) {
+  if (e.key === 'lang') location.reload();
 });
-// Also update on navbar language toggle
 setTimeout(() => {
   const langBtn = document.getElementById('lang-toggle');
   if (langBtn) {
@@ -127,6 +245,30 @@ setTimeout(() => {
     });
   }
 }, 500);
+
+// عند تحميل الصفحة
+const lang = getCurrentLang();
+if (!genderSelect.value) genderSelect.value = 'women';
+buildGenderAndCategorySelects();
+buildCategoryOptions();
+if (colorsList.childElementCount === 0) colorsList.appendChild(createColorRow());
+bindAddColorBtn();
+
+// عند تغيير الجنس
+genderSelect.addEventListener('change', () => {
+  buildCategoryOptions();
+  // يمكن إعادة ربط الأحداث هنا إذا لزم الأمر
+});
+
+// بعد كل عملية بناء زر أو قائمة ديناميكية
+function bindAddColorBtn() {
+  const btn = document.getElementById('add-color-btn');
+  if (btn) {
+    btn.onclick = function() {
+      colorsList.appendChild(createColorRow());
+    };
+  }
+}
 </script>
 </body>
 </html>
