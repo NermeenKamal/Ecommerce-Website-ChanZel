@@ -231,9 +231,9 @@
 <script src="auth.js"></script>
 <script>
 // Language toggle logic for all pages
-const translations = { en: { lang: 'AR' }, ar: { lang: 'EN' } };
+const langBtnTranslations = { en: { lang: 'AR' }, ar: { lang: 'EN' } };
 function setLangBtnText(lang) {
-  document.getElementById('lang-toggle').textContent = translations[lang].lang;
+  document.getElementById('lang-toggle').textContent = langBtnTranslations[lang].lang;
   document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 }
 const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
