@@ -167,21 +167,22 @@
     <script src="firebase-init.js"></script>
     
     <!-- Custom JS -->
+    <script src="products.js"></script>
     <script src="script.js"></script>
     <script src="navbar.js"></script>
     <script src="footer.js"></script>
     <script src="auth.js"></script>
-    <script src="products.js"></script>
+    
     <script>
-        // Wait for Firebase to be fully initialized
-        firebase.auth().onAuthStateChanged(function(user) {
+        // Wait for Firebase and products.js to be fully loaded
+        window.addEventListener('load', function() {
             const lang = localStorage.getItem('lang') || 'en';
             
             // Load category counts
             async function loadCategoryCounts() {
                 try {
-                    const womenProducts = await getProductsByGender('women');
-                    const menProducts = await getProductsByGender('men');
+                    const womenProducts = await window.getProductsByGender('women');
+                    const menProducts = await window.getProductsByGender('men');
                     
                     document.querySelector('.women-title').textContent = lang === 'ar' ? 'نساء' : 'WOMEN';
                     document.querySelector('.men-title').textContent = lang === 'ar' ? 'رجال' : 'MEN';
@@ -203,8 +204,8 @@
                 
                 try {
                     // Get both men's and women's products
-                    const womenProducts = await getProductsByGender('women');
-                    const menProducts = await getProductsByGender('men');
+                    const womenProducts = await window.getProductsByGender('women');
+                    const menProducts = await window.getProductsByGender('men');
                     
                     if (!womenProducts && !menProducts) {
                         productsContainer.innerHTML = `
