@@ -185,6 +185,22 @@
       </table>
     </div>
   </div>
+  <!-- Modal for customer details -->
+  <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="customerModalLabel">Customer Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="customerModalBody">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
   <footer class="main-footer" style="width:100%;background:rgba(255,255,255,0.96);border-top:1.5px solid #e0dfd2;text-align:center;padding:13px 0 10px 0;font-size:1.01rem;color:#353232;letter-spacing:0.3px;box-shadow:none;z-index:2;position:sticky;bottom:0;left:0;">
     &copy; 2024 ChanZel. All rights reserved.
   </footer>
@@ -200,10 +216,91 @@
         const adminEmail = "nermeenkamal92@gmail.com";
         if (!user || user.email !== adminEmail) {
           window.location.href = "login.html";
+        } else {
+          loadCustomers();
         }
       });
     });
-    // TODO: Fetch and render customers from Firestore
+    // Load customers from Firestore
+    function loadCustomers() {
+      const tableBody = document.querySelector('#customersTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+      db.collection('users').where('role', '==', 'client').get().then(async (snapshot) => {
+        const users = [];
+        snapshot.forEach(doc => users.push(doc.data()));
+        // For each user, get orders count
+        const ordersSnapshot = await db.collection('orders').get();
+        const ordersByUser = {};
+        ordersSnapshot.forEach(orderDoc => {
+          const order = orderDoc.data();
+          if (!ordersByUser[order.userId]) ordersByUser[order.userId] = [];
+          ordersByUser[order.userId].push({...order, id: orderDoc.id});
+        });
+        tableBody.innerHTML = '';
+        if (users.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="6">No customers found.</td></tr>';
+        }
+        users.forEach(user => {
+          const orders = ordersByUser[user.uid] || [];
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><img src="${user.photoURL || 'img/girl.jpg'}" class="customer-photo" alt="photo"></td>
+            <td>${user.name || '-'}</td>
+            <td>${user.email}</td>
+            <td>${user.phone || '-'}</td>
+            <td>${orders.length}</td>
+            <td><button class="details-btn" data-uid="${user.uid}">Details</button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+        // Bind details buttons
+        document.querySelectorAll('.details-btn').forEach(btn => {
+          btn.onclick = function() {
+            const uid = this.getAttribute('data-uid');
+            const user = users.find(u => u.uid === uid);
+            const orders = ordersByUser[uid] || [];
+            showCustomerModal(user, orders);
+          };
+        });
+      });
+    }
+    // Show customer modal
+    function showCustomerModal(user, orders) {
+      const modalBody = document.getElementById('customerModalBody');
+      modalBody.innerHTML = `
+        <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+          <img src="${user.photoURL || 'img/girl.jpg'}" class="customer-photo" style="width:70px;height:70px;">
+          <div>
+            <div><b>Name:</b> ${user.name || '-'}</div>
+            <div><b>Email:</b> ${user.email}</div>
+            <div><b>Phone:</b> ${user.phone || '-'}</div>
+            <div><b>Address:</b> ${user.address || '-'}</div>
+            <div><b>Orders:</b> ${orders.length}</div>
+          </div>
+        </div>
+        <hr>
+        <div><b>Orders:</b></div>
+        <div class="table-responsive"><table class="customers-table" style="margin-top:10px;">
+          <thead><tr><th>ID</th><th>Date</th><th>Status</th><th>View</th></tr></thead>
+          <tbody>
+            ${orders.length === 0 ? '<tr><td colspan="4">No orders</td></tr>' : orders.map(order => `
+              <tr>
+                <td>${order.id}</td>
+                <td>${order.createdAt ? (new Date(order.createdAt.seconds ? order.createdAt.seconds*1000 : order.createdAt)).toLocaleDateString() : '-'}</td>
+                <td>${order.status || '-'}</td>
+                <td><button class="details-btn" style="padding:0.2rem 0.7rem;font-size:0.95rem;" onclick="alert('Order details coming soon')">View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table></div>
+      `;
+      // Show modal (Bootstrap 4/5 compatible)
+      if (window.$ && $('#customerModal').modal) {
+        $('#customerModal').modal('show');
+      } else {
+        document.getElementById('customerModal').style.display = 'block';
+      }
+    }
   </script>
 </body>
 </html> 
