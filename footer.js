@@ -8,10 +8,10 @@ if (typeof currentPage === 'undefined') {
     footerCurrentPage = currentPage;
 }
 
-const isAuthPage = ['login.html', 'sign-up.html', 'forget-password.html'].includes(footerCurrentPage);
+const footerIsAuthPage = ['login.html', 'sign-up.html', 'forget-password.html'].includes(footerCurrentPage);
 
 // Define footer HTML based on page type
-const footerHTML = isAuthPage ? `
+const footerHTML = footerIsAuthPage ? `
     <footer class="auth-footer">
         <div class="text-center py-3">
             Copyright &copy; 2024 ChanZel By NERMEEN
@@ -90,7 +90,7 @@ const translations = {
 
 // Function to translate footer
 function translateFooter(lang) {
-    if (isAuthPage) return;
+    if (footerIsAuthPage) return;
     
     const t = translations[lang];
     const footer = document.querySelector('footer');
