@@ -106,19 +106,79 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateAuthButtons(user) {
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
+    const notifBell = document.getElementById('notif-bell');
     if (!loginBtn || !logoutBtn) return;
     if (user) {
       loginBtn.classList.add('d-none');
       logoutBtn.classList.remove('d-none');
+      if (notifBell) notifBell.classList.remove('d-none');
     } else {
       loginBtn.classList.remove('d-none');
       logoutBtn.classList.add('d-none');
+      if (notifBell) notifBell.classList.add('d-none');
     }
   }
-  // Firebase Auth listener
+  // إضافة جرس الإشعارات للـ navbar إذا لم يكن موجودًا
+  function addNotifBell() {
+    if (document.getElementById('notif-bell')) return;
+    const navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+    const bell = document.createElement('div');
+    bell.innerHTML = `
+      <div style="position:relative;display:inline-block;">
+        <button id="notif-bell" class="btn btn-link p-0" style="font-size:1.5rem;color:#785c4a;outline:none;box-shadow:none;" title="Notifications">
+          <i class="fa fa-bell"></i>
+          <span id="notif-badge" style="position:absolute;top:-7px;right:-7px;background:#9c2c2c;color:#fff;border-radius:50%;font-size:0.8rem;padding:1px 6px;display:none;">0</span>
+        </button>
+        <div id="notif-dropdown" style="display:none;position:absolute;right:0;top:120%;background:#fff;min-width:270px;max-width:350px;box-shadow:0 4px 18px rgba(0,0,0,0.13);border-radius:10px;z-index:9999;border:1px solid #e0dfd2;max-height:350px;overflow-y:auto;"></div>
+      </div>
+    `;
+    navLinks.insertBefore(bell, navLinks.firstChild);
+  }
+  addNotifBell();
+  // إشعارات Firestore
+  function loadNotifications(user) {
+    if (!user) return;
+    const notifBell = document.getElementById('notif-bell');
+    const notifBadge = document.getElementById('notif-badge');
+    const notifDropdown = document.getElementById('notif-dropdown');
+    if (!notifBell || !notifBadge || !notifDropdown) return;
+    // جلب الإشعارات من Firestore
+    db.collection('notifications').where('userId', '==', user.uid).orderBy('createdAt', 'desc').limit(15).onSnapshot(snap => {
+      let unread = 0;
+      let html = '';
+      snap.forEach(doc => {
+        const n = doc.data();
+        if (!n.read) unread++;
+        html += `<div class="p-2 border-bottom small ${n.read ? '' : 'font-weight-bold'}" style="cursor:pointer;" data-id="${doc.id}">
+          <span>${n.message}</span>
+          <div style="font-size:0.85em;color:#888;">${n.createdAt && n.createdAt.toDate ? n.createdAt.toDate().toLocaleString() : ''}</div>
+        </div>`;
+      });
+      notifBadge.textContent = unread;
+      notifBadge.style.display = unread > 0 ? 'inline-block' : 'none';
+      notifDropdown.innerHTML = html || '<div class="p-2 text-center text-muted">No notifications</div>';
+      // عند الضغط على إشعار: اعتبره مقروء
+      notifDropdown.querySelectorAll('div[data-id]').forEach(div => {
+        div.onclick = function() {
+          db.collection('notifications').doc(this.getAttribute('data-id')).update({read:true});
+          this.classList.remove('font-weight-bold');
+        };
+      });
+    });
+    // إظهار/إخفاء القائمة
+    notifBell.onclick = function(e) {
+      e.stopPropagation();
+      notifDropdown.style.display = notifDropdown.style.display === 'block' ? 'none' : 'block';
+    };
+    document.addEventListener('click', function() {
+      notifDropdown.style.display = 'none';
+    });
+  }
   if (window.firebase && firebase.auth) {
     firebase.auth().onAuthStateChanged(function(user) {
       updateAuthButtons(user);
+      loadNotifications(user);
     });
   } else {
     // fallback: show login by default
