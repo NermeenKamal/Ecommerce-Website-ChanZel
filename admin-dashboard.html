@@ -166,5 +166,18 @@
 <script type="module" src="admin-script.js"></script>
 <script src="navbar.js"></script>
 <script src="footer.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    firebase.auth().onAuthStateChanged(function(user) {
+      const adminEmail = "nermeenkamal92@gmail.com";
+      if (!user || user.email !== adminEmail) {
+        window.location.href = "login.html";
+      }
+    });
+  });
+</script>
 </body>
 </html>
