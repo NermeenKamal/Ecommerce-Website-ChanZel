@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link px-3" href="profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+          </li>
+          <li class="nav-item">
             <button id="lang-toggle" class="btn btn-outline-secondary btn-sm px-3">AR</button>
           </li>
           <li class="nav-item">
