@@ -52,7 +52,10 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
   </footer>
   `;
-  document.getElementById('footer').innerHTML = footerHTML;
+  const footerDiv = document.getElementById('footer');
+  if (footerDiv) {
+    footerDiv.innerHTML = footerHTML;
+  }
 
   // Subscribe form placeholder
   document.getElementById('subscribe-form').addEventListener('submit', function(e) {
