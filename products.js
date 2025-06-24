@@ -10,7 +10,7 @@ async function fetchAllProducts() {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error fetching all products:', error);
-    return [];
+    throw error; // Propagate error for better error handling
   }
 }
 
@@ -29,7 +29,7 @@ async function getFeaturedProducts({ season, gender, limit = 4 } = {}) {
     return products;
   } catch (error) {
     console.error('Error fetching featured products:', error);
-    return [];
+    throw error; // Propagate error for better error handling
   }
 }
 
@@ -44,7 +44,7 @@ async function getProductsByGender(gender, { season, category } = {}) {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error fetching products by gender:', error);
-    return [];
+    throw error; // Propagate error for better error handling
   }
 }
 
@@ -52,11 +52,13 @@ async function getProductsByGender(gender, { season, category } = {}) {
 async function getProductById(id) {
   try {
     const doc = await db.collection('products').doc(id).get();
-    if (!doc.exists) return null;
+    if (!doc.exists) {
+      throw new Error('Product not found');
+    }
     return { id: doc.id, ...doc.data() };
   } catch (error) {
     console.error('Error fetching product by ID:', error);
-    return null;
+    throw error; // Propagate error for better error handling
   }
 }
 
