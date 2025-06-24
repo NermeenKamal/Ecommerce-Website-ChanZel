@@ -22,9 +22,11 @@ try {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Enable offline persistence using the new method
+// Configure Firestore settings for better performance and offline support
 db.settings({
-    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+    experimentalForceLongPolling: false,
+    useFetchStreams: false
 }).catch((err) => {
     if (err.code == 'failed-precondition') {
         // Multiple tabs open, persistence can only be enabled in one tab at a time
@@ -32,5 +34,7 @@ db.settings({
     } else if (err.code == 'unimplemented') {
         // The current browser doesn't support persistence
         console.warn('Firebase persistence not supported in this browser');
+    } else {
+        console.warn('Firebase settings error:', err);
     }
 }); 
