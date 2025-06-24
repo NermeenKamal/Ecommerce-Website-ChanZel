@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | ChanZel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-init.js"></script>
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="container my-5">
+    <h2 id="checkout-title">Checkout</h2>
+    <div id="cart-total" class="mb-4"></div>
+    <form id="checkout-form" class="col-md-6 mx-auto">
+      <div class="form-group">
+        <label id="name-label">Name</label>
+        <input type="text" class="form-control" id="name-input" required>
+      </div>
+      <div class="form-group">
+        <label id="address-label">Address</label>
+        <input type="text" class="form-control" id="address-input" required>
+      </div>
+      <div class="form-group">
+        <label id="card-label">Card Number</label>
+        <input type="text" class="form-control" id="card-input" maxlength="19" required placeholder="0000 0000 0000 0000">
+      </div>
+      <button type="submit" class="btn btn-success btn-block" id="confirm-btn">Confirm Purchase</button>
+      <div id="loading-spinner" class="text-center mt-3 d-none">
+        <div class="spinner-border text-success" role="status"><span class="visually-hidden">Loading...</span></div>
+      </div>
+    </form>
+    <div id="success-message" class="alert alert-success mt-4 d-none"></div>
+  </div>
+  <div id="footer"></div>
+  <script src="navbar.js"></script>
+  <script src="footer.js"></script>
+  <script src="auth.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const lang = localStorage.getItem('lang') || 'en';
+  // Set translations
+  const t = {
+    en: {
+      checkout: 'Checkout', name: 'Name', address: 'Address', card: 'Card Number', confirm: 'Confirm Purchase', total: 'Total', success: 'Thank you! Your order has been placed.', loading: 'Redirecting to payment...'
+    },
+    ar: {
+      checkout: 'الدفع', name: 'الاسم', address: 'العنوان', card: 'رقم البطاقة', confirm: 'تأكيد الشراء', total: 'الإجمالي', success: 'شكرًا لك! تم تنفيذ طلبك بنجاح.', loading: 'جاري التحويل لبوابة الدفع...'
+    }
+  };
+  document.getElementById('checkout-title').textContent = t[lang].checkout;
+  document.getElementById('name-label').textContent = t[lang].name;
+  document.getElementById('address-label').textContent = t[lang].address;
+  document.getElementById('card-label').textContent = t[lang].card;
+  document.getElementById('confirm-btn').textContent = t[lang].confirm;
+  // Show cart total
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  document.getElementById('cart-total').innerHTML = `<h4>${t[lang].total}: <span class="text-success">${total} EGP</span></h4>`;
+  // Handle form submit
+  document.getElementById('checkout-form').onsubmit = async function(e) {
+    e.preventDefault();
+    document.getElementById('loading-spinner').classList.remove('d-none');
+    document.getElementById('confirm-btn').disabled = true;
+    try {
+      // Stripe expects amount in cents (e.g. 100 EGP = 10000)
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: total * 100 })
+      });
+      const data = await res.json();
+      if (data.url) {
+        document.getElementById('loading-spinner').classList.add('d-none');
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Payment session error');
+      }
+    } catch (err) {
+      document.getElementById('loading-spinner').classList.add('d-none');
+      document.getElementById('confirm-btn').disabled = false;
+      alert(err.message);
+    }
+  };
+});
+</script>
+</body>
+</html> 

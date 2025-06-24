@@ -1,26 +1,36 @@
 // server.js
 const express = require('express');
 const app = express();
-const stripe = require('stripe')('sk_test_YourSecretKeyHere'); // حطي هنا Secret key
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 app.use(express.static('public'));
 app.use(express.json());
 
 app.post('/create-checkout-session', async (req, res) => {
-  const { priceId, quantity } = req.body; // البيانات اللي هتبعتها من الفرونت إند
+  const { amount } = req.body; // استقبل المبلغ من الفرونت إند
+
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ message: "Amount must be positive" });
+  }
 
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId, // معرف المنتج أو السعر من Stripe dashboard
-          quantity: quantity || 1,
+          price_data: {
+            currency: 'egp', // يمكنك تغيير العملة هنا
+            product_data: {
+              name: 'ChanZel Order',
+            },
+            unit_amount: amount, // Stripe expects amount in cents (e.g. 100 EGP = 10000)
+          },
+          quantity: 1,
         },
       ],
       mode: 'payment',
-      success_url: 'https://yourdomain.com/success.html',
-      cancel_url: 'https://yourdomain.com/cancel.html',
+      success_url: 'https://ecommerce-website-chan-zel-git-main-nermeenkamals-projects.vercel.app/success.html',
+      cancel_url: 'https://ecommerce-website-chan-zel-git-main-nermeenkamals-projects.vercel.app/cancel.html',
     });
 
     res.json({ url: session.url });

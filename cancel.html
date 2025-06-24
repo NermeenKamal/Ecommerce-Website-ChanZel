@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Cancelled | ChanZel</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+    <div class="text-center">
+      <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+      <h2 id="cancel-title">Payment Cancelled</h2>
+      <p id="cancel-msg">Your payment was cancelled. You can try again or review your cart.</p>
+      <a href="cart.html" class="btn btn-secondary mt-3">Back to Cart</a>
+    </div>
+  </div>
+  <script>
+    const lang = localStorage.getItem('lang') || 'en';
+    if (lang === 'ar') {
+      document.getElementById('cancel-title').textContent = 'تم إلغاء الدفع';
+      document.getElementById('cancel-msg').textContent = 'تم إلغاء عملية الدفع. يمكنك المحاولة مرة أخرى أو مراجعة السلة.';
+      document.querySelector('.btn').textContent = 'العودة للسلة';
+      document.body.setAttribute('dir', 'rtl');
+    }
+  </script>
+</body>
+</html> 

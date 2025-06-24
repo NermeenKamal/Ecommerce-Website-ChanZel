@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | ChanZel</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="firebase-init.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: url('img/Screenshot 2024-08-26 155230.png') repeat;
+            background-size: cover;
+        }
+        .main-navbar {
+            width: 100%;
+            height: 56px;
+            background: rgba(255,255,255,0.96);
+            border-bottom: 1.5px solid #e0dfd2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px 0 10px;
+            position: relative;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+        .main-navbar .logo {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+        .main-navbar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .main-navbar .nav-links a, .main-navbar .nav-links button, .main-navbar .nav-links span {
+            color: #353232;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+            outline: none;
+            font-family: inherit;
+        }
+        .main-navbar .nav-links a:hover, .main-navbar .nav-links button:hover {
+            background: #f8f7e9;
+            color: #9c2c2c;
+            text-decoration: underline;
+        }
+        .main-navbar .nav-links .ar-btn {
+            font-weight: bold;
+            color: #785c4a;
+            border: 1px solid #e0dfd2;
+            background: #f8f7e9;
+            margin-right: 0.3rem;
+        }
+        .main-navbar .nav-links .ar-btn:hover {
+            background: #e0dfd2;
+            color: #343a40;
+        }
+        .main-navbar .nav-links .login-btn, .main-navbar .nav-links .logout-btn {
+            background: #785c4a;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            padding: 0.15rem 0.8rem;
+            border-radius: 7px;
+            margin-left: 0.3rem;
+            transition: background 0.15s;
+        }
+        .main-navbar .nav-links .login-btn:hover, .main-navbar .nav-links .logout-btn:hover {
+            background: #343a40;
+            color: #fff;
+        }
+        @media (max-width: 900px) {
+            .main-navbar {
+                flex-direction: column;
+                height: auto;
+                padding: 8px 2vw;
+                gap: 0.5rem;
+            }
+            .main-navbar .nav-links {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .main-navbar .logo {
+                height: 28px;
+            }
+        }
+        .login-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            padding: 24px 0 24px 0;
+            box-sizing: border-box;
+        }
+        .login-card {
+            background: #f8f7e9;
+            border-radius: 24px;
+            border: 1.5px solid #353232;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            width: 100%;
+            max-width: 370px;
+            padding: 1.3rem 1.1rem 1.1rem 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-card h1 {
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-bottom: 1.2rem;
+            letter-spacing: 1px;
+        }
+        .login-card label {
+            font-size: 1.05rem;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+            display: block;
+            text-align: center;
+        }
+        .login-card input[type="email"],
+        .login-card input[type="password"] {
+            width: 70%;
+            margin: 0 auto 1rem auto;
+            display: block;
+            background: #e5e0d6;
+            border: none;
+            border-radius: 7px;
+            padding: 0.38rem 0.5rem;
+            font-size: 0.93rem;
+            text-align: center;
+            outline: none;
+            transition: box-shadow 0.2s;
+            min-width: 120px;
+            max-width: 250px;
+        }
+        .login-card input[type="email"]:focus,
+        .login-card input[type="password"]:focus {
+            box-shadow: 0 0 0 2px #785c4a44;
+            background: #fff;
+        }
+        .login-card .login-links {
+            width: 90%;
+            margin: 0 auto 0.7rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+            background: none !important;
+            box-shadow: none !important;
+            padding: 0;
+        }
+        .login-card .login-links a, .login-card .login-links span, .login-card .login-links {
+            background: none !important;
+            box-shadow: none !important;
+            color: #9c2c2c;
+            font-size: 0.97rem;
+            text-decoration: none;
+            margin-right: 0.2rem;
+        }
+        .login-card .login-links a:hover {
+            color: #785c4a;
+            text-decoration: underline;
+        }
+        .login-card .login-btn {
+            width: 70%;
+            margin: 0.7rem auto 0 auto;
+            background: #8b837a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.08rem;
+            font-weight: bold;
+            padding: 0.55rem 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: block;
+        }
+        .login-card .login-btn:hover {
+            background: #353232;
+        }
+        @media (max-width: 700px) {
+            .login-card {
+                max-width: 98vw;
+                padding: 0.7rem 0.2rem;
+            }
+            .login-card h1 {
+                font-size: 1.2rem;
+            }
+            .login-card label {
+                font-size: 0.93rem;
+            }
+            .login-card input[type="email"],
+            .login-card input[type="password"] {
+                width: 95%;
+                font-size: 0.89rem;
+                padding: 0.28rem 0.3rem;
+                min-width: 80px;
+                max-width: 99vw;
+            }
+            .login-card .login-btn {
+                width: 99%;
+                font-size: 0.98rem;
+                padding: 0.45rem 0;
+            }
+            .login-card .login-links {
+                width: 99%;
+                font-size: 0.93rem;
+            }
+            .login-main {
+                padding-bottom: 90px;
+            }
+        }
+        .main-footer {
+            width: 100%;
+            background: rgba(255,255,255,0.96);
+            border-top: 1.5px solid #e0dfd2;
+            text-align: center;
+            padding: 13px 0 10px 0;
+            font-size: 1.01rem;
+            color: #353232;
+            letter-spacing: 0.3px;
+            box-shadow: none;
+            z-index: 2;
+            position: sticky;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="main-navbar">
+        <img src="img/Chazel.png" alt="ChanZel Logo" class="logo">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="women.html">Women</a>
+            <a href="men.html">Men</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <button class="ar-btn" onclick="window.location.href=window.location.pathname+'?lang=ar'">AR</button>
+            <button class="login-btn" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
+            <button class="logout-btn d-none" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+    <main class="login-main">
+        <div class="login-card">
+            <h1>SIGN UP</h1>
+            <form id="signup-form" autocomplete="off" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+                <label for="email">EMAIL</label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">PASSWORD</label>
+                <input type="password" id="password" name="password" required>
+                <label for="confirm-password">CONFIRM PASSWORD</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+                <div class="login-links">
+                    <a href="login.html">Already have an account? Login</a>
+                    <a href="forget-password.html">Forgot password?</a>
+                </div>
+                <button type="submit" class="login-btn">Sign Up</button>
+            </form>
+            <div id="signup-error" class="alert alert-danger d-none" style="width:80%;margin:1rem auto 0 auto;text-align:center;"></div>
+        </div>
+    </main>
+    <footer class="main-footer">
+        &copy; 2024 ChanZel. All rights reserved.
+    </footer>
+    <script>
+        // Auth logic for navbar buttons
+        function updateAuthButtons() {
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    loginBtn.classList.add('d-none');
+                    logoutBtn.classList.remove('d-none');
+                } else {
+                    loginBtn.classList.remove('d-none');
+                    logoutBtn.classList.add('d-none');
+                }
+            });
+            logoutBtn.onclick = function() {
+                firebase.auth().signOut().then(function() {
+                    window.location.href = 'index.html';
+                });
+            };
+        }
+        updateAuthButtons();
+        // Signup form logic
+        document.getElementById('signup-form').onsubmit = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            if (password !== confirmPassword) {
+                document.getElementById('signup-error').textContent = "Passwords do not match.";
+                document.getElementById('signup-error').classList.remove('d-none');
+                return;
+            }
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    document.getElementById('signup-error').textContent = error.message;
+                    document.getElementById('signup-error').classList.remove('d-none');
+                });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Success | ChanZel</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+    <div class="text-center">
+      <i class="fas fa-check-circle fa-4x text-success mb-4"></i>
+      <h2 id="success-title">Thank you for your purchase!</h2>
+      <p id="success-msg">Your payment was successful. We appreciate your trust.</p>
+      <a href="index.html" class="btn btn-primary mt-3">Back to Home</a>
+    </div>
+  </div>
+  <script>
+    const lang = localStorage.getItem('lang') || 'en';
+    if (lang === 'ar') {
+      document.getElementById('success-title').textContent = 'شكرًا لطلبك!';
+      document.getElementById('success-msg').textContent = 'تم الدفع بنجاح. نشكرك على ثقتك.';
+      document.querySelector('.btn').textContent = 'العودة للرئيسية';
+      document.body.setAttribute('dir', 'rtl');
+    }
+  </script>
+</body>
+</html> 
