@@ -198,46 +198,44 @@
                 }
             }
 
-            // Load random featured products
-            async function loadRandomProducts() {
+            // Load featured products
+            async function loadFeaturedProducts() {
                 const productsContainer = document.getElementById('featured-products');
                 
                 try {
-                    // Get both men's and women's products
-                    const womenProducts = await window.getProductsByGender('women');
-                    const menProducts = await window.getProductsByGender('men');
+                    const products = await window.getFeaturedProducts({ limit: 4 });
                     
-                    if (!womenProducts && !menProducts) {
+                    if (!products || products.length === 0) {
                         productsContainer.innerHTML = `
                             <div class="col-12 text-center">
-                                <p class="text-muted">${lang === 'ar' ? 'لا توجد منتجات متاحة حالياً' : 'No products available at the moment'}</p>
+                                <p class="text-muted">${lang === 'ar' ? 'لا توجد منتجات مميزة حالياً' : 'No featured products available'}</p>
                             </div>
                         `;
                         return;
                     }
 
-                    const allProducts = [...(womenProducts || []), ...(menProducts || [])];
-                    
-                    if (allProducts.length === 0) {
-                        productsContainer.innerHTML = `
-                            <div class="col-12 text-center">
-                                <p class="text-muted">${lang === 'ar' ? 'لا توجد منتجات متاحة حالياً' : 'No products available at the moment'}</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    // Shuffle array and take first 8 items
-                    const shuffled = allProducts.sort(() => 0.5 - Math.random());
-                    const randomProducts = shuffled.slice(0, 8);
-
-                    function renderProductCard(product) {
-                        const name = lang === 'ar' ? product.name_ar : product.name_en;
-                        const description = lang === 'ar' ? product.description_ar : product.description_en;
-                        const sizes = (product.sizes || []).map(size => `<span class='badge badge-secondary mx-1'>${size}</span>`).join(' ');
-                        const colors = (product.colors || []).map(color => `<span style='display:inline-block;width:18px;height:18px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:4px;'></span>`).join(' ');
-                        const img = (product.images && product.images.length) ? product.images[0] : 'img/div-empty.jpg';
+                    productsContainer.innerHTML = products.map(product => {
+                        const name = lang === 'ar' ? 
+                            (product.name_ar || 'منتج جديد') : 
+                            (product.name_en || 'New Product');
                         
+                        const description = lang === 'ar' ? 
+                            (product.description_ar || 'وصف المنتج') : 
+                            (product.description_en || 'Product description');
+                        
+                        const price = typeof product.price === 'number' ? product.price.toFixed(2) : '0.00';
+                        
+                        const sizes = (Array.isArray(product.sizes) && product.sizes.length > 0) ? 
+                            product.sizes.map(size => `<span class='badge badge-secondary mx-1'>${size}</span>`).join(' ') :
+                            `<span class='badge badge-secondary mx-1'>${lang === 'ar' ? 'مقاس موحد' : 'One Size'}</span>`;
+                        
+                        const colors = (Array.isArray(product.colors) && product.colors.length > 0) ?
+                            product.colors.map(color => `<span style='display:inline-block;width:18px;height:18px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:4px;'></span>`).join(' ') :
+                            `<span style='display:inline-block;width:18px;height:18px;border-radius:50%;background:#000;border:1px solid #ccc;margin-right:4px;'></span>`;
+                        
+                        const img = (Array.isArray(product.images) && product.images.length > 0) ? 
+                            product.images[0] : 'img/div-empty.jpg';
+
                         return `
                             <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                                 <div class="card h-100 shadow-sm product-card">
@@ -247,7 +245,7 @@
                                         <p class="card-text text-truncate">${description}</p>
                                         <div class="product-details">
                                             <div class="mb-2">
-                                                <strong class="text-primary">$${product.price.toFixed(2)}</strong>
+                                                <strong class="text-primary">$${price}</strong>
                                             </div>
                                             <div class="mb-2">
                                                 <small class="text-muted">${lang === 'ar' ? 'المقاسات المتوفرة' : 'Available Sizes'}:</small><br>
@@ -265,11 +263,9 @@
                                 </div>
                             </div>
                         `;
-                    }
-
-                    productsContainer.innerHTML = randomProducts.map(renderProductCard).join('');
+                    }).join('');
                 } catch (error) {
-                    console.error('Error loading products:', error);
+                    console.error('Error loading featured products:', error);
                     productsContainer.innerHTML = `
                         <div class="col-12 text-center">
                             <div class="alert alert-danger" role="alert">
@@ -283,7 +279,7 @@
 
             // Load both category counts and featured products
             loadCategoryCounts();
-            loadRandomProducts();
+            loadFeaturedProducts();
         });
     </script>
 </body>
