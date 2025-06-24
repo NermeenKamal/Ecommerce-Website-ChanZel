@@ -12,34 +12,44 @@ const footerHTML = isAuthPage ? `
         </div>
     </footer>
 ` : `
-    <footer class="container-fluid mt-5" id="contact">
-        <div class="d-flex align-items-center flex-column foo">
-            <h2 class="textt fo">Subscribe To Get Offers In Your Inbox</h2>
-            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br> <br></span>
-
-            <div class="navbar-nav vvv">
-                <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
-                <a href="women.html" class="nav-link text mr-4">Women</a>
-                <a href="men.html" class="nav-link text mr-4">Men</a>
-                <a href="about.html" class="nav-link text mr-4">About</a>
-                <a href="#contact" class="nav-link text">Contact</a>
+    <footer class="fixed-footer" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About ChanZel</h5>
+                    <p>Your premier destination for fashion. We bring you the latest trends in men's and women's clothing.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="women.html">Women</a></li>
+                        <li><a href="men.html">Men</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/NermeenKamalEldin" class="social-link">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="https://github.com/NermeenKamal" class="social-link">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/nirmn-kamal/" class="social-link">
+                            <i class="fa-brands fa-linkedin"></i>
+                        </a>
+                        <a href="https://www.behance.net/Nermeen_Kamal" class="social-link">
+                            <i class="fa-brands fa-square-behance"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-
-            <div class="d-flex mt-3 btns">
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
-                    <i class="fa-brands fa-facebook"></i></a>
-
-                <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
-                    <i class="fa-brands fa-github"></i></a>
-
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
-                    <i class="fa-brands fa-linkedin"></i></a>
-
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
-                    <i class="fa-brands fa-square-behance"></i></a>
+            <div class="footer-bottom">
+                <p class="text-center mb-0">Copyright &copy; 2024 ChanZel By NERMEEN</p>
             </div>
         </div>
-        <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
     </footer>
 `;
 
@@ -49,23 +59,25 @@ document.getElementById('footer').innerHTML = footerHTML;
 // Language translation for footer
 const translations = {
     en: {
-        subscribe: 'Subscribe To Get Offers In Your Inbox',
-        lorem: 'Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum',
-        buyTshirts: 'Buy T-Shirts',
+        about: 'About ChanZel',
+        aboutText: 'Your premier destination for fashion. We bring you the latest trends in men\'s and women\'s clothing.',
+        quickLinks: 'Quick Links',
+        home: 'Home',
         women: 'Women',
         men: 'Men',
         about: 'About',
-        contact: 'Contact',
+        connect: 'Connect With Us',
         copyright: 'Copyright © 2024 ChanZel By NERMEEN'
     },
     ar: {
-        subscribe: 'اشترك للحصول على العروض في صندوق الوارد الخاص بك',
-        lorem: 'هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة',
-        buyTshirts: 'شراء تي شيرت',
+        about: 'عن شانزيل',
+        aboutText: 'وجهتك الأولى للأزياء. نقدم لك أحدث صيحات الموضة في ملابس الرجال والنساء.',
+        quickLinks: 'روابط سريعة',
+        home: 'الرئيسية',
         women: 'نساء',
         men: 'رجال',
         about: 'عن المتجر',
-        contact: 'اتصل بنا',
+        connect: 'تواصل معنا',
         copyright: 'حقوق النشر © 2024 شانزيل بواسطة نرمين'
     }
 };
@@ -74,17 +86,22 @@ function translateFooter(lang) {
     if (isAuthPage) return;
     
     const t = translations[lang];
-    document.querySelector('.textt.fo').textContent = t.subscribe;
-    document.querySelector('.text.fon').textContent = t.lorem;
+    const footer = document.querySelector('footer');
     
-    const navLinks = document.querySelectorAll('.navbar-nav.vvv .nav-link');
-    navLinks[0].textContent = t.buyTshirts;
-    navLinks[1].textContent = t.women;
-    navLinks[2].textContent = t.men;
-    navLinks[3].textContent = t.about;
-    navLinks[4].textContent = t.contact;
-    
-    document.querySelector('.last-div.copy').textContent = t.copyright;
+    if (footer) {
+        footer.querySelector('h5:nth-of-type(1)').textContent = t.about;
+        footer.querySelector('p:nth-of-type(1)').textContent = t.aboutText;
+        footer.querySelector('h5:nth-of-type(2)').textContent = t.quickLinks;
+        
+        const quickLinks = footer.querySelectorAll('.list-unstyled li a');
+        quickLinks[0].textContent = t.home;
+        quickLinks[1].textContent = t.women;
+        quickLinks[2].textContent = t.men;
+        quickLinks[3].textContent = t.about;
+        
+        footer.querySelector('h5:nth-of-type(3)').textContent = t.connect;
+        footer.querySelector('.footer-bottom p').textContent = t.copyright;
+    }
 }
 
 // Initialize translation
