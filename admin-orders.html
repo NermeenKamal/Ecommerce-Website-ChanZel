@@ -208,10 +208,107 @@
         if (!user || user.email !== adminEmail) {
           window.location.href = "login.html";
         } else {
-          // TODO: loadOrders();
+          loadOrders();
         }
       });
     });
+
+    // Load orders from Firestore
+    async function loadOrders() {
+      const tableBody = document.querySelector('#ordersTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+      // Fetch all orders
+      const ordersSnapshot = await db.collection('orders').get();
+      const orders = [];
+      ordersSnapshot.forEach(doc => orders.push({id: doc.id, ...doc.data()}));
+      // Fetch all users (for client info)
+      const usersSnapshot = await db.collection('users').get();
+      const users = {};
+      usersSnapshot.forEach(doc => users[doc.id] = doc.data());
+      tableBody.innerHTML = '';
+      if (orders.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5">No orders found.</td></tr>';
+      }
+      orders.forEach(order => {
+        const client = users[order.userId] || {};
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${order.id}</td>
+          <td>${client.name || client.email || '-'}</td>
+          <td>${order.createdAt ? (new Date(order.createdAt.seconds ? order.createdAt.seconds*1000 : order.createdAt)).toLocaleDateString() : '-'}</td>
+          <td>${order.status || '-'}</td>
+          <td><button class="details-btn" data-id="${order.id}">Details</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+      // Bind details buttons
+      document.querySelectorAll('.details-btn').forEach(btn => {
+        btn.onclick = function() {
+          const orderId = this.getAttribute('data-id');
+          const order = orders.find(o => o.id === orderId);
+          const client = users[order.userId] || {};
+          showOrderModal(order, client);
+        };
+      });
+    }
+
+    // Show order modal
+    function showOrderModal(order, client) {
+      const modalBody = document.getElementById('orderModalBody');
+      modalBody.innerHTML = `
+        <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+          <img src="${client.photoURL || 'img/girl.jpg'}" class="customer-photo" style="width:70px;height:70px;">
+          <div>
+            <div><b>Name:</b> ${client.name || '-'}</div>
+            <div><b>Email:</b> ${client.email || '-'}</div>
+            <div><b>Phone:</b> ${client.phone || '-'}</div>
+            <div><b>Address:</b> ${client.address || '-'}</div>
+          </div>
+        </div>
+        <hr>
+        <div><b>Order ID:</b> ${order.id}</div>
+        <div><b>Date:</b> ${order.createdAt ? (new Date(order.createdAt.seconds ? order.createdAt.seconds*1000 : order.createdAt)).toLocaleString() : '-'}</div>
+        <div><b>Status:</b> <span id="orderStatus">${order.status || '-'}</span></div>
+        <div style="margin:10px 0;"><b>Products:</b></div>
+        <div class="table-responsive"><table class="orders-table" style="margin-top:10px;">
+          <thead><tr><th>Name</th><th>Qty</th><th>Price</th></tr></thead>
+          <tbody>
+            ${(order.products||[]).length === 0 ? '<tr><td colspan="3">No products</td></tr>' : order.products.map(p => `
+              <tr>
+                <td>${p.name || '-'}</td>
+                <td>${p.qty || 1}</td>
+                <td>${p.price ? p.price + ' EGP' : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table></div>
+        <div style="margin-top:18px;">
+          <b>Change Status:</b>
+          <select id="statusSelect" style="margin-left:10px;padding:3px 8px;border-radius:6px;border:1px solid #e0dfd2;">
+            <option value="pending" ${order.status==='pending'?'selected':''}>Pending</option>
+            <option value="accepted" ${order.status==='accepted'?'selected':''}>Accepted</option>
+            <option value="rejected" ${order.status==='rejected'?'selected':''}>Rejected</option>
+            <option value="delivering" ${order.status==='delivering'?'selected':''}>Delivering</option>
+            <option value="delivered" ${order.status==='delivered'?'selected':''}>Delivered</option>
+          </select>
+          <button class="details-btn" id="saveStatusBtn" style="margin-left:10px;padding:0.2rem 0.7rem;font-size:0.95rem;">Save</button>
+        </div>
+      `;
+      // Show modal (Bootstrap 4/5 compatible)
+      if (window.$ && $('#orderModal').modal) {
+        $('#orderModal').modal('show');
+      } else {
+        document.getElementById('orderModal').style.display = 'block';
+      }
+      // Save status logic
+      document.getElementById('saveStatusBtn').onclick = async function() {
+        const newStatus = document.getElementById('statusSelect').value;
+        await db.collection('orders').doc(order.id).update({status: newStatus});
+        document.getElementById('orderStatus').textContent = newStatus;
+        loadOrders();
+        alert('Order status updated!');
+      };
+    }
   </script>
 </body>
 </html> 
