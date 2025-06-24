@@ -174,6 +174,8 @@ function createColorRow(name = '', imageUrl = '', file = null) {
   setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
   return row;
 }
+const genderSelect = document.getElementById('gender');
+const categorySelect = document.getElementById('category');
 const colorsList = document.getElementById('colors-list');
 
 // Add Product
