@@ -1,0 +1,106 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    height: 640px;
+    background-image: url('../img/Screenshot 2024-08-26 155230.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+#myVideo {
+    position: fixed;
+
+    width: 100%;
+    height: 114.5%;
+    display: block;
+
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*min-width: 100%;*/
+    /*min-height: 100%;*/
+    /*z-index: -1;*/
+}
+.container{
+    background: #f8f7e9;
+    border-radius: 24px;
+    position: fixed;
+    z-index: 10;
+    width: 580px;
+    height: 620px;
+    left: 29%;
+    top: 7%;
+    border: 2px solid #353232;
+    text-align: center;
+    padding: 15px;
+}
+form{
+    font-size: 30px;
+    font-weight: bold;
+}
+h1{
+    margin-bottom: 90px;
+    margin-top: 50px;
+    font-size: 40px;
+}
+
+input[type=text]{
+    background-color: #d5d0c3;
+    width: 50%;
+    margin-bottom: 45px;
+}
+input[type=password]{
+    background-color: #d5d0c3;
+    width: 50%;
+    margin-bottom: 26px;
+}
+label{
+    text-align: start;
+    font-size: x-large;
+}
+a, span{
+    font-size: 13px;
+    text-decoration: none;
+}
+a{
+    font-size: 15px;
+    color: #9c2c2c;
+}
+a:hover{
+    text-decoration-style: solid;
+    text-decoration-line: underline;
+    text-decoration-color: rgba(110, 105, 99, 0.56);
+    color: #551111;
+}
+input{
+    border: none;
+    outline: none;
+    height: 20px;
+    border-radius: 5px;
+}
+#sign-in:hover{
+    background-color: rgba(10, 2, 15, 0.74);
+}
+#sign-in{
+    border: none;
+    background: #817b74;
+    color: #f8f7e9;
+    font-weight: bold;
+    padding: 16px 32px;
+    text-align: center;
+    border-radius: 7px;
+    text-decoration: none;
+}
+
+
+@media only screen and (min-width: 829px) and (max-width: 1000px){
+    #myVideo{
+        visibility: hidden;
+    }
+    .container{
+        left: 19%;
+    }
+}
+
+
