@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/login.css">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="firebase-init.js"></script>
     <style>
         html, body {
@@ -322,13 +323,61 @@
             }
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    window.location.href = 'index.html';
+                    // Save user data to Firestore
+                    const user = userCredential.user;
+                    const role = (user.email === 'nermeenkamal92@gmail.com') ? 'admin' : 'client';
+                    db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        email: user.email,
+                        name: '',
+                        phone: '',
+                        address: '',
+                        photoURL: '',
+                        role: role
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    }).catch((err) => {
+                        document.getElementById('signup-error').textContent = 'Signup succeeded but failed to save user data.';
+                        document.getElementById('signup-error').classList.remove('d-none');
+                    });
                 })
                 .catch((error) => {
                     document.getElementById('signup-error').textContent = error.message;
                     document.getElementById('signup-error').classList.remove('d-none');
                 });
         };
+        // Language translation logic
+        const translations = {
+          en: {
+            signup: 'SIGN UP', email: 'EMAIL', password: 'PASSWORD', confirm: 'CONFIRM PASSWORD', signUp: 'Sign Up', already: 'Already have an account? ', login: 'Login', forgot: 'Forgot password?', signupBtn: 'Sign Up', loginBtn: 'Login', logoutBtn: 'Logout', lang: 'AR',
+          },
+          ar: {
+            signup: 'إنشاء حساب', email: 'البريد الإلكتروني', password: 'كلمة المرور', confirm: 'تأكيد كلمة المرور', signUp: 'سجّل الآن', already: 'لديك حساب بالفعل؟ ', login: 'تسجيل الدخول', forgot: 'نسيت كلمة المرور؟', signupBtn: 'سجّل الآن', loginBtn: 'تسجيل الدخول', logoutBtn: 'تسجيل الخروج', lang: 'EN',
+          }
+        };
+        function translatePage(lang) {
+          const t = translations[lang];
+          document.querySelector('.login-card h1').textContent = t.signup;
+          document.querySelector('label[for="email"]').textContent = t.email;
+          document.querySelector('label[for="password"]').textContent = t.password;
+          document.querySelector('label[for="confirm-password"]').textContent = t.confirm;
+          document.querySelector('.login-card button[type="submit"]').textContent = t.signupBtn;
+          document.querySelector('.login-links a').textContent = t.already + `<a href="login.html">${t.login}</a>`;
+          document.querySelector('.login-links a:last-child').textContent = t.forgot;
+          document.getElementById('loginBtn').textContent = t.loginBtn;
+          document.getElementById('logoutBtn').textContent = t.logoutBtn;
+          document.getElementById('lang-toggle').textContent = t.lang;
+          document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        }
+        // On load
+        const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+        translatePage(savedLang);
+        document.getElementById('lang-toggle').addEventListener('click', function() {
+          const currentLang = localStorage.getItem('lang') || 'en';
+          const newLang = currentLang === 'en' ? 'ar' : 'en';
+          localStorage.setItem('lang', newLang);
+          translatePage(newLang);
+        });
     </script>
 </body>
 </html>
