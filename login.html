@@ -250,6 +250,34 @@
         bottom: 0;
         left: 0;
       }
+      .verification-message {
+        text-align: center;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 8px;
+        display: none;
+      }
+      
+      .resend-btn {
+        background: #785c4a;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s;
+      }
+      
+      .resend-btn:hover {
+        background: #9c2c2c;
+      }
+      
+      .resend-btn:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+      }
     </style>
 </head>
 <body>
@@ -268,8 +296,12 @@
   </nav>
   <main class="login-main">
     <div class="login-card">
-      <h1>LOGIN</h1>
-      <form id="login-form" autocomplete="off" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+      <h1>تسجيل الدخول</h1>
+      <div id="verificationMessage" class="verification-message">
+        <p>البريد الإلكتروني غير مفعل. برجاء تفعيل حسابك من خلال الرابط المرسل إلى بريدك الإلكتروني.</p>
+        <button id="resendBtn" class="resend-btn">إعادة إرسال رابط التفعيل</button>
+      </div>
+      <form id="loginForm">
         <label for="email">EMAIL</label>
         <input type="email" id="email" name="email" required>
         <label for="password">PASSWORD</label>
@@ -340,7 +372,7 @@
       translatePage(newLang);
     });
     // Login form logic
-    document.getElementById('login-form').onsubmit = function(e) {
+    document.getElementById('loginForm').onsubmit = function(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
@@ -367,6 +399,54 @@
           document.getElementById('login-error').classList.remove('d-none');
         });
     };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      const verificationMessage = document.getElementById('verificationMessage');
+      const resendBtn = document.getElementById('resendBtn');
+      
+      // Handle login form submission
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        try {
+          const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+          const user = userCredential.user;
+          
+          if (!user.emailVerified) {
+            // Show verification message and button if email is not verified
+            verificationMessage.style.display = 'block';
+            return;
+          }
+          
+          // If email is verified, redirect to home page
+          window.location.href = 'index.html';
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+      
+      // Handle resend verification email
+      resendBtn.addEventListener('click', async () => {
+        const user = firebase.auth().currentUser;
+        if (user) {
+          try {
+            await user.sendEmailVerification();
+            resendBtn.disabled = true;
+            alert('تم إرسال رابط التفعيل. برجاء التحقق من بريدك الإلكتروني.');
+            
+            // Enable the button after 60 seconds
+            setTimeout(() => {
+              resendBtn.disabled = false;
+            }, 60000);
+          } catch (error) {
+            alert('حدث خطأ أثناء إرسال رابط التفعيل. برجاء المحاولة مرة أخرى.');
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>
