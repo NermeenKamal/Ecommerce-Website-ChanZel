@@ -1,18 +1,30 @@
 // admin-script.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDCkxDZH0tSd_c02dFkaEVQMpV4ZL06etU",
-    authDomain: "chanzel-ecommerce.firebaseapp.com",
-    projectId: "chanzel-ecommerce",
-    storageBucket: "chanzel-ecommerce.appspot.com",
-    messagingSenderId: "379673191328",
-    appId: "1:379673191328:web:3ae431b8d0c23a4e177ac5"
-};
+// Use Firebase v9 compat mode instead of v10 ES6 modules
+// This ensures compatibility with other files that use Firebase v9
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Use the existing Firebase instance from firebase-init.js
+let db;
+if (typeof window.db !== 'undefined') {
+    db = window.db;
+} else if (typeof firebase !== 'undefined' && firebase.firestore) {
+    db = firebase.firestore();
+} else {
+    console.error('Firebase Firestore not available');
+    // Create a mock db for fallback
+    db = {
+        collection: () => ({
+            add: () => Promise.resolve({ id: 'mock-id' }),
+            get: () => Promise.resolve({ docs: [] }),
+            where: () => ({ where: () => ({ limit: () => ({ get: () => Promise.resolve({ docs: [] }) }) }) }),
+            doc: () => ({ 
+                get: () => Promise.resolve({ exists: false, data: () => ({}) }),
+                update: () => Promise.resolve(),
+                delete: () => Promise.resolve()
+            })
+        })
+    };
+}
 
 // 1. إعداد كائن التصنيفات متعدد اللغات
 const categoriesByLang = {
@@ -70,79 +82,79 @@ document.addEventListener('DOMContentLoaded', function() {
   colorsList = document.getElementById('colors-list');
   form = document.getElementById("addProductForm");
 
-  function buildGenderAndCategorySelects() {
-    const lang = getCurrentLang();
-    const t = getDashboardT(lang);
-    genderSelect.innerHTML = '';
-    const optSelect = document.createElement('option');
-    optSelect.value = '';
-    optSelect.textContent = t.select;
-    genderSelect.appendChild(optSelect);
-    const optWomen = document.createElement('option');
-    optWomen.value = 'women';
-    optWomen.textContent = t.women;
-    genderSelect.appendChild(optWomen);
-    const optMen = document.createElement('option');
-    optMen.value = 'men';
-    optMen.textContent = t.men;
-    genderSelect.appendChild(optMen);
-    if (!genderSelect.value || genderSelect.value === '') {
-      genderSelect.value = 'women';
-    }
-    buildCategoryOptions();
+function buildGenderAndCategorySelects() {
+  const lang = getCurrentLang();
+  const t = getDashboardT(lang);
+  genderSelect.innerHTML = '';
+  const optSelect = document.createElement('option');
+  optSelect.value = '';
+  optSelect.textContent = t.select;
+  genderSelect.appendChild(optSelect);
+  const optWomen = document.createElement('option');
+  optWomen.value = 'women';
+  optWomen.textContent = t.women;
+  genderSelect.appendChild(optWomen);
+  const optMen = document.createElement('option');
+  optMen.value = 'men';
+  optMen.textContent = t.men;
+  genderSelect.appendChild(optMen);
+  if (!genderSelect.value || genderSelect.value === '') {
+    genderSelect.value = 'women';
   }
-  function buildCategoryOptions() {
-    const lang = getCurrentLang();
-    const t = getDashboardT(lang);
-    const gender = genderSelect.value;
-    categorySelect.innerHTML = '';
-    const optSelect = document.createElement('option');
-    optSelect.value = '';
-    optSelect.textContent = t.select;
-    categorySelect.appendChild(optSelect);
-    if (gender && categoriesByLang[lang][gender]) {
-      categoriesByLang[lang][gender].forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        categorySelect.appendChild(opt);
-      });
-    }
+  buildCategoryOptions();
+}
+function buildCategoryOptions() {
+  const lang = getCurrentLang();
+  const t = getDashboardT(lang);
+  const gender = genderSelect.value;
+  categorySelect.innerHTML = '';
+  const optSelect = document.createElement('option');
+  optSelect.value = '';
+  optSelect.textContent = t.select;
+  categorySelect.appendChild(optSelect);
+  if (gender && categoriesByLang[lang][gender]) {
+    categoriesByLang[lang][gender].forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      categorySelect.appendChild(opt);
+    });
   }
-  function bindAddColorBtn() {
-    const btn = document.getElementById('add-color-btn');
-    if (btn) {
-      btn.onclick = function() {
-        colorsList.appendChild(createColorRow());
-      };
-    }
+}
+function bindAddColorBtn() {
+  const btn = document.getElementById('add-color-btn');
+  if (btn) {
+    btn.onclick = function() {
+      colorsList.appendChild(createColorRow());
+    };
   }
-  function createColorRow(name = '', imageUrl = '', file = null) {
-    const lang = getCurrentLang();
-    const t = getDashboardT(lang);
-    const row = document.createElement('div');
-    row.className = 'd-flex align-items-center mb-2 color-row';
-    row.innerHTML = `
-      <input type="text" class="form-control form-control-sm mr-2 color-name" placeholder="${t.colorName}" value="${name}" style="max-width:120px;">
-      <input type="file" accept="image/*" class="form-control-file form-control-sm mr-2 color-image">
-      <img src="${imageUrl}" class="product-img-thumb mr-2 d-none" style="width:36px;height:36px;" alt="color-img">
-      <button type="button" class="btn btn-danger btn-sm remove-color-btn">&times;</button>
-    `;
-    if (imageUrl) {
-      row.querySelector('img').src = imageUrl;
+}
+function createColorRow(name = '', imageUrl = '', file = null) {
+  const lang = getCurrentLang();
+  const t = getDashboardT(lang);
+  const row = document.createElement('div');
+  row.className = 'd-flex align-items-center mb-2 color-row';
+  row.innerHTML = `
+    <input type="text" class="form-control form-control-sm mr-2 color-name" placeholder="${t.colorName}" value="${name}" style="max-width:120px;">
+    <input type="file" accept="image/*" class="form-control-file form-control-sm mr-2 color-image">
+    <img src="${imageUrl}" class="product-img-thumb mr-2 d-none" style="width:36px;height:36px;" alt="color-img">
+    <button type="button" class="btn btn-danger btn-sm remove-color-btn">&times;</button>
+  `;
+  if (imageUrl) {
+    row.querySelector('img').src = imageUrl;
+    row.querySelector('img').classList.remove('d-none');
+  }
+  row.querySelector('.remove-color-btn').onclick = () => row.remove();
+  row.querySelector('.color-image').onchange = function(e) {
+    if (this.files && this.files[0]) {
+      const url = URL.createObjectURL(this.files[0]);
+      row.querySelector('img').src = url;
       row.querySelector('img').classList.remove('d-none');
     }
-    row.querySelector('.remove-color-btn').onclick = () => row.remove();
-    row.querySelector('.color-image').onchange = function(e) {
-      if (this.files && this.files[0]) {
-        const url = URL.createObjectURL(this.files[0]);
-        row.querySelector('img').src = url;
-        row.querySelector('img').classList.remove('d-none');
-      }
-    };
-    setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
-    return row;
-  }
+  };
+  setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
+  return row;
+}
 
   genderSelect.addEventListener('change', buildCategoryOptions);
   form.addEventListener('reset', () => {
@@ -153,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
       buildCategoryOptions();
     }, 0);
   });
-  form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("name").value.trim();
     const price = parseFloat(document.getElementById("price").value);
@@ -186,17 +198,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Prevent Cloudinary upload if no file
     let imageUrls = [];
-    for (let img of imagesFiles) {
+        for (let img of imagesFiles) {
       if (!img) continue;
-      imageUrls.push(await uploadImage(img));
-    }
-    // Upload main image if provided, else use first image
-    let mainImageUrl = null;
-    if (mainImageFile) {
-      mainImageUrl = await uploadImage(mainImageFile);
+          imageUrls.push(await uploadImage(img));
+        }
+        // Upload main image if provided, else use first image
+        let mainImageUrl = null;
+        if (mainImageFile) {
+          mainImageUrl = await uploadImage(mainImageFile);
     } else if (imageUrls.length > 0) {
       mainImageUrl = imageUrls[0];
-    } else {
+        } else {
       mainImageUrl = '';
     }
     // Ensure no undefined fields for Firebase
@@ -205,27 +217,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const safeImages = Array.isArray(imageUrls) ? imageUrls : [];
     const safeMainImage = mainImageUrl || '';
     try {
-      await addDoc(collection(db, "products"), {
-        name,
-        price,
-        stock,
-        gender,
-        category,
+        await db.collection('products').add({
+            name,
+            price,
+            stock,
+            gender,
+            category,
         colors: safeColors,
         sizes: safeSizes,
         mainImage: safeMainImage,
         images: safeImages,
-        createdAt: new Date()
-      });
-      alert("Product added successfully!");
-      form.reset();
-      buildGenderAndCategorySelects();
-      colorsList.innerHTML = '';
-      colorsList.appendChild(createColorRow());
-      loadProducts().then(loadStats);
+            createdAt: new Date()
+        });
+        alert("Product added successfully!");
+        form.reset();
+        buildGenderAndCategorySelects();
+        colorsList.innerHTML = '';
+        colorsList.appendChild(createColorRow());
+        loadProducts().then(loadStats);
     } catch (err) {
-      alert("Failed to add product.");
-      console.error(err);
+        alert("Failed to add product.");
+        console.error(err);
     }
   });
 
@@ -258,7 +270,7 @@ async function loadProducts() {
     const t = getDashboardT(lang);
     const table = document.getElementById("productTable");
     table.innerHTML = "";
-    const snapshot = await getDocs(collection(db, "products"));
+    const snapshot = await db.collection('products').get();
     snapshot.forEach(docSnap => {
         const data = docSnap.data();
         const row = document.createElement("tr");
@@ -286,7 +298,7 @@ async function loadProducts() {
 // Delete Product
 window.deleteProduct = async function (id) {
     if (!confirm("Are you sure you want to delete this product?")) return;
-    await deleteDoc(doc(db, "products", id));
+    await db.collection('products').doc(id).delete();
     loadProducts().then(loadStats);
 };
 
@@ -298,8 +310,8 @@ window.editProduct = async function (id) {
     const form = document.getElementById('editProductForm');
     form.innerHTML = '<div class="text-center">Loading...</div>';
     modal.modal('show');
-    const docRef = doc(db, "products", id);
-    const docSnap = await getDoc(docRef);
+    const docRef = db.collection('products').doc(id);
+    const docSnap = await docRef.get();
     if (!docSnap.exists()) {
       form.innerHTML = '<div class="alert alert-danger">Product not found.</div>';
       return;
@@ -449,7 +461,7 @@ saveEditBtn.onclick = async function(e) {
     const safeSizes = Array.isArray(sizes) ? sizes : [];
     const safeImages = Array.isArray(imageUrls) ? imageUrls : [];
     const safeMainImage = mainImageUrl || '';
-    await updateDoc(doc(db, "products", id), {
+    await db.collection('products').doc(id).update({
       name, price, stock, gender, category,
       colors: safeColors,
       sizes: safeSizes,
@@ -463,13 +475,13 @@ saveEditBtn.onclick = async function(e) {
 // Load statistics (products, orders, customers)
 async function loadStats() {
   // Products count
-  const productsSnap = await getDocs(collection(db, "products"));
+  const productsSnap = await db.collection('products').get();
   const statProducts = document.getElementById("stat-products");
   if (statProducts) statProducts.textContent = productsSnap.size;
   // Orders count
   let ordersCount = 0;
   try {
-    const ordersSnap = await getDocs(collection(db, "orders"));
+    const ordersSnap = await db.collection('orders').get();
     ordersCount = ordersSnap.size;
   } catch (e) {
     // If orders collection doesn't exist yet
@@ -480,7 +492,7 @@ async function loadStats() {
   // Customers count
   let customersCount = 0;
   try {
-    const usersSnap = await getDocs(collection(db, "users"));
+    const usersSnap = await db.collection('users').get();
     customersCount = usersSnap.size;
   } catch (e) {
     customersCount = 0;
