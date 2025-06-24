@@ -12,8 +12,13 @@ const firebaseConfig = {
 
 // Initialize Firebase with error handling
 try {
-    firebase.initializeApp(firebaseConfig);
-    console.log('Firebase initialized successfully');
+    // Check if Firebase is already initialized
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized successfully');
+    } else {
+        console.log('Firebase already initialized');
+    }
 } catch (error) {
     console.error('Error initializing Firebase:', error);
 }
@@ -23,18 +28,27 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 // Configure Firestore settings for better performance and offline support
-db.settings({
-    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-    experimentalForceLongPolling: false,
-    useFetchStreams: false
-}).catch((err) => {
-    if (err.code == 'failed-precondition') {
-        // Multiple tabs open, persistence can only be enabled in one tab at a time
-        console.warn('Firebase persistence failed: Multiple tabs open');
-    } else if (err.code == 'unimplemented') {
-        // The current browser doesn't support persistence
-        console.warn('Firebase persistence not supported in this browser');
-    } else {
-        console.warn('Firebase settings error:', err);
+try {
+    const settingsPromise = db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+        experimentalForceLongPolling: false,
+        useFetchStreams: false
+    });
+    
+    // Only add catch if settings returns a Promise
+    if (settingsPromise && typeof settingsPromise.catch === 'function') {
+        settingsPromise.catch((err) => {
+            if (err.code == 'failed-precondition') {
+                // Multiple tabs open, persistence can only be enabled in one tab at a time
+                console.warn('Firebase persistence failed: Multiple tabs open');
+            } else if (err.code == 'unimplemented') {
+                // The current browser doesn't support persistence
+                console.warn('Firebase persistence not supported in this browser');
+            } else {
+                console.warn('Firebase settings error:', err);
+            }
+        });
     }
-}); 
+} catch (error) {
+    console.warn('Error configuring Firestore settings:', error);
+} 
