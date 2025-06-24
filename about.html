@@ -145,8 +145,8 @@ function setLangBtnText(lang) {
   document.getElementById('lang-toggle').textContent = langBtnTranslations[lang].lang;
   document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 }
-const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
-setLangBtnText(savedLang);
+const savedLangBtn = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+setLangBtnText(savedLangBtn);
 document.getElementById('lang-toggle').addEventListener('click', function() {
   const currentLang = localStorage.getItem('lang') || 'en';
   const newLang = currentLang === 'en' ? 'ar' : 'en';
