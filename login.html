@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | ChanZel</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
+    <link rel="icon" href="img/logo-light.png">
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="firebase-init.js"></script>
@@ -307,174 +312,177 @@
     </style>
 </head>
 <body>
-  <nav class="main-navbar">
-    <img src="img/Chazel.png" alt="ChanZel Logo" class="logo">
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="women.html">Women</a>
-      <a href="men.html">Men</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <button class="ar-btn" id="lang-toggle">AR</button>
-      <button class="login-btn" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
-      <button class="logout-btn d-none" id="logoutBtn">Logout</button>
-    </div>
-  </nav>
-  <main class="login-main">
-    <div class="login-card">
-      <h1>LOGIN</h1>
-      <div id="verificationSection" class="verification-section" style="display: none;">
-        <p class="verification-message">Email not verified. Please verify your account through the link sent to your email.</p>
-        <button id="resendBtn" class="resend-btn">Resend Verification Link</button>
-      </div>
-      <form id="loginForm">
-        <label for="email">EMAIL</label>
-        <input type="email" id="email" name="email" required>
-        <label for="password">PASSWORD</label>
-        <input type="password" id="password" name="password" required>
-        <div class="login-links">
-          <a href="forget-password.html">Forgot Password?</a>
+    <div id="navbar"></div>
+    
+    <main class="login-main">
+        <div class="login-card">
+            <h1>LOGIN</h1>
+            <div id="verificationSection" class="verification-section" style="display: none;">
+                <p class="verification-message">Please verify your email before logging in. Check your inbox for the verification link.</p>
+                <button id="resendBtn" class="resend-btn">Resend Verification Link</button>
+            </div>
+            <form id="loginForm">
+                <label for="email">EMAIL</label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">PASSWORD</label>
+                <input type="password" id="password" name="password" required>
+                <div class="login-links">
+                    <a href="forget-password.html">Forgot Password?</a>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+            <div class="signup-link" style="text-align: center; margin-top: 15px; width: 100%; color: #785c4a;">
+                Don't have an account? <a href="sign-up.html" style="color: #9c2c2c; text-decoration: none; font-weight: bold;">Sign Up</a>
+            </div>
+            <div id="login-error" class="alert alert-danger d-none" style="width:80%;margin:1rem auto 0 auto;text-align:center;"></div>
         </div>
-        <button type="submit" class="login-btn">Sign In</button>
-      </form>
-      <div class="signup-link">
-        Don't have an account? <a href="sign-up.html">Sign Up</a>
-      </div>
-      <div id="login-error" class="alert alert-danger d-none" style="width:80%;margin:1rem auto 0 auto;text-align:center;"></div>
-    </div>
-  </main>
-  <footer class="main-footer">
-    &copy; 2024 ChanZel. All rights reserved.
-  </footer>
-  <script>
-    // Auth logic for navbar buttons
-    function updateAuthButtons() {
-      const loginBtn = document.getElementById('loginBtn');
-      const logoutBtn = document.getElementById('logoutBtn');
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          loginBtn.classList.add('d-none');
-          logoutBtn.classList.remove('d-none');
-        } else {
-          loginBtn.classList.remove('d-none');
-          logoutBtn.classList.add('d-none');
-        }
-      });
-      logoutBtn.onclick = function() {
-        firebase.auth().signOut().then(function() {
-          window.location.href = 'index.html';
-        });
-      };
-    }
-    updateAuthButtons();
+    </main>
 
-    // Language translation logic
-    const translations = {
-      en: {
-        login: 'LOGIN', email: 'EMAIL', password: 'PASSWORD', signIn: 'Sign in', forgot: 'forget password?', noAccount: "Don't have an account? ", signUp: 'Sign Up', loginBtn: 'Login', logoutBtn: 'Logout', lang: 'AR',
-      },
-      ar: {
-        login: 'تسجيل الدخول', email: 'البريد الإلكتروني', password: 'كلمة المرور', signIn: 'دخول', forgot: 'نسيت كلمة المرور؟', noAccount: 'ليس لديك حساب؟ ', signUp: 'سجّل الآن', loginBtn: 'تسجيل الدخول', logoutBtn: 'تسجيل الخروج', lang: 'EN',
-      }
-    };
-    function translatePage(lang) {
-      const t = translations[lang];
-      document.querySelector('.login-card h1').textContent = t.login;
-      document.querySelector('label[for="email"]').textContent = t.email;
-      document.querySelector('label[for="password"]').textContent = t.password;
-      document.querySelector('.login-card button[type="submit"]').textContent = t.signIn;
-      document.querySelector('.login-links a').textContent = t.forgot;
-      document.querySelector('.login-links span').innerHTML = t.noAccount + `<a href="sign-up.html">${t.signUp}</a>`;
-      document.getElementById('loginBtn').textContent = t.loginBtn;
-      document.getElementById('logoutBtn').textContent = t.logoutBtn;
-      document.getElementById('lang-toggle').textContent = t.lang;
-      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-    }
-    // On load
-    const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
-    translatePage(savedLang);
-    document.getElementById('lang-toggle').addEventListener('click', function() {
-      const currentLang = localStorage.getItem('lang') || 'en';
-      const newLang = currentLang === 'en' ? 'ar' : 'en';
-      localStorage.setItem('lang', newLang);
-      translatePage(newLang);
-    });
-    // Login form logic
-    document.getElementById('loginForm').onsubmit = function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          if (!user.emailVerified) {
-            document.getElementById('login-error').textContent = 'Please verify your email before logging in. Check your inbox.';
-            document.getElementById('login-error').classList.remove('d-none');
-            firebase.auth().signOut();
-            return;
-          }
-          if (user.email === 'nermeenkamal92@gmail.com') {
-            window.location.href = 'admin-dashboard.html';
-          } else {
-            window.location.href = 'index.html';
-          }
-        })
-        .catch((error) => {
-          let msg = error.message;
-          if (msg.includes('user-not-found')) msg = 'No account found for this email.';
-          if (msg.includes('wrong-password')) msg = 'Incorrect password.';
-          document.getElementById('login-error').textContent = msg;
-          document.getElementById('login-error').classList.remove('d-none');
-        });
-    };
+    <div id="footer"></div>
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const loginForm = document.getElementById('loginForm');
-      const verificationSection = document.getElementById('verificationSection');
-      const resendBtn = document.getElementById('resendBtn');
-      
-      // Handle login form submission
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        try {
-          const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-          const user = userCredential.user;
-          
-          if (!user.emailVerified) {
-            // Show verification section if email is not verified
-            verificationSection.style.display = 'block';
-            return;
-          }
-          
-          // If email is verified, redirect to home page
-          window.location.href = 'index.html';
-        } catch (error) {
-          alert(error.message);
-        }
-      });
-      
-      // Handle resend verification email
-      resendBtn.addEventListener('click', async () => {
-        const user = firebase.auth().currentUser;
-        if (user) {
-          try {
-            await user.sendEmailVerification();
-            resendBtn.disabled = true;
-            alert('Verification link has been sent. Please check your email.');
-            
-            // Enable the button after 60 seconds
-            setTimeout(() => {
-              resendBtn.disabled = false;
-            }, 60000);
-          } catch (error) {
-            alert('Error sending verification link. Please try again.');
-          }
-        }
-      });
-    });
-  </script>
+    <!-- jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="navbar.js"></script>
+    <script src="footer.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const verificationSection = document.getElementById('verificationSection');
+            const resendBtn = document.getElementById('resendBtn');
+            const loginError = document.getElementById('login-error');
+            let currentUser = null;
+
+            // Handle login form submission
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                    currentUser = userCredential.user;
+
+                    if (!currentUser.emailVerified) {
+                        // Show verification section if email is not verified
+                        verificationSection.style.display = 'block';
+                        loginError.textContent = 'Please verify your email before logging in.';
+                        loginError.classList.remove('d-none');
+                        firebase.auth().signOut();
+                        return;
+                    }
+
+                    // If email is verified, redirect based on role
+                    if (currentUser.email === 'nermeenkamal92@gmail.com') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    let errorMessage = error.message;
+                    if (errorMessage.includes('user-not-found')) {
+                        errorMessage = 'No account found with this email.';
+                    } else if (errorMessage.includes('wrong-password')) {
+                        errorMessage = 'Incorrect password.';
+                    }
+                    loginError.textContent = errorMessage;
+                    loginError.classList.remove('d-none');
+                }
+            });
+
+            // Handle resend verification email
+            resendBtn.addEventListener('click', async () => {
+                if (!currentUser) {
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    try {
+                        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                        currentUser = userCredential.user;
+                    } catch (error) {
+                        loginError.textContent = 'Please enter your credentials again to resend verification email.';
+                        loginError.classList.remove('d-none');
+                        return;
+                    }
+                }
+
+                try {
+                    await currentUser.sendEmailVerification();
+                    resendBtn.disabled = true;
+                    loginError.textContent = 'Verification link has been sent. Please check your email.';
+                    loginError.classList.remove('alert-danger');
+                    loginError.classList.add('alert-success');
+                    loginError.classList.remove('d-none');
+
+                    // Enable the button after 60 seconds
+                    setTimeout(() => {
+                        resendBtn.disabled = false;
+                    }, 60000);
+                } catch (error) {
+                    loginError.textContent = 'Error sending verification link. Please try again.';
+                    loginError.classList.remove('d-none');
+                }
+            });
+
+            // Language translation logic
+            const translations = {
+                en: {
+                    login: 'LOGIN',
+                    email: 'EMAIL',
+                    password: 'PASSWORD',
+                    signIn: 'Sign In',
+                    forgot: 'Forgot Password?',
+                    noAccount: "Don't have an account? ",
+                    signUp: 'Sign Up',
+                    verify: 'Please verify your email before logging in. Check your inbox for the verification link.',
+                    resend: 'Resend Verification Link',
+                    loginBtn: 'Login',
+                    logoutBtn: 'Logout',
+                    lang: 'AR'
+                },
+                ar: {
+                    login: 'تسجيل الدخول',
+                    email: 'البريد الإلكتروني',
+                    password: 'كلمة المرور',
+                    signIn: 'دخول',
+                    forgot: 'نسيت كلمة المرور؟',
+                    noAccount: 'ليس لديك حساب؟ ',
+                    signUp: 'سجّل الآن',
+                    verify: 'يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد للحصول على رابط التحقق.',
+                    resend: 'إعادة إرسال رابط التحقق',
+                    loginBtn: 'تسجيل الدخول',
+                    logoutBtn: 'تسجيل الخروج',
+                    lang: 'EN'
+                }
+            };
+
+            function translatePage(lang) {
+                const t = translations[lang];
+                document.querySelector('.login-card h1').textContent = t.login;
+                document.querySelector('label[for="email"]').textContent = t.email;
+                document.querySelector('label[for="password"]').textContent = t.password;
+                document.querySelector('.login-card button[type="submit"]').textContent = t.signIn;
+                document.querySelector('.login-links a').textContent = t.forgot;
+                document.querySelector('.signup-link').innerHTML = t.noAccount + `<a href="sign-up.html" style="color: #9c2c2c; text-decoration: none; font-weight: bold;">${t.signUp}</a>`;
+                document.querySelector('.verification-message').textContent = t.verify;
+                document.querySelector('#resendBtn').textContent = t.resend;
+                document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            }
+
+            // Initialize language
+            const savedLang = localStorage.getItem('lang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+            translatePage(savedLang);
+
+            // Language toggle
+            document.getElementById('lang-toggle').addEventListener('click', function() {
+                const currentLang = localStorage.getItem('lang') || 'en';
+                const newLang = currentLang === 'en' ? 'ar' : 'en';
+                localStorage.setItem('lang', newLang);
+                translatePage(newLang);
+            });
+        });
+    </script>
 </body>
 </html>
