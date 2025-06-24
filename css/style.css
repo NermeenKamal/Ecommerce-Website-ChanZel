@@ -118,60 +118,92 @@ body {
 }
 
 /* Footer Styles */
-footer {
+.fixed-footer {
     background-color: var(--gray-color);
     padding: 3rem 0;
     margin-top: 5rem;
+    position: relative;
+    width: 100%;
+    bottom: 0;
 }
 
-.foo {
-    text-align: center;
-}
-
-.textt {
+.fixed-footer h5 {
     color: var(--primary-color);
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.text {
+.fixed-footer p {
     color: var(--secondary-color);
+    line-height: 1.6;
 }
 
-.vvv {
+.fixed-footer .list-unstyled li {
+    margin-bottom: 0.75rem;
+}
+
+.fixed-footer .list-unstyled a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.fixed-footer .list-unstyled a:hover {
+    color: var(--accent-color);
+}
+
+.social-links {
     display: flex;
-    justify-content: center;
-    margin: 2rem 0;
-}
-
-.vvv .nav-link {
-    color: var(--secondary-color) !important;
-    padding: 0.5rem 1rem;
-}
-
-.btns {
     gap: 1rem;
+    margin-top: 1rem;
 }
 
-.btn-lightt {
-    background-color: transparent;
-    border: 1px solid var(--secondary-color);
+.social-link {
     color: var(--secondary-color);
-    padding: 0.5rem 1rem;
-    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
 }
 
-.btn-lightt:hover {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-    color: var(--light-color);
+.social-link:hover {
+    color: var(--accent-color);
 }
 
-.copy {
+.footer-bottom {
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+}
+
+.footer-bottom p {
+    margin: 0;
     text-align: center;
     color: var(--secondary-color);
-    margin-top: 2rem;
     font-size: 0.9rem;
+}
+
+/* RTL Support for Footer */
+[dir="rtl"] .fixed-footer .list-unstyled {
+    padding-right: 0;
+}
+
+[dir="rtl"] .social-links {
+    justify-content: flex-end;
+}
+
+/* Responsive Footer */
+@media (max-width: 767.98px) {
+    .fixed-footer {
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .fixed-footer .col-md-4:not(:last-child) {
+        margin-bottom: 2rem;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
 }
 
 /* Auth Pages Styles */
