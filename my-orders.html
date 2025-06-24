@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders | ChanZel</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      background: url('img/Screenshot 2024-08-26 155230.png') repeat;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-navbar {
+      width: 100%;
+      height: 56px;
+      background: rgba(255,255,255,0.96);
+      border-bottom: 1.5px solid #e0dfd2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px 0 10px;
+      position: relative;
+      z-index: 10;
+      box-sizing: border-box;
+    }
+    .main-navbar .logo {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+    .main-navbar .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .main-navbar .nav-links a, .main-navbar .nav-links button {
+      color: #353232;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+      outline: none;
+      font-family: inherit;
+    }
+    .main-navbar .nav-links a:hover, .main-navbar .nav-links button:hover {
+      background: #f8f7e9;
+      color: #9c2c2c;
+      text-decoration: underline;
+    }
+    .main-navbar .nav-links .ar-btn {
+      font-weight: bold;
+      color: #785c4a;
+      border: 1px solid #e0dfd2;
+      background: #f8f7e9;
+      margin-right: 0.3rem;
+    }
+    .main-navbar .nav-links .ar-btn:hover {
+      background: #e0dfd2;
+      color: #343a40;
+    }
+    .main-navbar .nav-links .login-btn, .main-navbar .nav-links .logout-btn {
+      background: #785c4a;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      padding: 0.15rem 0.8rem;
+      border-radius: 7px;
+      margin-left: 0.3rem;
+      transition: background 0.15s;
+    }
+    .main-navbar .nav-links .login-btn:hover, .main-navbar .nav-links .logout-btn:hover {
+      background: #343a40;
+      color: #fff;
+    }
+    .orders-container {
+      max-width: 900px;
+      margin: 40px auto 30px auto;
+      background: #f8f7e9e6;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+      padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+      border: 1.5px solid #353232;
+    }
+    .orders-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #785c4a;
+      margin-bottom: 1.5rem;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .orders-table {
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      border: 1px solid #e0dfd2;
+    }
+    .orders-table th, .orders-table td {
+      text-align: center;
+      padding: 0.85rem 0.5rem;
+      font-size: 1.04rem;
+      border-bottom: 1px solid #e0dfd2;
+      vertical-align: middle;
+    }
+    .orders-table th {
+      background: #f8f7e9;
+      color: #785c4a;
+      font-weight: bold;
+      font-size: 1.08rem;
+    }
+    .orders-table tr:last-child td {
+      border-bottom: none;
+    }
+    .details-btn, .cancel-btn {
+      background: #785c4a;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0.35rem 1.1rem;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background 0.18s;
+      cursor: pointer;
+      margin: 0 2px;
+    }
+    .details-btn:hover, .cancel-btn:hover {
+      background: #353232;
+    }
+    .cancel-btn[disabled] {
+      background: #ccc;
+      color: #888;
+      cursor: not-allowed;
+    }
+    @media (max-width: 700px) {
+      .orders-container { padding: 0.7rem 0.2rem; }
+      .orders-title { font-size: 1.2rem; }
+      .orders-table th, .orders-table td { font-size: 0.93rem; padding: 0.5rem 0.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="main-navbar">
+    <img src="img/Chazel.png" alt="ChanZel Logo" class="logo">
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="women.html">Women</a>
+      <a href="men.html">Men</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <button class="ar-btn" id="lang-toggle">AR</button>
+      <button class="login-btn" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
+      <button class="logout-btn d-none" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+  <div class="orders-container">
+    <div class="orders-title">My Orders</div>
+    <div class="table-responsive">
+      <table class="orders-table" id="ordersTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Details</th>
+            <th>Cancel</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamic rows here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Modal for order details -->
+  <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="orderModalBody">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for edit order -->
+  <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editOrderModalLabel">Edit Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="editOrderModalBody">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="main-footer" style="width:100%;background:rgba(255,255,255,0.96);border-top:1.5px solid #e0dfd2;text-align:center;padding:13px 0 10px 0;font-size:1.01rem;color:#353232;letter-spacing:0.3px;box-shadow:none;z-index:2;position:sticky;bottom:0;left:0;">
+    &copy; 2024 ChanZel. All rights reserved.
+  </footer>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-init.js"></script>
+  <script src="navbar.js"></script>
+  <script>
+    // Only allow logged-in clients (not admin)
+    document.addEventListener('DOMContentLoaded', function() {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (!user) {
+          window.location.href = "login.html";
+        } else if (user.email === "nermeenkamal92@gmail.com") {
+          window.location.href = "admin-dashboard.html";
+        } else {
+          loadMyOrders(user.uid);
+        }
+      });
+    });
+
+    // Load my orders from Firestore
+    async function loadMyOrders(uid) {
+      const tableBody = document.querySelector('#ordersTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+      const ordersSnapshot = await db.collection('orders').where('userId', '==', uid).get();
+      const orders = [];
+      ordersSnapshot.forEach(doc => orders.push({id: doc.id, ...doc.data()}));
+      tableBody.innerHTML = '';
+      if (orders.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5">No orders found.</td></tr>';
+      }
+      orders.forEach(order => {
+        const canCancel = order.status !== 'delivered' && order.status !== 'rejected';
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${order.id}</td>
+          <td>${order.createdAt ? (new Date(order.createdAt.seconds ? order.createdAt.seconds*1000 : order.createdAt)).toLocaleDateString() : '-'}</td>
+          <td>${order.status || '-'}</td>
+          <td><button class="details-btn" data-id="${order.id}">Details</button></td>
+          <td><button class="cancel-btn" data-id="${order.id}" ${canCancel ? '' : 'disabled'}>Cancel</button></td>
+          <td><button class="details-btn" data-id="${order.id}" data-edit="1" ${canCancel ? '' : 'disabled'}>Edit</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+      // Bind details buttons
+      document.querySelectorAll('.details-btn').forEach(btn => {
+        btn.onclick = function() {
+          const orderId = this.getAttribute('data-id');
+          const order = orders.find(o => o.id === orderId);
+          showOrderModal(order);
+        };
+      });
+      // Bind cancel buttons
+      document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.onclick = async function() {
+          const orderId = this.getAttribute('data-id');
+          if (confirm('Are you sure you want to cancel this order?')) {
+            await db.collection('orders').doc(orderId).update({status: 'rejected'});
+            loadMyOrders(uid);
+            alert('Order cancelled.');
+          }
+        };
+      });
+      // Bind edit buttons
+      document.querySelectorAll('.details-btn[data-edit="1"]').forEach(btn => {
+        btn.onclick = function() {
+          const orderId = this.getAttribute('data-id');
+          const order = orders.find(o => o.id === orderId);
+          showEditModal(order);
+        };
+      });
+    }
+
+    // Show order modal
+    function showOrderModal(order) {
+      const modalBody = document.getElementById('orderModalBody');
+      modalBody.innerHTML = `
+        <div><b>Order ID:</b> ${order.id}</div>
+        <div><b>Date:</b> ${order.createdAt ? (new Date(order.createdAt.seconds ? order.createdAt.seconds*1000 : order.createdAt)).toLocaleString() : '-'}</div>
+        <div><b>Status:</b> ${order.status || '-'}</div>
+        <div style="margin:10px 0;"><b>Products:</b></div>
+        <div class="table-responsive"><table class="orders-table" style="margin-top:10px;">
+          <thead><tr><th>Name</th><th>Qty</th><th>Price</th></tr></thead>
+          <tbody>
+            ${(order.products||[]).length === 0 ? '<tr><td colspan="3">No products</td></tr>' : order.products.map(p => `
+              <tr>
+                <td>${p.name || '-'}</td>
+                <td>${p.qty || 1}</td>
+                <td>${p.price ? p.price + ' EGP' : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table></div>
+      `;
+      // Show modal (Bootstrap 4/5 compatible)
+      if (window.$ && $('#orderModal').modal) {
+        $('#orderModal').modal('show');
+      } else {
+        document.getElementById('orderModal').style.display = 'block';
+      }
+    }
+
+    // Show edit modal
+    function showEditModal(order) {
+      const modalBody = document.getElementById('editOrderModalBody');
+      // Build editable form
+      modalBody.innerHTML = `
+        <form id="editOrderForm">
+          <div><b>Order ID:</b> ${order.id}</div>
+          <div style="margin:10px 0 8px 0;"><label><b>Address:</b></label><input type="text" id="editAddress" value="${order.address || ''}" style="width:70%;margin-left:10px;padding:3px 8px;border-radius:6px;border:1px solid #e0dfd2;"></div>
+          <div style="margin:10px 0 8px 0;"><label><b>Phone:</b></label><input type="text" id="editPhone" value="${order.phone || ''}" style="width:50%;margin-left:10px;padding:3px 8px;border-radius:6px;border:1px solid #e0dfd2;"></div>
+          <div style="margin:10px 0;"><b>Products:</b></div>
+          <div class="table-responsive"><table class="orders-table" style="margin-top:10px;">
+            <thead><tr><th>Name</th><th>Qty</th><th>Price</th><th>Delete</th></tr></thead>
+            <tbody id="editProductsBody">
+              ${(order.products||[]).map((p,i) => `
+                <tr data-idx="${i}">
+                  <td>${p.name || '-'}</td>
+                  <td><input type="number" min="1" value="${p.qty||1}" style="width:60px;" class="edit-qty"></td>
+                  <td>${p.price ? p.price + ' EGP' : '-'}</td>
+                  <td><button type="button" class="cancel-btn delete-product-btn">Delete</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table></div>
+          <div style="margin-top:18px;text-align:right;">
+            <button type="submit" class="details-btn" style="padding:0.4rem 1.2rem;font-size:1.08rem;">Save Changes</button>
+          </div>
+        </form>
+      `;
+      // Show modal
+      if (window.$ && $('#editOrderModal').modal) {
+        $('#editOrderModal').modal('show');
+      } else {
+        document.getElementById('editOrderModal').style.display = 'block';
+      }
+      // Handle delete product
+      modalBody.querySelectorAll('.delete-product-btn').forEach((btn, idx) => {
+        btn.onclick = function() {
+          const row = btn.closest('tr');
+          row.remove();
+        };
+      });
+      // Handle save
+      document.getElementById('editOrderForm').onsubmit = async function(e) {
+        e.preventDefault();
+        // Gather new data
+        const newAddress = document.getElementById('editAddress').value;
+        const newPhone = document.getElementById('editPhone').value;
+        const newProducts = [];
+        modalBody.querySelectorAll('#editProductsBody tr').forEach((tr, i) => {
+          const qty = parseInt(tr.querySelector('.edit-qty').value) || 1;
+          const name = order.products[i].name;
+          const price = order.products[i].price;
+          newProducts.push({name, price, qty});
+        });
+        await db.collection('orders').doc(order.id).update({
+          address: newAddress,
+          phone: newPhone,
+          products: newProducts
+        });
+        if (window.$ && $('#editOrderModal').modal) {
+          $('#editOrderModal').modal('hide');
+        } else {
+          document.getElementById('editOrderModal').style.display = 'none';
+        }
+        loadMyOrders(order.userId);
+        alert('Order updated!');
+      };
+    }
+  </script>
+</body>
+</html> 
