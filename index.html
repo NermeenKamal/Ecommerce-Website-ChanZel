@@ -76,37 +76,19 @@
         </main>
 
         <!-- Featured Products Section -->
-        <section class="container-lg mt-5 flexx">
-            <h3 class="h33 text-center mb-4">Categories</h3>
-            <div class="d-flex flex-row mb-3">
-                <div class="backk"></div>
-                <div class="p-2 items"><h4 class="mt-2">Dress</h4><img src="img/Dress-category.jpg" style="display: block"> <button>GO!</button></div>
-                <div class="p-2 items"><h4 class="mt-2">Pants</h4><img src="img/Pants-Category.jpg" style="display: block"><button>GO!</button></div>
-                <div class="p-2 items"><h4 class="mt-2">T-shirt</h4><img src="img/Tshirt-Category.jpg" style="display: block"><button>GO!</button></div>
+        <section class="container-lg mt-5">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h3 class="h33 mb-4">Featured Products</h3>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="women.html" class="btn btn-outline-primary category-btn">Women Products</a>
+                        <a href="men.html" class="btn btn-outline-primary category-btn">Men Products</a>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex flex-row-reverse reverse-do">
-                <div class="back"></div>
-                <div class="p-2 items"><h4 class="mt-2">Bags</h4><img src="img/Bags-Category.jpg" style="display: block"><button>GO!</button></div>
-                <div class="p-2 items"><h4 class="mt-2">Suits</h4><img src="img/Suits-Category.jpg" style="display: block"><button>GO!</button></div>
-                <div class="p-2 items"><h4 class="mt-2">Shoes</h4><img src="img/shoes-category.jpg" style="display: block"><button>GO!</button></div>
-            </div>
-        </section>
 
-        <!-- Products Count Section -->
-        <section class="container-fluid mt-5">
-            <div class="d-flex ml-4 boy-girl">
-                <div class="d-flex flex-column position-relative">
-                    <img src="img/girl.jpg" class="girl-img" alt="girl">
-                    <button class="position-absolute bnn btn btn-lightt">
-                        WOMEN<br><span id="women-count">Loading...</span>
-                    </button>
-                </div>
-                <div class="d-flex flex-column position-relative">
-                    <img src="img/boy.jpg" class="boy-img" alt="boy">
-                    <button class="position-absolute bnn btn btn-lightt">
-                        MEN<br><span id="men-count">Loading...</span>
-                    </button>
-                </div>
+            <div class="row" id="featured-products">
+                <!-- Random products will be loaded here -->
             </div>
         </section>
 
@@ -115,133 +97,61 @@
     </div>
 
     <!-- jQuery first -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     
     <!-- Custom JS -->
+    <script src="script.js"></script>
     <script src="navbar.js"></script>
     <script src="footer.js"></script>
+    <script src="auth.js"></script>
+    <script src="products.js"></script>
     <script>
-        // Wait for Firebase to be ready
-        firebase.auth().onAuthStateChanged(function(user) {
-            // Load products.js after Firebase is ready
-            const script = document.createElement('script');
-            script.src = 'products.js';
-            script.onload = function() {
-                // Initialize products after products.js is loaded
-                initializeProducts();
-            };
-            document.body.appendChild(script);
-        });
-
-        function initializeProducts() {
-            const db = firebase.firestore();
+        document.addEventListener('DOMContentLoaded', function () {
+            const lang = localStorage.getItem('lang') || 'en';
             
-            // Function to format price
-            function formatPrice(price) {
-                return `$${parseFloat(price).toFixed(2)}`;
-            }
-
-            // Function to create color dots HTML
-            function createColorDots(colors) {
-                if (!Array.isArray(colors)) return '';
-                return colors.map(color => 
-                    `<span class="color-dot" style="background-color: ${color};"></span>`
-                ).join('');
-            }
-
-            // Function to create size badges HTML
-            function createSizeBadges(sizes) {
-                if (!Array.isArray(sizes)) return '';
-                return sizes.map(size => 
-                    `<span class="size-badge">${size}</span>`
-                ).join('');
-            }
-
-            // Function to create product card
-            function createProductCard(product) {
-                if (!product || !product.images || !product.images.length) {
-                    return '';
-                }
+            async function loadRandomProducts() {
+                // Get both men's and women's products
+                const womenProducts = await getProductsByGender('women');
+                const menProducts = await getProductsByGender('men');
+                const allProducts = [...womenProducts, ...menProducts];
                 
-                return `
-                    <div class="col-md-3 mb-4">
-                        <div class="card product-card" onclick="window.location.href='product.html?id=${product.id}'">
-                            <img src="${product.images[0]}" class="card-img-top product-image" alt="${product.name}">
-                            <div class="card-body">
-                                <h5 class="card-title">${product.name}</h5>
-                                <p class="card-text">${formatPrice(product.price)}</p>
-                                <div class="colors mb-2">
-                                    ${createColorDots(product.colors)}
-                                </div>
-                                <div class="sizes">
-                                    ${createSizeBadges(product.sizes)}
+                // Shuffle array and take first 8 items
+                const shuffled = allProducts.sort(() => 0.5 - Math.random());
+                const randomProducts = shuffled.slice(0, 8);
+
+                function renderProductCard(product) {
+                    const name = lang === 'ar' ? product.name_ar : product.name_en;
+                    const sizes = (product.sizes || []).map(size => `<span class='badge bg-secondary mx-1'>${size}</span>`).join(' ');
+                    const colors = (product.colors || []).map(color => `<span style='display:inline-block;width:18px;height:18px;border-radius:50%;background:${color};border:1px solid #ccc;margin-right:4px;'></span>`).join(' ');
+                    const img = (product.images && product.images.length) ? product.images[0] : 'img/div-empty.jpg';
+                    
+                    return `
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <img src="${img}" class="card-img-top" alt="${name}" style="height:220px;object-fit:cover;">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">${name}</h5>
+                                    <div class="mb-1"><strong>${lang === 'ar' ? 'المقاسات' : 'Sizes'}:</strong> ${sizes}</div>
+                                    <div class="mb-2"><strong>${lang === 'ar' ? 'الألوان' : 'Colors'}:</strong> ${colors}</div>
+                                    <a href="product.html?id=${product.id}" class="btn btn-outline-primary mt-auto w-100">
+                                        ${lang === 'ar' ? 'عرض التفاصيل' : 'View Details'}
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            }
-
-            // Load featured products
-            async function loadFeaturedProducts() {
-                const featuredSection = document.getElementById('featured-products');
-                try {
-                    // Get featured products from Firestore
-                    const snapshot = await db.collection('products')
-                        .where('featured', '==', true)
-                        .limit(4)
-                        .get();
-                    
-                    if (snapshot.empty) {
-                        featuredSection.innerHTML = '<div class="col-12 text-center">No featured products available.</div>';
-                        return;
-                    }
-
-                    // Convert to array and shuffle
-                    const products = snapshot.docs
-                        .map(doc => ({ id: doc.id, ...doc.data() }))
-                        .sort(() => 0.5 - Math.random());
-
-                    // Generate HTML
-                    const productsHTML = products
-                        .slice(0, 4)
-                        .map(createProductCard)
-                        .join('');
-
-                    featuredSection.innerHTML = productsHTML;
-                } catch (error) {
-                    console.error('Error loading featured products:', error);
-                    featuredSection.innerHTML = '<div class="col-12 error-message">Error loading products. Please try again later.</div>';
+                    `;
                 }
+
+                document.getElementById('featured-products').innerHTML = randomProducts.map(renderProductCard).join('');
             }
 
-            // Load product counts
-            async function loadProductCounts() {
-                try {
-                    // Get counts from Firestore
-                    const [womenSnapshot, menSnapshot] = await Promise.all([
-                        db.collection('products').where('gender', '==', 'women').get(),
-                        db.collection('products').where('gender', '==', 'men').get()
-                    ]);
-                    
-                    // Update the count displays
-                    document.getElementById('women-count').textContent = 
-                        `${womenSnapshot.size} Products`;
-                    document.getElementById('men-count').textContent = 
-                        `${menSnapshot.size} Products`;
-                } catch (error) {
-                    console.error('Error loading product counts:', error);
-                    document.getElementById('women-count').textContent = 'Error';
-                    document.getElementById('men-count').textContent = 'Error';
-                }
-            }
-
-            // Initialize
-            loadFeaturedProducts();
-            loadProductCounts();
-        }
+            // Initial load
+            loadRandomProducts();
+        });
     </script>
 </body>
 </html>
