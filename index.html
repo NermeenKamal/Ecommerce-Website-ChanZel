@@ -298,6 +298,31 @@
             loadCategoryCounts();
             loadRandomProducts();
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const lang = localStorage.getItem('lang') || 'en';
+            // Hero section translation
+            const h2 = document.querySelector('.main-bg .h2');
+            const side = document.querySelector('.main-bg .side');
+            const h3 = document.querySelector('.main-bg .slick');
+            if (lang === 'ar') {
+                if(h2) h2.innerHTML = 'مرحبًا بك في <span class="side">ChanZel</span>';
+                if(h3) h3.innerHTML = '.أنيق .عصري <br>.مميز';
+            } else {
+                if(h2) h2.innerHTML = 'Welcome To <span class="side">ChanZel</span>';
+                if(h3) h3.innerHTML = 'Slick. Modern. <br> Awesome.';
+            }
+            // Category overlays translation
+            const womenTitle = document.querySelector('.women-title');
+            const menTitle = document.querySelector('.men-title');
+            if (lang === 'ar') {
+                if(womenTitle) womenTitle.textContent = 'نساء';
+                if(menTitle) menTitle.textContent = 'رجال';
+            } else {
+                if(womenTitle) womenTitle.textContent = 'WOMEN';
+                if(menTitle) menTitle.textContent = 'MEN';
+            }
+        });
     </script>
 </body>
 </html>
