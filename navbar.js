@@ -92,6 +92,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+  if (localStorage.getItem('justLoggedIn')) {
+    localStorage.removeItem('justLoggedIn');
+    location.reload();
+  }
   // Translation object
   const translations = {
     en: {
