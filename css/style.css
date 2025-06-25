@@ -396,8 +396,8 @@ svg{
 }
 .main-bg {
     position: absolute;
-    left: 3%;
-    top: 0;
+    left: 3vw;
+    top: 2vw;
     width: 94%;
     height: 108%;
     bottom: -5%;
