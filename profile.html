@@ -37,14 +37,14 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // مراقبة DOM حتى تظهر العناصر ثم إضافة الكلاسات
-      function addProfileClasses() {
-        var nav = document.getElementById('navbar');
-        var foot = document.getElementById('footer');
-        if (nav && !nav.classList.contains('profile-navbar')) nav.classList.add('profile-navbar');
-        if (foot && !foot.classList.contains('profile-footer')) foot.classList.add('profile-footer');
-        if (nav && foot) clearInterval(waitForNavFooter);
-      }
-      var waitForNavFooter = setInterval(addProfileClasses, 100);
+      // function addProfileClasses() {
+      //   var nav = document.getElementById('navbar');
+      //   var foot = document.getElementById('footer');
+      //   if (nav && !nav.classList.contains('profile-navbar')) nav.classList.add('profile-navbar');
+      //   if (foot && !foot.classList.contains('profile-footer')) foot.classList.add('profile-footer');
+      //   if (nav && foot) clearInterval(waitForNavFooter);
+      // }
+      // var waitForNavFooter = setInterval(addProfileClasses, 100);
 
       firebase.auth().onAuthStateChanged(function(user) {
         if (!user) {
