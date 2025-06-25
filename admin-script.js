@@ -312,7 +312,7 @@ window.editProduct = async function (id) {
     modal.modal('show');
     const docRef = db.collection('products').doc(id);
     const docSnap = await docRef.get();
-    if (!docSnap.exists()) {
+    if (!docSnap.exists) {
       form.innerHTML = '<div class="alert alert-danger">Product not found.</div>';
       return;
     }
