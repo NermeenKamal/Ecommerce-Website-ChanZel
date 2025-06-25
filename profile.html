@@ -35,6 +35,29 @@
         <div class="profile-value"><span class="profile-label">Phone:</span> <span id="profile-phone"></span></div>
         <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
         <button class="btn btn-dark mt-2 d-none" id="admin-dashboard-btn">Admin Dashboard</button>
+        <button class="btn btn-outline-primary mt-2" id="edit-profile-btn">Edit</button>
+        <form id="edit-profile-form" class="d-none mt-3" enctype="multipart/form-data" style="text-align:left;">
+          <div class="form-group text-center">
+            <label for="edit-avatar" style="font-weight:500;">Change Photo</label><br>
+            <input type="file" id="edit-avatar" accept="image/*" style="margin:0 auto;">
+          </div>
+          <div class="form-group">
+            <label for="edit-name">Name</label>
+            <input type="text" class="form-control" id="edit-name" maxlength="32">
+          </div>
+          <div class="form-group">
+            <label for="edit-address">Address</label>
+            <input type="text" class="form-control" id="edit-address" maxlength="64">
+          </div>
+          <div class="form-group">
+            <label for="edit-phone">Phone</label>
+            <input type="text" class="form-control" id="edit-phone" maxlength="20">
+          </div>
+          <div class="d-flex justify-content-between mt-3">
+            <button type="button" class="btn btn-success" id="save-profile-btn">Save</button>
+            <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
     <div id="footer"></div>
@@ -72,6 +95,76 @@
           adminBtn.onclick = function() {
             window.location.href = 'admin-dashboard.html';
           };
+        }
+        // --- Edit Profile Logic ---
+        const editBtn = document.getElementById('edit-profile-btn');
+        const editForm = document.getElementById('edit-profile-form');
+        const cancelBtn = document.getElementById('cancel-edit-btn');
+        const saveBtn = document.getElementById('save-profile-btn');
+        const avatarInput = document.getElementById('edit-avatar');
+        const nameInput = document.getElementById('edit-name');
+        const addressInput = document.getElementById('edit-address');
+        const phoneInput = document.getElementById('edit-phone');
+        const avatarImg = document.getElementById('profile-avatar');
+        // Fill current values
+        editBtn.onclick = function() {
+          editForm.classList.remove('d-none');
+          editBtn.classList.add('d-none');
+          nameInput.value = user.displayName || '';
+          addressInput.value = address !== 'Not set' ? address : '';
+          phoneInput.value = phone !== 'Not set' ? phone : '';
+        };
+        cancelBtn.onclick = function() {
+          editForm.classList.add('d-none');
+          editBtn.classList.remove('d-none');
+          avatarInput.value = '';
+        };
+        // صورة معاينة
+        avatarInput.onchange = function(e) {
+          if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              avatarImg.src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+          }
+        };
+        // حفظ التعديلات
+        saveBtn.onclick = async function() {
+          const newName = nameInput.value.trim();
+          const newAddress = addressInput.value.trim();
+          const newPhone = phoneInput.value.trim();
+          let photoURL = user.photoURL;
+          // صورة جديدة
+          if (avatarInput.files && avatarInput.files[0]) {
+            // رفع الصورة على شكل base64 (مؤقتًا)
+            const reader = new FileReader();
+            reader.onload = async function(ev) {
+              photoURL = ev.target.result;
+              await updateProfileData(newName, photoURL, newAddress, newPhone);
+            };
+            reader.readAsDataURL(avatarInput.files[0]);
+          } else {
+            await updateProfileData(newName, photoURL, newAddress, newPhone);
+          }
+        };
+        async function updateProfileData(newName, photoURL, newAddress, newPhone) {
+          // تحديث الاسم والصورة في Firebase
+          try {
+            await user.updateProfile({ displayName: newName, photoURL: photoURL });
+          } catch (e) { alert('Error updating profile: ' + e.message); return; }
+          // تحديث العنوان والموبايل في localStorage
+          if (!isAdmin) {
+            localStorage.setItem('deliveryAddress', newAddress);
+            localStorage.setItem('userPhone', newPhone);
+          }
+          // تحديث العرض
+          document.getElementById('profile-name').textContent = newName || 'No Name';
+          document.getElementById('profile-avatar').src = photoURL || 'img/Chazel.png';
+          document.getElementById('profile-address').textContent = newAddress || 'Not set';
+          document.getElementById('profile-phone').textContent = newPhone || 'Not set';
+          editForm.classList.add('d-none');
+          editBtn.classList.remove('d-none');
         }
       });
       document.getElementById('logout-btn').onclick = function() {
