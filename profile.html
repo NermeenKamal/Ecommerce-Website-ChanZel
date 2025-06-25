@@ -13,13 +13,14 @@
   <link rel="icon" href="img/logo-light.png">
   <style>
     .profile-card { max-width: 420px; margin: 40px auto; box-shadow: 0 2px 12px #0001; border-radius: 18px; padding: 2rem; background: #fff; }
-    .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 2px solid #eee; margin: 0 auto 1rem auto; display: block; background: #fff; }
+    .avatar-wrapper { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto 1rem auto; background: #fff; border: 2px solid #eee; display: flex; align-items: center; justify-content: center; }
+    .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
     .profile-label { font-weight: bold; color: #785c4a; }
     .profile-value { margin-bottom: 1rem; }
     .logout-btn { margin-top: 0; }
     .profile-btn-row { display: flex; justify-content: center; gap: 0.7rem; margin-top: 1.5rem; }
     @media (max-width: 400px) {
-      .profile-avatar { width: 80px; height: 80px; }
+      .avatar-wrapper { width: 80px; height: 80px; }
       .profile-btn-row { flex-direction: column; gap: 0.5rem; }
     }
   </style>
@@ -33,7 +34,9 @@
     <div id="navbar"></div>
     <div class="container">
       <div class="profile-card text-center">
-        <img id="profile-avatar" class="profile-avatar" src="img/Chazel.png" alt="Avatar">
+        <div class="avatar-wrapper">
+          <img id="profile-avatar" class="profile-avatar" src="img/Chazel.png" alt="Avatar">
+        </div>
         <h3 id="profile-name">User Name</h3>
         <div class="profile-value"><span class="profile-label">Email:</span> <span id="profile-email"></span></div>
         <div class="profile-value"><span class="profile-label" id="address-label">Address:</span> <span id="profile-address"></span></div>
@@ -78,21 +81,38 @@
   <script src="auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      firebase.auth().onAuthStateChanged(function(user) {
+      firebase.auth().onAuthStateChanged(async function(user) {
         if (!user) {
           window.location.href = 'login.html';
           return;
         }
-        // Basic info
-        document.getElementById('profile-name').textContent = user.displayName || 'No Name';
-        document.getElementById('profile-email').textContent = user.email || '';
         // صورة البروفايل: من localStorage إذا وجدت، وإلا من Firebase، وإلا الافتراضية
         const localAvatar = localStorage.getItem('profileAvatar');
         document.getElementById('profile-avatar').src = localAvatar || user.photoURL || 'img/Chazel.png';
-        // العنوان والموبايل: من localStorage إذا وجدت، وإلا الافتراضي (حتى للـ Admin)
+        // جلب بيانات Firestore
         let isAdmin = user.email === 'nermeenkamal92@gmail.com';
-        let address = localStorage.getItem('deliveryAddress') || (isAdmin ? 'ChanZel Store, Cairo, Egypt' : 'Not set');
-        let phone = localStorage.getItem('userPhone') || 'Not set';
+        let address = '';
+        let phone = '';
+        let name = user.displayName || '';
+        try {
+          const db = firebase.firestore();
+          const docRef = db.collection('users').doc(user.uid);
+          const docSnap = await docRef.get();
+          if (docSnap.exists) {
+            const data = docSnap.data();
+            address = data.address || (isAdmin ? 'ChanZel Store, Cairo, Egypt' : 'Not set');
+            phone = data.phone || 'Not set';
+            name = data.name || name;
+          } else {
+            address = isAdmin ? 'ChanZel Store, Cairo, Egypt' : 'Not set';
+            phone = 'Not set';
+          }
+        } catch (e) {
+          address = isAdmin ? 'ChanZel Store, Cairo, Egypt' : 'Not set';
+          phone = 'Not set';
+        }
+        document.getElementById('profile-name').textContent = name || 'No Name';
+        document.getElementById('profile-email').textContent = user.email || '';
         document.getElementById('profile-address').textContent = address;
         document.getElementById('profile-phone').textContent = phone;
         document.getElementById('address-label').textContent = isAdmin ? 'Store Address:' : 'Delivery Address:';
@@ -118,7 +138,7 @@
         editBtn.onclick = function() {
           editForm.classList.remove('d-none');
           editBtn.classList.add('d-none');
-          nameInput.value = user.displayName || '';
+          nameInput.value = name || '';
           addressInput.value = address !== 'Not set' ? address : '';
           phoneInput.value = phone !== 'Not set' ? phone : '';
         };
@@ -148,11 +168,10 @@
             const reader = new FileReader();
             reader.onload = async function(ev) {
               photoURL = ev.target.result;
-              // إذا كانت Base64، لا تحدث في Firebase Auth
               if (photoURL.startsWith('data:image')) {
                 avatarImg.src = photoURL;
                 localStorage.setItem('profileAvatar', photoURL);
-                await updateProfileData(newName, null, newAddress, newPhone); // null = لا تحدث photoURL في Firebase
+                await updateProfileData(newName, null, newAddress, newPhone);
               } else {
                 await updateProfileData(newName, photoURL, newAddress, newPhone);
               }
@@ -164,21 +183,25 @@
         };
         async function updateProfileData(newName, photoURL, newAddress, newPhone) {
           try {
-            // إذا كان photoURL=null لا تحدث الصورة في Firebase
             if (photoURL !== null) {
               await user.updateProfile({ displayName: newName, photoURL: photoURL });
             } else {
               await user.updateProfile({ displayName: newName });
             }
           } catch (e) { alert('Error updating profile: ' + e.message); return; }
-          // تحديث العنوان والموبايل في localStorage
-          if (!isAdmin) {
-            localStorage.setItem('deliveryAddress', newAddress);
-            localStorage.setItem('userPhone', newPhone);
-          }
+          // تحديث البيانات في Firestore
+          try {
+            const db = firebase.firestore();
+            const docRef = db.collection('users').doc(user.uid);
+            await docRef.set({
+              name: newName,
+              address: newAddress,
+              phone: newPhone,
+              email: user.email
+            }, { merge: true });
+          } catch (e) { alert('Error saving to Firestore: ' + e.message); }
           // تحديث العرض
           document.getElementById('profile-name').textContent = newName || 'No Name';
-          // الصورة: لو في localStorage استخدمها، وإلا استخدم photoURL أو الافتراضية
           const localAvatar = localStorage.getItem('profileAvatar');
           document.getElementById('profile-avatar').src = localAvatar || photoURL || 'img/Chazel.png';
           document.getElementById('profile-address').textContent = newAddress || 'Not set';
