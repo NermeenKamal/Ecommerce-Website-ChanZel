@@ -13,7 +13,7 @@
   <link rel="icon" href="img/logo-light.png">
   <style>
     .profile-card { max-width: 420px; margin: 40px auto; box-shadow: 0 2px 12px #0001; border-radius: 18px; padding: 2rem; background: #fff; }
-    .profile-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 2px solid #eee; margin: 0 auto 1rem auto; display: block; }
+    .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 2px solid #eee; margin: 0 auto 1rem auto; display: block; background: #fff; }
     .profile-label { font-weight: bold; color: #785c4a; }
     .profile-value { margin-bottom: 1rem; }
     .logout-btn { margin-top: 0; }
@@ -86,11 +86,12 @@
         // Basic info
         document.getElementById('profile-name').textContent = user.displayName || 'No Name';
         document.getElementById('profile-email').textContent = user.email || '';
-        document.getElementById('profile-avatar').src = user.photoURL || 'img/Chazel.png';
-        // Custom claims or Firestore for address/phone
-        // For demo: use localStorage or fallback
+        // صورة البروفايل: من localStorage إذا وجدت، وإلا من Firebase، وإلا الافتراضية
+        const localAvatar = localStorage.getItem('profileAvatar');
+        document.getElementById('profile-avatar').src = localAvatar || user.photoURL || 'img/Chazel.png';
+        // العنوان والموبايل: من localStorage إذا وجدت، وإلا الافتراضي (حتى للـ Admin)
         let isAdmin = user.email === 'nermeenkamal92@gmail.com';
-        let address = isAdmin ? 'ChanZel Store, Cairo, Egypt' : (localStorage.getItem('deliveryAddress') || 'Not set');
+        let address = localStorage.getItem('deliveryAddress') || (isAdmin ? 'ChanZel Store, Cairo, Egypt' : 'Not set');
         let phone = localStorage.getItem('userPhone') || 'Not set';
         document.getElementById('profile-address').textContent = address;
         document.getElementById('profile-phone').textContent = phone;
@@ -185,9 +186,6 @@
           editForm.classList.add('d-none');
           editBtn.classList.remove('d-none');
         }
-        // عند تحميل الصفحة: استخدم صورة localStorage لو موجودة
-        const localAvatar = localStorage.getItem('profileAvatar');
-        if(localAvatar) document.getElementById('profile-avatar').src = localAvatar;
       });
       document.getElementById('logout-btn').onclick = function() {
         firebase.auth().signOut().then(function() {
