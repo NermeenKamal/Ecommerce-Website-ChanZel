@@ -13,33 +13,27 @@ const navbarHTML = isAuthPage ? `
         <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
     </nav>
 ` : `
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg" style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
         <a class="navbar-brand" href="index.html">
             <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
         </a>
-
-        <div class="collapse navbar-collapse" id="x">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link h ${currentPage === 'index.html' ? 'active alert-link' : ''}" aria-current="page" href="index.html">HOME</a></li>
-                <li class="nav-item"><a class="nav-link h ${currentPage === 'women.html' ? 'active alert-link' : ''}" href="women.html">WOMEN</a></li>
-                <li class="nav-item"><a class="nav-link h ${currentPage === 'men.html' ? 'active alert-link' : ''}" href="men.html">MEN</a></li>
-                <li class="nav-item"><a class="nav-link h ${currentPage === 'about.html' ? 'active alert-link' : ''}" href="about.html">ABOUT</a></li>
-                <li class="nav-item"><a class="nav-link h ${currentPage === 'contact.html' ? 'active alert-link' : ''}" href="#contact">CONTACT</a></li>
+        <div class="collapse navbar-collapse" id="x" style="flex:1;">
+            <ul class="navbar-nav" style="gap:0.7rem;">
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'index.html' ? 'active alert-link' : ''}" aria-current="page" href="index.html" data-translate="home">HOME</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'women.html' ? 'active alert-link' : ''}" href="women.html" data-translate="women">WOMEN</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'men.html' ? 'active alert-link' : ''}" href="men.html" data-translate="men">MEN</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'about.html' ? 'active alert-link' : ''}" href="about.html" data-translate="about">ABOUT</a></li>
+                <li class="nav-item"><a class="nav-link h ${currentPage === 'contact.html' ? 'active alert-link' : ''}" href="#contact" data-translate="contact">CONTACT</a></li>
             </ul>
         </div>
-
-        <ul class="navbar-nav vv">
-            <h6 class="nav-item dolar">$0.00</h6>
+        <div class="d-flex align-items-center gap-2" style="gap:0.7rem;">
+            <h6 class="nav-item dolar mb-0">$0.00</h6>
             <i class="fa-solid fa-cart-shopping ico-btn cart-icon"></i>
-            <a id="login-btn" class="nav-link login" href="login.html">LOG IN</a>
-            <a id="logout-btn" class="nav-link logout d-none" href="#">LOG OUT</a>
-            <a id="profile-btn" class="nav-link profile d-none" href="profile.html">PROFILE</a>
-        </ul>
-
-        <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
-            <span class="navbar-toggler-icon"></span>
-        </a>
-        <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
+            <a id="login-btn" class="nav-link login" href="login.html" data-translate="login">LOG IN</a>
+            <a id="logout-btn" class="nav-link logout d-none" href="#" data-translate="logout">LOG OUT</a>
+            <a id="profile-btn" class="nav-link profile d-none" href="profile.html" data-translate="profile">PROFILE</a>
+            <button class="ar-btn btn btn-outline-secondary btn-sm ml-2" id="lang-toggle">AR</button>
+        </div>
     </nav>
 `;
 
