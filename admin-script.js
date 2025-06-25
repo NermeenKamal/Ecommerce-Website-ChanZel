@@ -69,8 +69,22 @@ function getDashboardT(lang) {
   if (window.dashboardTranslations) return window.dashboardTranslations[lang];
   // fallback (should not happen)
   return {
-    edit: 'Edit', delete: 'Delete', women: 'Women', men: 'Men', select: 'Select', addColor: 'Add Color', colorName: 'Color name', actions: 'Actions',
-    statProducts: 'Products', statOrders: 'Orders', statCustomers: 'Customers',
+    name: 'Name',
+    price: 'Price',
+    stock: 'Stock',
+    mainImage: 'Main Image',
+    images: 'Images',
+    gender: 'Gender',
+    category: 'Category',
+    colors: 'Colors',
+    sizes: 'Sizes',
+    select: 'Select',
+    addColor: 'Add Color',
+    colorName: 'Color name',
+    actions: 'Actions',
+    edit: 'Edit',
+    delete: 'Delete',
+    // أضف أي مفاتيح أخرى تستخدمها في الفورم هنا
   };
 }
 
