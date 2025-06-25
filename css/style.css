@@ -1117,3 +1117,35 @@ img {
     margin-top: 0.7rem;
   }
 }
+
+/* Responsive: About & Women Sections */
+@media (max-width: 600px) {
+  .about-section, .about-img, .about-text {
+    width: 100% !important;
+    max-width: 100vw !important;
+    display: block !important;
+    margin: 0 auto 1.2rem auto !important;
+    text-align: center !important;
+  }
+  .about-img img {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 12px !important;
+  }
+  .about-text {
+    padding: 1.2rem 0.5rem !important;
+    font-size: 1.05rem !important;
+  }
+  .main-bg {
+    margin-bottom: 1.5rem !important;
+  }
+  .category-btn, .btn, .ar-btn {
+    margin-bottom: 0.7rem !important;
+  }
+  .product-filters, .product-cards {
+    margin-top: 1.2rem !important;
+  }
+  .footer-main, .fixed-footer {
+    padding: 1.2rem 0 0 0 !important;
+  }
+}
