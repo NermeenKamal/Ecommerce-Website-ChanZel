@@ -31,7 +31,9 @@ const navbarHTML = isAuthPage ? `
         <ul class="navbar-nav vv">
             <h6 class="nav-item dolar">$0.00</h6>
             <i class="fa-solid fa-cart-shopping ico-btn cart-icon"></i>
-            <a class="nav-link login" href="login.html">LOG IN</a>
+            <a id="login-btn" class="nav-link login" href="login.html">LOG IN</a>
+            <a id="logout-btn" class="nav-link logout d-none" href="#">LOG OUT</a>
+            <a id="profile-btn" class="nav-link profile d-none" href="profile.html">PROFILE</a>
         </ul>
 
         <a href="#x" data-toggle="collapse" class="navbar-toggler navbar-dark alink">
@@ -180,44 +182,20 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Authentication buttons logic
-  function updateAuthButtons(user) {
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    if (!loginBtn || !logoutBtn) return;
-    
-    if (user) {
-      loginBtn.classList.add('d-none');
-      logoutBtn.classList.remove('d-none');
-    } else {
-      loginBtn.classList.remove('d-none');
-      logoutBtn.classList.add('d-none');
-    }
-  }
-
-  // Login button click handler
-  const loginBtn = document.getElementById('login-btn');
-  if (loginBtn) {
-    loginBtn.onclick = function() {
-      window.location.href = 'login.html';
-    };
-  }
-
-  // Logout button click handler
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.onclick = function() {
-      if (window.firebase && firebase.auth) {
-        firebase.auth().signOut().then(function() {
-          window.location.href = 'index.html';
-        });
-      }
-    };
-  }
-
-  // Initialize auth state
   if (window.firebase && firebase.auth) {
-    firebase.auth().onAuthStateChanged(updateAuthButtons);
-  } else {
-    updateAuthButtons(null);
+    firebase.auth().onAuthStateChanged(function(user) {
+      const loginBtn = document.getElementById('login-btn');
+      const logoutBtn = document.getElementById('logout-btn');
+      const profileBtn = document.getElementById('profile-btn');
+      if (user) {
+        if (loginBtn) loginBtn.classList.add('d-none');
+        if (logoutBtn) logoutBtn.classList.remove('d-none');
+        if (profileBtn) profileBtn.classList.remove('d-none');
+      } else {
+        if (loginBtn) loginBtn.classList.remove('d-none');
+        if (logoutBtn) logoutBtn.classList.add('d-none');
+        if (profileBtn) profileBtn.classList.add('d-none');
+      }
+    });
   }
 }); 
