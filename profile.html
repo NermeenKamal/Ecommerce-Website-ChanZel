@@ -137,11 +137,17 @@
           let photoURL = user.photoURL;
           // صورة جديدة
           if (avatarInput.files && avatarInput.files[0]) {
-            // رفع الصورة على شكل base64 (مؤقتًا)
             const reader = new FileReader();
             reader.onload = async function(ev) {
               photoURL = ev.target.result;
-              await updateProfileData(newName, photoURL, newAddress, newPhone);
+              // إذا كانت Base64، لا تحدث في Firebase Auth
+              if (photoURL.startsWith('data:image')) {
+                avatarImg.src = photoURL;
+                localStorage.setItem('profileAvatar', photoURL);
+                await updateProfileData(newName, null, newAddress, newPhone); // null = لا تحدث photoURL في Firebase
+              } else {
+                await updateProfileData(newName, photoURL, newAddress, newPhone);
+              }
             };
             reader.readAsDataURL(avatarInput.files[0]);
           } else {
@@ -149,9 +155,13 @@
           }
         };
         async function updateProfileData(newName, photoURL, newAddress, newPhone) {
-          // تحديث الاسم والصورة في Firebase
           try {
-            await user.updateProfile({ displayName: newName, photoURL: photoURL });
+            // إذا كان photoURL=null لا تحدث الصورة في Firebase
+            if (photoURL !== null) {
+              await user.updateProfile({ displayName: newName, photoURL: photoURL });
+            } else {
+              await user.updateProfile({ displayName: newName });
+            }
           } catch (e) { alert('Error updating profile: ' + e.message); return; }
           // تحديث العنوان والموبايل في localStorage
           if (!isAdmin) {
@@ -160,12 +170,17 @@
           }
           // تحديث العرض
           document.getElementById('profile-name').textContent = newName || 'No Name';
-          document.getElementById('profile-avatar').src = photoURL || 'img/Chazel.png';
+          // الصورة: لو في localStorage استخدمها، وإلا استخدم photoURL أو الافتراضية
+          const localAvatar = localStorage.getItem('profileAvatar');
+          document.getElementById('profile-avatar').src = localAvatar || photoURL || 'img/Chazel.png';
           document.getElementById('profile-address').textContent = newAddress || 'Not set';
           document.getElementById('profile-phone').textContent = newPhone || 'Not set';
           editForm.classList.add('d-none');
           editBtn.classList.remove('d-none');
         }
+        // عند تحميل الصفحة: استخدم صورة localStorage لو موجودة
+        const localAvatar = localStorage.getItem('profileAvatar');
+        if(localAvatar) document.getElementById('profile-avatar').src = localAvatar;
       });
       document.getElementById('logout-btn').onclick = function() {
         firebase.auth().signOut().then(function() {
