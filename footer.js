@@ -18,29 +18,29 @@ const footerHTML = footerIsAuthPage ? `
         </div>
     </footer>
 ` : `
-    <footer class="container-fluid mt-5" id="contact">
-        <div class="d-flex align-items-center flex-column foo">
-            <h2 class="textt  fo">Subscribe To Get Offers In Your Inbox</h2>
-            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br> <br></span>
-            <div class="navbar-nav vvv">
-                <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
-                <a href="women.html" class="nav-link text mr-4">Women</a>
-                <a href="men.html" class="nav-link text mr-4">Men</a>
-                <a href="about.html" class="nav-link text mr-4">About</a>
-                <a href="#contact" class="nav-link text">Contact</a>
-            </div>
-            <div class="d-flex mt-3 btns">
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
-                    <i class="fa-brands fa-facebook"></i></a>
-                <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
-                    <i class="fa-brands fa-github"></i></a>
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
-                    <i class="fa-brands fa-linkedin"></i></a>
-                <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
-                    <i class="fa-brands fa-square-behance"></i></a>
-            </div>
+    <footer class="footer-main" style="background:#f8e9df;padding:60px 0 0 0;">
+      <div class="container text-center">
+        <h2 class="mb-3" style="font-weight:bold;">Subscribe To Get Offers In Your Inbox</h2>
+        <span style="font-size: 22px; color:#888;">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br><br></span>
+        <div class="d-flex justify-content-center gap-4 mt-4 mb-3 flex-wrap" style="font-size:1.18rem;">
+          <a href="index.html" class="font-weight-bold nav-link" style="display:inline-block;min-width:110px;">Buy T-Shirts</a>
+          <a href="women.html" class="font-weight-bold nav-link" style="display:inline-block;min-width:80px;">Women</a>
+          <a href="men.html" class="font-weight-bold nav-link" style="display:inline-block;min-width:80px;">Men</a>
+          <a href="about.html" class="font-weight-bold nav-link" style="display:inline-block;min-width:80px;">About</a>
+          <a href="#contact" class="font-weight-bold nav-link" style="display:inline-block;min-width:80px;">Contact</a>
         </div>
-        <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
+        <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap">
+          <a class="ico-btn btn btn-lightt mx-2" type="button" href="https://www.facebook.com/NermeenKamalEldin" style="min-width:100px;min-height:60px;display:flex;align-items:center;justify-content:center;font-size:2rem;"><i class="fa-brands fa-facebook"></i></a>
+          <a class="ico-btn btn btn-lightt mx-2" type="button" href="https://github.com/NermeenKamal" style="min-width:100px;min-height:60px;display:flex;align-items:center;justify-content:center;font-size:2rem;"><i class="fa-brands fa-github"></i></a>
+          <a class="ico-btn btn btn-lightt mx-2" type="button" href="https://www.linkedin.com/in/nirmn-kamal/" style="min-width:100px;min-height:60px;display:flex;align-items:center;justify-content:center;font-size:2rem;"><i class="fa-brands fa-linkedin"></i></a>
+          <a class="ico-btn btn btn-lightt mx-2" type="button" href="https://www.behance.net/Nermeen_Kamal" style="min-width:100px;min-height:60px;display:flex;align-items:center;justify-content:center;font-size:2rem;"><i class="fa-brands fa-square-behance"></i></a>
+        </div>
+      </div>
+      <div style="background:#000;color:#fff;padding:32px 0 18px 0;margin-top:0;">
+        <div class="container text-center">
+          <span style="font-size:1.25rem;">Copyright &copy; 2024 ChanZel By NERMEEN</span>
+        </div>
+      </div>
     </footer>
 `;
 
