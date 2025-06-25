@@ -189,6 +189,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial load
     loadProducts();
+
+    // Hero section translation
+    const h2 = document.querySelector('.main-bg .h2');
+    const side = document.querySelector('.main-bg .side');
+    const h3 = document.querySelector('.main-bg .slick');
+    if (lang === 'ar') {
+        if(h2) h2.innerHTML = 'قسم <span class="side">الرجال</span>';
+        if(h3) h3.innerHTML = '.أنيق .عصري <br>.مميز';
+    } else {
+        if(h2) h2.innerHTML = 'Men <span class="side">Side</span>';
+        if(h3) h3.innerHTML = 'Slick. Modern. <br> Awesome.';
+    }
+    // Category buttons translation
+    const catBtns = document.querySelectorAll('.category-btn');
+    const catLabels = lang === 'ar'
+        ? ['كل المنتجات','بدل','بنطلونات','تيشيرتات','أحذية','ساعات','قبعات']
+        : ['All Products','Suits','Pants','T-shirts','Shoes','Watches','Hats'];
+    catBtns.forEach((btn, i) => { if(catLabels[i]) btn.textContent = catLabels[i]; });
 });
 </script>
 </body>
