@@ -104,15 +104,15 @@ function buildGenderAndCategorySelects() {
   genderSelect.innerHTML = '';
   const optSelect = document.createElement('option');
   optSelect.value = '';
-  optSelect.textContent = t.select;
+  optSelect.textContent = t.select || 'Select';
   genderSelect.appendChild(optSelect);
   const optWomen = document.createElement('option');
   optWomen.value = 'women';
-  optWomen.textContent = t.women;
+  optWomen.textContent = t.women || 'Women';
   genderSelect.appendChild(optWomen);
   const optMen = document.createElement('option');
   optMen.value = 'men';
-  optMen.textContent = t.men;
+  optMen.textContent = t.men || 'Men';
   genderSelect.appendChild(optMen);
   if (!genderSelect.value || genderSelect.value === '') {
     genderSelect.value = 'women';
