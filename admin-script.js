@@ -84,6 +84,8 @@ function getDashboardT(lang) {
     actions: 'Actions',
     edit: 'Edit',
     delete: 'Delete',
+    women: 'Women',
+    men: 'Men',
     // أضف أي مفاتيح أخرى تستخدمها في الفورم هنا
   };
 }
