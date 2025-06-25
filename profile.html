@@ -16,6 +16,36 @@
     .profile-label { font-weight: bold; color: #785c4a; }
     .profile-value { margin-bottom: 1rem; }
     .logout-btn { margin-top: 1.5rem; }
+    /* Navbar adjustments for profile */
+    .profile-navbar {
+      min-height: 48px !important;
+      padding: 0.3rem 1.2rem !important;
+      background: #f8f9fa !important;
+      border-bottom: 1.5px solid #e0dfd2;
+    }
+    .profile-navbar .nav-link.profile {
+      border: 2px solid #785c4a;
+      border-radius: 8px;
+      color: #785c4a !important;
+      font-weight: bold;
+      background: #fffbe6;
+      margin-left: 8px;
+    }
+    .profile-navbar .nav-link.logout {
+      color: #b02a37 !important;
+      font-weight: bold;
+    }
+    .profile-navbar .nav-link.login {
+      display: none !important;
+    }
+    /* Footer adjustments for profile */
+    .profile-footer {
+      background: #f8f9fa !important;
+      border-top: 1.5px solid #e0dfd2;
+      padding: 0.5rem 0 !important;
+      font-size: 0.98rem !important;
+      color: #785c4a;
+    }
   </style>
 </head>
 <body>
@@ -35,6 +65,13 @@
   <script src="footer.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // أضف كلاس مخصص للناف بار والفوتر بعد إدراجهما
+      setTimeout(function() {
+        var nav = document.getElementById('navbar');
+        var foot = document.getElementById('footer');
+        if (nav) nav.classList.add('profile-navbar');
+        if (foot) foot.classList.add('profile-footer');
+      }, 0);
       firebase.auth().onAuthStateChanged(function(user) {
         if (!user) {
           window.location.href = 'login.html';
