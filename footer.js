@@ -18,44 +18,29 @@ const footerHTML = footerIsAuthPage ? `
         </div>
     </footer>
 ` : `
-    <footer class="fixed-footer" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>About ChanZel</h5>
-                    <p>Your premier destination for fashion. We bring you the latest trends in men's and women's clothing.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="women.html">Women</a></li>
-                        <li><a href="men.html">Men</a></li>
-                        <li><a href="about.html">About</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Connect With Us</h5>
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/NermeenKamalEldin" class="social-link">
-                            <i class="fa-brands fa-facebook"></i>
-                        </a>
-                        <a href="https://github.com/NermeenKamal" class="social-link">
-                            <i class="fa-brands fa-github"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/nirmn-kamal/" class="social-link">
-                            <i class="fa-brands fa-linkedin"></i>
-                        </a>
-                        <a href="https://www.behance.net/Nermeen_Kamal" class="social-link">
-                            <i class="fa-brands fa-square-behance"></i>
-                        </a>
-                    </div>
-                </div>
+    <footer class="container-fluid mt-5" id="contact">
+        <div class="d-flex align-items-center flex-column foo">
+            <h2 class="textt  fo">Subscribe To Get Offers In Your Inbox</h2>
+            <span class="text fon" style="font-size: 20px">Lorem ipsum dolor sit amet, adipiscing elit sed do eiusmod condimentum<br> <br></span>
+            <div class="navbar-nav vvv">
+                <a href="index.html" class="nav-link text mr-4">Buy T-Shirts</a>
+                <a href="women.html" class="nav-link text mr-4">Women</a>
+                <a href="men.html" class="nav-link text mr-4">Men</a>
+                <a href="about.html" class="nav-link text mr-4">About</a>
+                <a href="#contact" class="nav-link text">Contact</a>
             </div>
-            <div class="footer-bottom">
-                <p class="text-center mb-0">Copyright &copy; 2024 ChanZel By NERMEEN</p>
+            <div class="d-flex mt-3 btns">
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.facebook.com/NermeenKamalEldin">
+                    <i class="fa-brands fa-facebook"></i></a>
+                <a class="ico-btn btn btn-lightt" type="button" href="https://github.com/NermeenKamal">
+                    <i class="fa-brands fa-github"></i></a>
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.linkedin.com/in/nirmn-kamal/">
+                    <i class="fa-brands fa-linkedin"></i></a>
+                <a class="ico-btn btn btn-lightt" type="button" href="https://www.behance.net/Nermeen_Kamal">
+                    <i class="fa-brands fa-square-behance"></i></a>
             </div>
         </div>
+        <div class="last-div copy mb-4">Copyright &copy; 2024 ChanZel By NERMEEN</div>
     </footer>
 `;
 
@@ -97,17 +82,17 @@ function translateFooter(lang) {
     
     if (footer) {
         // Check if elements exist before accessing them
-        const aboutTitle = footer.querySelector('h5:nth-of-type(1)');
-        const aboutText = footer.querySelector('p:nth-of-type(1)');
-        const quickLinksTitle = footer.querySelector('h5:nth-of-type(2)');
-        const connectTitle = footer.querySelector('h5:nth-of-type(3)');
-        const copyrightText = footer.querySelector('.footer-bottom p');
+        const aboutTitle = footer.querySelector('h2');
+        const aboutText = footer.querySelector('span');
+        const quickLinksTitle = footer.querySelector('h2');
+        const connectTitle = footer.querySelector('h2');
+        const copyrightText = footer.querySelector('.copy');
         
         if (aboutTitle) aboutTitle.textContent = t.about;
         if (aboutText) aboutText.textContent = t.aboutText;
         if (quickLinksTitle) quickLinksTitle.textContent = t.quickLinks;
         
-        const quickLinks = footer.querySelectorAll('.list-unstyled li a');
+        const quickLinks = footer.querySelectorAll('.navbar-nav li a');
         if (quickLinks.length >= 4) {
             if (quickLinks[0]) quickLinks[0].textContent = t.home;
             if (quickLinks[1]) quickLinks[1].textContent = t.women;
