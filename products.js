@@ -19,7 +19,7 @@ if (typeof db !== 'undefined') {
 }
 
 // Default product image
-const DEFAULT_PRODUCT_IMAGE = 'img/div-empty.jpg';
+const DEFAULT_PRODUCT_IMAGE = 'img/Chazel.png';
 
 // Default product data
 const DEFAULT_PRODUCT = {
