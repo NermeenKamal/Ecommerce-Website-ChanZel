@@ -1181,3 +1181,42 @@ img {
     padding: 1.2rem 0 0 0 !important;
   }
 }
+
+/* Responsive: Product Cards in Men/Women Pages */
+@media (max-width: 991.98px) {
+  .product-cards, .products-list, .products-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.2rem !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  .product-card, .card, .product-item {
+    width: 95vw !important;
+    max-width: 340px !important;
+    margin: 0 auto !important;
+    box-shadow: 0 2px 12px #0001 !important;
+    border-radius: 16px !important;
+    padding: 1.1rem 0.7rem !important;
+  }
+  .product-card img, .card img, .product-item img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 220px !important;
+    object-fit: contain !important;
+    border-radius: 10px !important;
+    margin-bottom: 0.7rem !important;
+  }
+  .product-card .btn, .card .btn, .product-item .btn {
+    width: 100% !important;
+    margin: 0.5rem 0 0 0 !important;
+    font-size: 1rem !important;
+  }
+  .product-card h5, .card h5, .product-item h5 {
+    font-size: 1.13rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .product-card p, .card p, .product-item p {
+    font-size: 0.98rem !important;
+  }
+}
