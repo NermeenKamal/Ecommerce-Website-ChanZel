@@ -20,6 +20,7 @@
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase-init.js"></script>
 </head>
 <body>
@@ -33,6 +34,7 @@
         <div class="profile-value"><span class="profile-label" id="address-label">Address:</span> <span id="profile-address"></span></div>
         <div class="profile-value"><span class="profile-label">Phone:</span> <span id="profile-phone"></span></div>
         <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
+        <button class="btn btn-dark mt-2 d-none" id="admin-dashboard-btn">Admin Dashboard</button>
       </div>
     </div>
     <div id="footer"></div>
@@ -63,6 +65,14 @@
         document.getElementById('profile-address').textContent = address;
         document.getElementById('profile-phone').textContent = phone;
         document.getElementById('address-label').textContent = isAdmin ? 'Store Address:' : 'Delivery Address:';
+        // Show admin dashboard button if admin
+        const adminBtn = document.getElementById('admin-dashboard-btn');
+        if (isAdmin && adminBtn) {
+          adminBtn.classList.remove('d-none');
+          adminBtn.onclick = function() {
+            window.location.href = 'admin-dashboard.html';
+          };
+        }
       });
       document.getElementById('logout-btn').onclick = function() {
         firebase.auth().signOut().then(function() {
