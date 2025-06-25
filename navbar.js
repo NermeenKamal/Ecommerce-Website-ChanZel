@@ -17,6 +17,11 @@ const navbarHTML = isAuthPage ? `
         <a class="navbar-brand" href="index.html">
             <img src="img/Chazel.png" id="logo" alt="Chanzel" width="111px" height="82px">
         </a>
+        <button class="navbar-toggler d-lg-none" id="menu-toggle" aria-label="Open menu" style="background:#111; border:none; width:44px; height:44px; display:flex;align-items:center;justify-content:center;position:relative;">
+          <span class="menu-bars">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
         <div class="collapse navbar-collapse" id="x" style="flex:1;">
             <ul class="navbar-nav" style="gap:0.7rem;">
                 <li class="nav-item"><a class="nav-link h ${currentPage === 'index.html' ? 'active alert-link' : ''}" aria-current="page" href="index.html" data-translate="home">HOME</a></li>
@@ -38,7 +43,23 @@ const navbarHTML = isAuthPage ? `
 `;
 
 // Insert navbar
-document.getElementById('navbar').innerHTML = navbarHTML;
+document.getElementById('navbar').innerHTML = navbarHTML + `\
+  <div id="side-menu-overlay" class="side-menu-overlay">\
+    <div class="side-menu">\
+      <button class="close-menu" aria-label="Close menu">&times;</button>\
+      <ul class="side-menu-list">\
+        <li><a href="index.html" data-translate="home">HOME</a></li>\
+        <li><a href="women.html" data-translate="women">WOMEN</a></li>\
+        <li><a href="men.html" data-translate="men">MEN</a></li>\
+        <li><a href="about.html" data-translate="about">ABOUT</a></li>\
+        <li><a href="#contact" data-translate="contact">CONTACT</a></li>\
+        <li><a id="side-login-btn" href="login.html" data-translate="login">LOG IN</a></li>\
+        <li><a id="side-logout-btn" class="d-none" href="#" data-translate="logout">LOG OUT</a></li>\
+        <li><a id="side-profile-btn" class="d-none" href="profile.html" data-translate="profile">PROFILE</a></li>\
+      </ul>\
+    </div>\
+  </div>\
+`;
 
 // Update cart count
 function updateCartCount() {
@@ -189,6 +210,43 @@ document.addEventListener('DOMContentLoaded', function () {
         if (loginBtn) loginBtn.classList.remove('d-none');
         if (logoutBtn) logoutBtn.classList.add('d-none');
         if (profileBtn) profileBtn.classList.add('d-none');
+      }
+    });
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const menuToggle = document.getElementById('menu-toggle');
+  const sideMenuOverlay = document.getElementById('side-menu-overlay');
+  const closeMenuBtn = document.querySelector('.close-menu');
+  if(menuToggle && sideMenuOverlay && closeMenuBtn) {
+    menuToggle.addEventListener('click', function() {
+      sideMenuOverlay.classList.add('open');
+    });
+    closeMenuBtn.addEventListener('click', function() {
+      sideMenuOverlay.classList.remove('open');
+    });
+    sideMenuOverlay.addEventListener('click', function(e) {
+      if(e.target === sideMenuOverlay) sideMenuOverlay.classList.remove('open');
+    });
+  }
+  // مزامنة أزرار الدخول/الخروج في القائمة الجانبية
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const profileBtn = document.getElementById('profile-btn');
+  const sideLoginBtn = document.getElementById('side-login-btn');
+  const sideLogoutBtn = document.getElementById('side-logout-btn');
+  const sideProfileBtn = document.getElementById('side-profile-btn');
+  if(window.firebase && firebase.auth) {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if(user) {
+        if(sideLoginBtn) sideLoginBtn.classList.add('d-none');
+        if(sideLogoutBtn) sideLogoutBtn.classList.remove('d-none');
+        if(sideProfileBtn) sideProfileBtn.classList.remove('d-none');
+      } else {
+        if(sideLoginBtn) sideLoginBtn.classList.remove('d-none');
+        if(sideLogoutBtn) sideLogoutBtn.classList.add('d-none');
+        if(sideProfileBtn) sideProfileBtn.classList.add('d-none');
       }
     });
   }
