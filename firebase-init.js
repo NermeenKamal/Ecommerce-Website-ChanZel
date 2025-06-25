@@ -26,6 +26,7 @@ try {
 // Initialize Firebase services
 const auth = firebase.auth();
 const db = firebase.firestore();
+window.db = db;
 
 // Configure Firestore settings for better performance and offline support
 try {
