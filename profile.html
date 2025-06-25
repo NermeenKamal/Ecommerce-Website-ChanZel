@@ -65,13 +65,17 @@
   <script src="footer.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // أضف كلاس مخصص للناف بار والفوتر بعد إدراجهما
-      setTimeout(function() {
+      // مراقبة DOM حتى تظهر العناصر
+      function addProfileClasses() {
         var nav = document.getElementById('navbar');
         var foot = document.getElementById('footer');
-        if (nav) nav.classList.add('profile-navbar');
-        if (foot) foot.classList.add('profile-footer');
-      }, 0);
+        if (nav && !nav.classList.contains('profile-navbar')) nav.classList.add('profile-navbar');
+        if (foot && !foot.classList.contains('profile-footer')) foot.classList.add('profile-footer');
+        // إذا تم تطبيق الكلاسات، أوقف المراقبة
+        if (nav && foot) clearInterval(waitForNavFooter);
+      }
+      var waitForNavFooter = setInterval(addProfileClasses, 100);
+
       firebase.auth().onAuthStateChanged(function(user) {
         if (!user) {
           window.location.href = 'login.html';
