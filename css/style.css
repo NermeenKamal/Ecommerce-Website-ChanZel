@@ -396,11 +396,10 @@ svg{
 }
 .main-bg {
     position: absolute;
-    left: 0;
+    left: 2.5vw;
     top: 0;
-    width: 105%;
+    width: calc(100% - 2.5vw);
     height: 110%;
-    right: -3%;
     bottom: -5%;
     margin: 0;
     border-radius: 0;
