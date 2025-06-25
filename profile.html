@@ -6,7 +6,6 @@
   <title>Profile | ChanZel</title>
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="img/logo-light.png">
   <link rel="stylesheet" href="css/fontawesome-free-6.6.0-web/css/all.css">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -20,33 +19,29 @@
   </style>
 </head>
 <body>
-  <div id="navbar"></div>
-  <div class="container">
-    <div class="profile-card text-center">
-      <img id="profile-avatar" class="profile-avatar" src="img/Chazel.png" alt="Avatar">
-      <h3 id="profile-name">User Name</h3>
-      <div class="profile-value"><span class="profile-label">Email:</span> <span id="profile-email"></span></div>
-      <div class="profile-value"><span class="profile-label" id="address-label">Address:</span> <span id="profile-address"></span></div>
-      <div class="profile-value"><span class="profile-label">Phone:</span> <span id="profile-phone"></span></div>
-      <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
+  <div class="container-fluid body" data-bs-theme="light">
+    <div id="navbar"></div>
+    <div class="container">
+      <div class="profile-card text-center">
+        <img id="profile-avatar" class="profile-avatar" src="img/Chazel.png" alt="Avatar">
+        <h3 id="profile-name">User Name</h3>
+        <div class="profile-value"><span class="profile-label">Email:</span> <span id="profile-email"></span></div>
+        <div class="profile-value"><span class="profile-label" id="address-label">Address:</span> <span id="profile-address"></span></div>
+        <div class="profile-value"><span class="profile-label">Phone:</span> <span id="profile-phone"></span></div>
+        <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
+      </div>
     </div>
+    <div id="footer"></div>
   </div>
-  <div id="footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="firebase-init.js"></script>
   <script src="navbar.js"></script>
   <script src="footer.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // مراقبة DOM حتى تظهر العناصر ثم إضافة الكلاسات
-      // function addProfileClasses() {
-      //   var nav = document.getElementById('navbar');
-      //   var foot = document.getElementById('footer');
-      //   if (nav && !nav.classList.contains('profile-navbar')) nav.classList.add('profile-navbar');
-      //   if (foot && !foot.classList.contains('profile-footer')) foot.classList.add('profile-footer');
-      //   if (nav && foot) clearInterval(waitForNavFooter);
-      // }
-      // var waitForNavFooter = setInterval(addProfileClasses, 100);
-
       firebase.auth().onAuthStateChanged(function(user) {
         if (!user) {
           window.location.href = 'login.html';
