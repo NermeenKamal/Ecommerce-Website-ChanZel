@@ -335,12 +335,22 @@ window.editProduct = async function (id) {
         <div class="col-md-6 mb-3">
           <label for="edit-mainImage">${t.mainImage} (optional)</label>
           <input type="file" id="edit-mainImage" class="form-control" accept="image/*">
-          <img src="${data.mainImage}" class="product-img-thumb mt-2" alt="main">
+          <div class="main-image-wrapper position-relative d-inline-block">
+            <img src="${data.mainImage}" class="product-img-thumb mt-2" alt="main">
+            <button type="button" class="btn btn-sm btn-danger remove-main-img-btn position-absolute" style="top:0;right:0;">&times;</button>
+          </div>
         </div>
         <div class="col-md-6 mb-3">
           <label for="edit-images">${t.images} (add more)</label>
           <input type="file" id="edit-images" class="form-control" accept="image/*" multiple>
-          ${(data.images||[]).map(img=>`<img src='${img}' class='product-img-thumb mt-2' alt='img'>`).join('')}
+          <div id="edit-images-list">
+            ${(data.images||[]).map(img=>`
+              <div class="image-wrapper position-relative d-inline-block">
+                <img src='${img}' class='product-img-thumb mt-2' alt='img'>
+                <button type="button" class="btn btn-sm btn-danger remove-img-btn position-absolute" style="top:0;right:0;">&times;</button>
+              </div>
+            `).join('')}
+          </div>
         </div>
         <div class="col-md-4 mb-3">
           <label for="edit-gender">${t.gender}</label>
@@ -412,6 +422,20 @@ window.editProduct = async function (id) {
       if (typeof translateDashboard === 'function') translateDashboard(lang);
     });
     setTimeout(() => { if (typeof translateDashboard === 'function') translateDashboard(lang); }, 0);
+
+    // بعد بناء الفورم، اربط أزرار الحذف
+    // حذف صورة رئيسية
+    form.querySelectorAll('.remove-main-img-btn').forEach(btn => {
+      btn.onclick = function() {
+        btn.parentElement.remove();
+      };
+    });
+    // حذف صورة إضافية
+    form.querySelectorAll('.remove-img-btn').forEach(btn => {
+      btn.onclick = function() {
+        btn.parentElement.remove();
+      };
+    });
 };
 
 // Save Edit
@@ -445,12 +469,11 @@ saveEditBtn.onclick = async function(e) {
     }
     // Upload new images if any
     let mainImageUrl = null;
-    if (mainImageFile) {
-      mainImageUrl = await uploadImage(mainImageFile);
-    } else {
-      mainImageUrl = form.querySelector('img[alt="main"]').src;
+    const mainImgElem = form.querySelector('.main-image-wrapper img');
+    if (mainImgElem) {
+      mainImageUrl = mainImgElem.src;
     }
-    let imageUrls = Array.from(form.querySelectorAll('img[alt="img"]')).map(img=>img.src);
+    let imageUrls = Array.from(form.querySelectorAll('#edit-images-list .image-wrapper img')).map(img=>img.src);
     if (imagesFiles.length) {
       for (let img of imagesFiles) {
         imageUrls.push(await uploadImage(img));
@@ -514,3 +537,11 @@ if (typeof translateDashboard === 'function') translateDashboard(getCurrentLang(
 
 // Helper to ensure no undefined values
 const safeValue = (val, fallback) => (typeof val === 'undefined' ? fallback : val);
+
+$(document).ready(function() {
+  $('#editProductModal').on('hidden.bs.modal', function () {
+    // أعد التركيز إلى أول زر Edit في الجدول
+    const firstEditBtn = document.querySelector('.edit-btn');
+    if (firstEditBtn) firstEditBtn.focus();
+  });
+});
