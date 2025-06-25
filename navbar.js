@@ -56,6 +56,10 @@ document.getElementById('navbar').innerHTML = navbarHTML + `\
         <li><a id="side-login-btn" href="login.html" data-translate="login">LOG IN</a></li>\
         <li><a id="side-logout-btn" class="d-none" href="#" data-translate="logout">LOG OUT</a></li>\
         <li><a id="side-profile-btn" class="d-none" href="profile.html" data-translate="profile">PROFILE</a></li>\
+        <li style="margin-top:1.2rem;display:flex;align-items:center;gap:1rem;">\
+          <button class="ar-btn btn btn-outline-secondary btn-sm" id="side-lang-toggle">AR</button>\
+          <span class="cart-icon ico-btn fa-solid fa-cart-shopping" id="side-cart-icon" style="font-size:1.3rem;cursor:pointer;position:relative;"></span>\
+        </li>\
       </ul>\
     </div>\
   </div>\
@@ -249,5 +253,34 @@ document.addEventListener('DOMContentLoaded', function() {
         if(sideProfileBtn) sideProfileBtn.classList.add('d-none');
       }
     });
+  }
+  // أضف مزامنة زر AR وأيقونة السلة في القائمة الجانبية:
+  const sideLangToggle = document.getElementById('side-lang-toggle');
+  if(sideLangToggle) {
+    sideLangToggle.onclick = function() {
+      const currentLang = localStorage.getItem('lang') || 'en';
+      const newLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('lang', newLang);
+      location.reload();
+    };
+    // مزامنة النص
+    const currentLang = localStorage.getItem('lang') || 'en';
+    sideLangToggle.textContent = currentLang === 'ar' ? 'EN' : 'AR';
+  }
+  // أيقونة السلة الجانبية
+  const sideCartIcon = document.getElementById('side-cart-icon');
+  if(sideCartIcon) {
+    sideCartIcon.onclick = function() {
+      window.location.href = 'cart.html';
+    };
+    // مزامنة عداد السلة
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length > 0) {
+      sideCartIcon.setAttribute('data-count', cart.length);
+      sideCartIcon.classList.add('has-items');
+    } else {
+      sideCartIcon.removeAttribute('data-count');
+      sideCartIcon.classList.remove('has-items');
+    }
   }
 }); 
