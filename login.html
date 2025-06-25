@@ -357,8 +357,10 @@
 
                     // If email is verified, redirect based on role
                     if (currentUser.email === 'nermeenkamal92@gmail.com') {
+                        localStorage.setItem('justLoggedIn', '1');
                         window.location.href = 'admin-dashboard.html';
                     } else {
+                        localStorage.setItem('justLoggedIn', '1');
                         window.location.href = 'index.html';
                     }
                 } catch (error) {
