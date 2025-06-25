@@ -16,7 +16,12 @@
     .profile-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 2px solid #eee; margin: 0 auto 1rem auto; display: block; }
     .profile-label { font-weight: bold; color: #785c4a; }
     .profile-value { margin-bottom: 1rem; }
-    .logout-btn { margin-top: 1.5rem; }
+    .logout-btn { margin-top: 0; }
+    .profile-btn-row { display: flex; justify-content: center; gap: 0.7rem; margin-top: 1.5rem; }
+    @media (max-width: 400px) {
+      .profile-avatar { width: 80px; height: 80px; }
+      .profile-btn-row { flex-direction: column; gap: 0.5rem; }
+    }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -33,9 +38,11 @@
         <div class="profile-value"><span class="profile-label">Email:</span> <span id="profile-email"></span></div>
         <div class="profile-value"><span class="profile-label" id="address-label">Address:</span> <span id="profile-address"></span></div>
         <div class="profile-value"><span class="profile-label">Phone:</span> <span id="profile-phone"></span></div>
-        <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
-        <button class="btn btn-dark mt-2 d-none" id="admin-dashboard-btn">Admin Dashboard</button>
-        <button class="btn btn-outline-primary mt-2" id="edit-profile-btn">Edit</button>
+        <div class="profile-btn-row">
+          <button class="btn btn-danger logout-btn" id="logout-btn">Logout</button>
+          <button class="btn btn-dark mt-0 d-none" id="admin-dashboard-btn">Admin Dashboard</button>
+          <button class="btn btn-outline-primary mt-0" id="edit-profile-btn">Edit</button>
+        </div>
         <form id="edit-profile-form" class="d-none mt-3" enctype="multipart/form-data" style="text-align:left;">
           <div class="form-group text-center">
             <label for="edit-avatar" style="font-weight:500;">Change Photo</label><br>
