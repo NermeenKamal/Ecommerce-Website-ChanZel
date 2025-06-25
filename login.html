@@ -310,6 +310,11 @@
                 Don't have an account? <a href="sign-up.html">Sign Up</a>
             </div>
             <div id="login-error" class="alert alert-danger d-none" style="margin-top:1rem;"></div>
+            <div id="resend-verification-container" style="margin-top:1.2rem; text-align:center;">
+                <p style="margin-bottom:0.5rem; color:#785c4a; font-size:0.98rem;">Didn't receive the verification email?</p>
+                <button id="resendBtn" class="resend-btn btn btn-outline-secondary btn-sm">Resend Verification Link</button>
+                <div id="resend-status" style="margin-top:0.5rem; font-size:0.97rem;"></div>
+            </div>
         </div>
     </main>
 
@@ -368,36 +373,37 @@
                 }
             });
 
-            // Handle resend verification email
+            // Handle resend verification email (دائمًا)
+            const resendStatus = document.getElementById('resend-status');
             resendBtn.addEventListener('click', async () => {
-                if (!currentUser) {
-                    const email = document.getElementById('email').value;
-                    const password = document.getElementById('password').value;
-                    try {
-                        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-                        currentUser = userCredential.user;
-                    } catch (error) {
-                        loginError.textContent = 'Please enter your credentials again to resend verification email.';
-                        loginError.classList.remove('d-none');
+                resendStatus.textContent = '';
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                if (!email || !password) {
+                    resendStatus.textContent = 'Please enter your email and password first.';
+                    resendStatus.style.color = '#b02a37';
+                    return;
+                }
+                try {
+                    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    if (user.emailVerified) {
+                        resendStatus.textContent = 'Your email is already verified.';
+                        resendStatus.style.color = '#198754';
+                        firebase.auth().signOut();
                         return;
                     }
-                }
-
-                try {
-                    await currentUser.sendEmailVerification();
+                    await user.sendEmailVerification();
                     resendBtn.disabled = true;
-                    loginError.textContent = 'Verification link has been sent. Please check your email.';
-                    loginError.classList.remove('alert-danger');
-                    loginError.classList.add('alert-success');
-                    loginError.classList.remove('d-none');
-
-                    // Enable the button after 60 seconds
+                    resendStatus.textContent = 'Verification link has been sent. Please check your email.';
+                    resendStatus.style.color = '#198754';
                     setTimeout(() => {
                         resendBtn.disabled = false;
                     }, 60000);
+                    firebase.auth().signOut();
                 } catch (error) {
-                    loginError.textContent = 'Error sending verification link. Please try again.';
-                    loginError.classList.remove('d-none');
+                    resendStatus.textContent = 'Error sending verification link. Please check your credentials.';
+                    resendStatus.style.color = '#b02a37';
                 }
             });
 
