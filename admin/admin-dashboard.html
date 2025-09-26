@@ -127,7 +127,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    const adminEmail = "admin@example.com"; // غيّري هنا لإيميل الأدمن
+    const adminEmail = "admin@example.com"; 
 
     // تحقق من حالة تسجيل الدخول وصلاحية الأدمن
     onAuthStateChanged(auth, (user) => {
@@ -151,3 +151,4 @@
   <script type="module" src="admin-script.js"></script>
 </body>
 </html>
+
